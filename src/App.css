@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/* Base */
+html,
+body {
+  height: auto;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto; /* ensure scrolling */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "Philosopher", sans-serif;
+  background: none; /* background handled by #bg to avoid repaints */
+  min-height: 100vh;
+  cursor: url("/cursor/my-cursor.png") 4 4, auto !important;
+}
+
+/* Fixed background layer (independent of app layout) */
+#bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none; /* never block clicks/scroll */
+  /* Start with tiny placeholder if you have one; otherwise you can set the full image here */
+  background: url("/images/bg-tiny.webp") center / cover no-repeat;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* When page is fully loaded, swap to the full-res image */
+body.bg-ready #bg {
+  background-image: url("/images/updated_bg.webp");
+}
+
+/* If you don't have a tiny placeholder, comment the two rules above and use just this:
+#bg { background: url("/images/updated_bg.webp") center / cover no-repeat; }
+*/
+
+/* Optional: responsive tune for very small screens */
+@media (max-width: 640px) {
+  #bg {
+    /* cover is usually best; if your composition crops badly, try contain */
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+/* App container helpers (keep it scrollable) */
+#root {
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+
+.container {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.Padding-container {
+  padding-left: clamp(20px, 5vw, 70px);
+  padding-right: clamp(20px, 5vw, 70px);
+}
+
+/* Logo demo styles (unchanged) */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+.read-the-docs {
+  color: #888;
+}
