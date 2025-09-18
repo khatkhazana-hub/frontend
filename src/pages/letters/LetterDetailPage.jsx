@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import RelatedCards from "../../components/Cards/Cards";
 import ThumbnailCards from "../../components/InnerComponents/ThumbnailCards";
 import { IoCalendarOutline } from "react-icons/io5";
+import api from "../../utils/api";
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL;
 
@@ -15,39 +16,44 @@ const LetterDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
-  useEffect(() => {
-    let alive = true;
-    setLoading(true);
-    setErr("");
 
-    fetch(`http://localhost:8000/api/submissions/${id}`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((json) => {
-        if (!alive) return;
-        const doc = json;
-        if (doc?.status?.toLowerCase() !== "approved") {
-          navigate("/letters/english", { replace: true });
-          return;
-        }
-        setData(doc);
-      })
-      .catch((e) => {
-        if (!alive) return;
-        console.error(e);
-        setErr("Failed to load letter. Check the ID or server.");
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
 
-    return () => {
-      alive = false;
-    };
-  }, [id, navigate]);
+useEffect(() => {
+  let alive = true;
+  setLoading(true);
+  setErr("");
+
+  api
+    .get(`/submissions/${id}`) // baseURL already set in api.js
+    .then((res) => {
+      if (!alive) return;
+      const doc = res.data;
+
+      if (doc?.status?.toLowerCase() !== "approved") {
+        // redirect back to the correct language list
+        navigate(`/letters/${doc?.letterLanguage?.toLowerCase() || "english"}`, {
+          replace: true,
+        });
+        return;
+      }
+
+      setData(doc);
+    })
+    .catch((e) => {
+      if (!alive) return;
+      console.error(e);
+      setErr("Failed to load letter. Check the ID or server.");
+    })
+    .finally(() => {
+      if (!alive) return;
+      setLoading(false);
+    });
+
+  return () => {
+    alive = false;
+  };
+}, [id, navigate]);
+
 
   const fileUrl = (p) => {
     if (!p) return "";

@@ -1,16 +1,17 @@
 // @ts-nocheck
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import HeadingDesc from "../../components/InnerComponents/HeadingDesc";
 import Subcription from "../../components/InnerComponents/Subcription";
 import LetterCard from "../../components/Cards/LetterCard";
+import api from "../../utils/api"; // 👈 use axios wrapper
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL;
 const PAGE_SIZE = 12;
 
 function LettersPage() {
-  const { lang } = useParams(); // 🔑 dynamic language param
+  const { lang } = useParams();
   const [all, setAll] = useState([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
@@ -23,65 +24,56 @@ function LettersPage() {
   const [decadeQ, setDecadeQ] = useState("");
 
   useEffect(() => {
-    let isMounted = true;
+    let alive = true;
     setLoading(true);
     setError("");
 
-    fetch("http://localhost:8000/api/submissions")
+    api
+      .get("/submissions")
       .then((res) => {
-        if (!res.ok) throw new Error(`Request failed with ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        if (!isMounted) return;
-        // ✅ filter only approved + selected language
-        const filtered = (Array.isArray(data) ? data : [])
+        if (!alive) return;
+        const data = res.data || [];
+        const filtered = data
           .filter(
             (d) =>
               d.letterLanguage?.toLowerCase() === lang.toLowerCase() &&
-              d.status &&
-              d.status.toLowerCase() === "approved"
+              d.status?.toLowerCase() === "approved"
           )
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setAll(filtered);
       })
       .catch((e) => {
-        if (!isMounted) return;
+        if (!alive) return;
         console.error(e);
         setError("Failed to load letters. Check API/server.");
       })
       .finally(() => {
-        if (!isMounted) return;
+        if (!alive) return;
         setLoading(false);
       });
 
     return () => {
-      isMounted = false;
+      alive = false;
     };
   }, [lang]);
 
-  // combine filters
-  const filtered = useMemo(() => {
-    const c = categoryQ.trim().toLowerCase();
-    const o = ownerQ.trim().toLowerCase();
-    const d = decadeQ.trim().toLowerCase();
+  // 🟢 compute filtered + visible inline
+  const c = categoryQ.trim().toLowerCase();
+  const o = ownerQ.trim().toLowerCase();
+  const d = decadeQ.trim().toLowerCase();
 
-    return all.filter((item) => {
-      const cat = (item.letterCategory || "").toLowerCase();
-      const owner = (item.fullName || "").toLowerCase();
-      const decade = (item.decade || "").toLowerCase();
+  const filtered = all.filter((item) => {
+    const cat = (item.letterCategory || "").toLowerCase();
+    const owner = (item.fullName || "").toLowerCase();
+    const decade = (item.decade || "").toLowerCase();
 
-      const matchC = c ? cat.includes(c) : true;
-      const matchO = o ? owner.includes(o) : true;
-      const matchD = d ? decade.includes(d) : true;
-      return matchC && matchO && matchD;
-    });
-  }, [all, categoryQ, ownerQ, decadeQ]);
+    const matchC = c ? cat.includes(c) : true;
+    const matchO = o ? owner.includes(o) : true;
+    const matchD = d ? decade.includes(d) : true;
+    return matchC && matchO && matchD;
+  });
 
-  const visible = useMemo(
-    () => filtered.slice(0, visibleCount),
-    [filtered, visibleCount]
-  );
+  const visible = filtered.slice(0, visibleCount);
 
   const handleLoadMore = () => {
     setLoadMoreBusy(true);
@@ -103,7 +95,7 @@ function LettersPage() {
       {/* Heading */}
       <HeadingDesc
         headingClassName="md:text-[40px] text-center"
-        heading={`${lang} Letters`} // dynamic heading
+        heading={`${lang} Letters`}
         containerClassName="mt-6"
         description={`Browse only approved submissions in ${lang}.`}
       />
@@ -201,7 +193,7 @@ function LettersPage() {
             return (
               <LetterCard
                 key={item._id || i}
-                to={`/letters/${lang}/${item._id || i}`} // dynamic link
+                to={`/letters/${lang}/${item._id || i}`}
                 overlay={img}
                 title={title}
                 description={desc}
