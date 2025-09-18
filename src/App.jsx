@@ -20,6 +20,7 @@ import SubmissionForm from "./pages/submissionform/SubmissionForm";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Dashboard from "./pages/admin/AdminDashboard";
 import ProtectedRoute from "./components/protected/ProtectedRoutes";
+import LettersPage from "./pages/letters/Englishletter";
 const Layout = () => {
   const location = useLocation();
 
@@ -36,14 +37,15 @@ const Layout = () => {
         <Route path="/letters" element={<Latters />} />
 
         {/* Sub routes with details */}
-        <Route path="/letters/english" element={<EnglishLetters />} />
-        <Route path="/letters/english/:id" element={<LetterDetailPage />} />
+        {/* Generic language route */}
+        <Route path="/letters/:lang" element={<LettersPage />} />
+        <Route path="/letters/:lang/:id" element={<LetterDetailPage />} />
 
-        <Route path="/letters/urdu" element={<Urduletter />} />
+        {/* <Route path="/letters/urdu" element={<Urduletter />} />
         <Route path="/letters/urdu/:id" element={<LetterDetailPage />} />
 
         <Route path="/letters/punjabi" element={<Punjabiletter />} />
-        <Route path="/letters/punjabi/:id" element={<LetterDetailPage />} />
+        <Route path="/letters/punjabi/:id" element={<LetterDetailPage />} /> */}
 
         <Route
           path="/photographs"

@@ -1,155 +1,234 @@
-import React, { useState } from "react";
+// @ts-nocheck
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import HeadingDesc from "../../components/InnerComponents/HeadingDesc";
 import Subcription from "../../components/InnerComponents/Subcription";
 import LetterCard from "../../components/Cards/LetterCard";
 
-// Dummy Data (isko API ya props se bhi le sakte ho)
-const cards = [
-  {
-    overlay: "/images/About-1.webp",
-    title: "Lorem Ipsum 1",
-    description:
-      "A glimpse into the past with rare documents and timeless stories.",
-  },
-  {
-    overlay: "/images/About-2.webp",
-    title: "Lorem Ipsum 2",
-    description:
-      "Rare and valuable find showcasing memories of forgotten eras.",
-  },
-  {
-    overlay: "/images/About-3.webp",
-    title: "Lorem Ipsum 3",
-    description:
-      "Preserving history and stories through beautifully kept letters.",
-  },
-  {
-    overlay: "/images/About-1.webp",
-    title: "Lorem Ipsum 4",
-    description: "Discover unseen letters that reveal unique life experiences.",
-  },
-  {
-    overlay: "/images/About-2.webp",
-    title: "Lorem Ipsum 5",
-    description:
-      "Historic archives providing insight into the past’s narratives.",
-  },
-  {
-    overlay: "/images/About-3.webp",
-    title: "Lorem Ipsum 6",
-    description:
-      "Beautifully preserved memories and letters of historical value.",
-  },
-  {
-    overlay: "/images/About-1.webp",
-    title: "Lorem Ipsum 7",
-    description:
-      "Timeless correspondence capturing the heart of old generations.",
-  },
-  {
-    overlay: "/images/About-2.webp",
-    title: "Lorem Ipsum 8",
-    description: "Rare letters connecting us to the voices of a bygone age.",
-  },
-  {
-    overlay: "/images/About-3.webp",
-    title: "Lorem Ipsum 9",
-    description: "Stories written in ink revealing untold journeys of life.",
-  },
-  {
-    overlay: "/images/About-1.webp",
-    title: "Lorem Ipsum 10",
-    description:
-      "Preserved messages reflecting emotions and memories of the past.",
-  },
-  {
-    overlay: "/images/About-2.webp",
-    title: "Lorem Ipsum 11",
-    description:
-      "Letters that document moments of love, struggle, and history.",
-  },
-  {
-    overlay: "/images/About-3.webp",
-    title: "Lorem Ipsum 12",
-    description: "Unlock the past through these rare handwritten treasures.",
-  },
-];
+const BASE_URL = import.meta.env.VITE_FILE_BASE_URL;
+const PAGE_SIZE = 12;
 
-function EnglishLetters() {
-  const [visibleCount, setVisibleCount] = useState(12);
-  const [loading, setLoading] = useState(false);
+function LettersPage() {
+  const { lang } = useParams(); // 🔑 dynamic language param
+  const [all, setAll] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [loading, setLoading] = useState(true);
+  const [loadMoreBusy, setLoadMoreBusy] = useState(false);
+  const [error, setError] = useState("");
 
-  const visibleCards = cards.slice(0, visibleCount);
+  // filters
+  const [categoryQ, setCategoryQ] = useState("");
+  const [ownerQ, setOwnerQ] = useState("");
+  const [decadeQ, setDecadeQ] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    setError("");
+
+    fetch("http://localhost:8000/api/submissions")
+      .then((res) => {
+        if (!res.ok) throw new Error(`Request failed with ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (!isMounted) return;
+        // ✅ filter only approved + selected language
+        const filtered = (Array.isArray(data) ? data : [])
+          .filter(
+            (d) =>
+              d.letterLanguage?.toLowerCase() === lang.toLowerCase() &&
+              d.status &&
+              d.status.toLowerCase() === "approved"
+          )
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setAll(filtered);
+      })
+      .catch((e) => {
+        if (!isMounted) return;
+        console.error(e);
+        setError("Failed to load letters. Check API/server.");
+      })
+      .finally(() => {
+        if (!isMounted) return;
+        setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [lang]);
+
+  // combine filters
+  const filtered = useMemo(() => {
+    const c = categoryQ.trim().toLowerCase();
+    const o = ownerQ.trim().toLowerCase();
+    const d = decadeQ.trim().toLowerCase();
+
+    return all.filter((item) => {
+      const cat = (item.letterCategory || "").toLowerCase();
+      const owner = (item.fullName || "").toLowerCase();
+      const decade = (item.decade || "").toLowerCase();
+
+      const matchC = c ? cat.includes(c) : true;
+      const matchO = o ? owner.includes(o) : true;
+      const matchD = d ? decade.includes(d) : true;
+      return matchC && matchO && matchD;
+    });
+  }, [all, categoryQ, ownerQ, decadeQ]);
+
+  const visible = useMemo(
+    () => filtered.slice(0, visibleCount),
+    [filtered, visibleCount]
+  );
 
   const handleLoadMore = () => {
-    setLoading(true);
+    setLoadMoreBusy(true);
     setTimeout(() => {
-      setVisibleCount((prev) => prev + 12);
-      setLoading(false);
-    }, 1000);
+      setVisibleCount((prev) => prev + PAGE_SIZE);
+      setLoadMoreBusy(false);
+    }, 500);
+  };
+
+  const fileUrl = (pathLike) => {
+    if (!pathLike) return "";
+    if (/^https?:\/\//i.test(pathLike)) return pathLike;
+    const cleaned = pathLike.replace(/^\/?/, "");
+    return `${BASE_URL}/${cleaned}`;
   };
 
   return (
-    <div className="min-h-screen  bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
       {/* Heading */}
       <HeadingDesc
         headingClassName="md:text-[40px] text-center"
-        heading="English Letters"
+        heading={`${lang} Letters`} // dynamic heading
         containerClassName="mt-6"
-        description="Get the latest items immediately with promo prices"
+        description={`Browse only approved submissions in ${lang}.`}
       />
 
       {/* Filters */}
-      <div className="w-[90%] md:w-full max-w-5xl mt-10  md:mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-        {["Category", "Owner's Name", "Decade"].map((filter, idx) => (
-          <div key={idx} className="flex flex-col w-full text-left">
-            <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
-              By {filter}
-            </span>
-            <div className="flex items-center w-full border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm">
-              <FiSearch className="text-[#704214] mr-2" size={20} />
-              <input
-                type="text"
-                placeholder={`Search ${filter.toLowerCase()}...`}
-                className="w-full outline-none bg-transparent placeholder:text-[#704214] text-sm"
-              />
-            </div>
+      <div className="w-[90%] md:w-full max-w-5xl mt-10 md:mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="flex flex-col w-full text-left">
+          <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
+            By Category
+          </span>
+          <div className="flex items-center w-full border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm">
+            <FiSearch className="text-[#704214] mr-2" size={20} />
+            <input
+              type="text"
+              value={categoryQ}
+              onChange={(e) => {
+                setCategoryQ(e.target.value);
+                setVisibleCount(PAGE_SIZE);
+              }}
+              placeholder="Search category..."
+              className="w-full outline-none bg-transparent placeholder:text-[#704214] text-sm"
+            />
           </div>
-        ))}
+        </div>
+
+        <div className="flex flex-col w-full text-left">
+          <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
+            By Owner's Name
+          </span>
+          <div className="flex items-center w-full border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm">
+            <FiSearch className="text-[#704214] mr-2" size={20} />
+            <input
+              type="text"
+              value={ownerQ}
+              onChange={(e) => {
+                setOwnerQ(e.target.value);
+                setVisibleCount(PAGE_SIZE);
+              }}
+              placeholder="Search owner's name..."
+              className="w-full outline-none bg-transparent placeholder:text-[#704214] text-sm"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col w-full text-left">
+          <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
+            By Decade
+          </span>
+          <div className="flex items-center w-full border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm">
+            <FiSearch className="text-[#704214] mr-2" size={20} />
+            <input
+              type="text"
+              value={decadeQ}
+              onChange={(e) => {
+                setDecadeQ(e.target.value);
+                setVisibleCount(PAGE_SIZE);
+              }}
+              placeholder="Search decade (e.g. 1900-1910)..."
+              className="w-full outline-none bg-transparent placeholder:text-[#704214] text-sm"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Loading / Error / Empty */}
+      <div className="w-full max-w-6xl mt-10">
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <div className="w-8 h-8 border-4 border-t-[#704214] border-gray-300 rounded-full animate-spin"></div>
+          </div>
+        ) : error ? (
+          <p className="text-center text-red-600 mt-8">{error}</p>
+        ) : filtered.length === 0 ? (
+          <p className="text-center text-[#704214] mt-8">
+            No approved {lang} letters match your filters.
+          </p>
+        ) : null}
       </div>
 
       {/* Cards */}
-      <div className="mt-16 w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
-        {visibleCards.map((card, i) => (
-          <LetterCard
-            key={i}
-            to={`/letters/english/${i}`}
-            overlay={card.overlay} // ✅ current card ka overlay
-            title={card.title || "Default Title"} // ✅ dynamic title agar ho
-            description={card.description || "Default description"} // ✅ dynamic desc agar ho
-          />
-        ))}
-      </div>
+      {!loading && !error && filtered.length > 0 && (
+        <div className="mt-8 w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+          {visible.map((item, i) => {
+            const img =
+              (item.letterImage && fileUrl(item.letterImage.path)) ||
+              "/images/About-1.webp";
+            const title = item.title || "Untitled Letter";
+            const desc =
+              item.photoCaption ||
+              item.letterNarrativeOptional ||
+              `${item.letterCategory || "Unknown Category"} · ${
+                item.decade || "Unknown Decade"
+              }`;
+
+            return (
+              <LetterCard
+                key={item._id || i}
+                to={`/letters/${lang}/${item._id || i}`} // dynamic link
+                overlay={img}
+                title={title}
+                description={desc}
+              />
+            );
+          })}
+        </div>
+      )}
 
       {/* Loader / Load More */}
-      <div className="mt-20">
-        {loading ? (
-          <div className="flex justify-center">
-            <div className="w-8 h-8 border-4 border-t-[#704214] border-gray-300 rounded-full animate-spin"></div>
-          </div>
-        ) : (
-          visibleCount < cards.length && (
+      {!loading && !error && visible.length < filtered.length && (
+        <div className="mt-12">
+          {loadMoreBusy ? (
+            <div className="flex justify-center">
+              <div className="w-8 h-8 border-4 border-t-[#704214] border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          ) : (
             <button
               onClick={handleLoadMore}
               className="px-6 py-2 text-[#704214] font-semibold border border-[#704214] rounded-full hover:bg-[#704214] hover:text-white transition disabled:opacity-50 cursor-pointer"
-              disabled={loading}
+              disabled={loadMoreBusy}
             >
               Load More
             </button>
-          )
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* Mailing List */}
       <div className="my-20 w-full">
@@ -159,4 +238,4 @@ function EnglishLetters() {
   );
 }
 
-export default EnglishLetters;
+export default LettersPage;
