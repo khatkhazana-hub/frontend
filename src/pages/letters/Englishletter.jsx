@@ -1,11 +1,10 @@
 // @ts-nocheck
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { FiSearch } from "react-icons/fi";
 import HeadingDesc from "../../components/InnerComponents/HeadingDesc";
 import Subcription from "../../components/InnerComponents/Subcription";
 import LetterCard from "../../components/Cards/LetterCard";
-import api from "../../utils/api"; // 👈 use axios wrapper
+import api from "../../utils/api"; // axios wrapper
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL;
 const PAGE_SIZE = 12;
@@ -13,16 +12,24 @@ const PAGE_SIZE = 12;
 function LettersPage() {
   const { lang } = useParams();
   const [all, setAll] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
   const [loadMoreBusy, setLoadMoreBusy] = useState(false);
   const [error, setError] = useState("");
 
   // filters
-  const [categoryQ, setCategoryQ] = useState("");
-  const [ownerQ, setOwnerQ] = useState("");
-  const [decadeQ, setDecadeQ] = useState("");
+  const [categoryQ, setCategoryQ] = useState(""); // slug
+  const [ownerQ, setOwnerQ] = useState(""); // fullName
+  const [decadeQ, setDecadeQ] = useState(""); // decade
 
+  const decadeOptions = Array.from({ length: 10 }, (_, i) => {
+    const start = 1900 + i * 10;
+    const end = start + 10;
+    return { value: `${start}-${end}`, label: `${start} - ${end}` };
+  });
+
+  // 🔹 fetch submissions
   useEffect(() => {
     let alive = true;
     setLoading(true);
@@ -57,19 +64,32 @@ function LettersPage() {
     };
   }, [lang]);
 
+  // 🔹 fetch categories
+  useEffect(() => {
+    api
+      .get("/categories")
+      .then((res) => {
+        const data = res.data || [];
+        const active = data.filter((c) => c.active);
+        setCategories(active);
+      })
+      .catch((err) => {
+        console.error("Failed to load categories", err);
+        setCategories([]);
+      });
+  }, []);
+
+  // 🔹 unique owners (fullName)
+  const owners = useMemo(() => {
+    const names = Array.from(new Set(all.map((item) => item.fullName).filter(Boolean)));
+    return names.sort();
+  }, [all]);
+
   // 🟢 compute filtered + visible inline
-  const c = categoryQ.trim().toLowerCase();
-  const o = ownerQ.trim().toLowerCase();
-  const d = decadeQ.trim().toLowerCase();
-
   const filtered = all.filter((item) => {
-    const cat = (item.letterCategory || "").toLowerCase();
-    const owner = (item.fullName || "").toLowerCase();
-    const decade = (item.decade || "").toLowerCase();
-
-    const matchC = c ? cat.includes(c) : true;
-    const matchO = o ? owner.includes(o) : true;
-    const matchD = d ? decade.includes(d) : true;
+    const matchC = categoryQ ? (item.letterCategory || "").toLowerCase() === categoryQ.toLowerCase() : true;
+    const matchO = ownerQ ? (item.fullName || "").toLowerCase() === ownerQ.toLowerCase() : true;
+    const matchD = decadeQ ? (item.decade || "").toLowerCase() === decadeQ.toLowerCase() : true;
     return matchC && matchO && matchD;
   });
 
@@ -102,61 +122,70 @@ function LettersPage() {
 
       {/* Filters */}
       <div className="w-[90%] md:w-full max-w-5xl mt-10 md:mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        {/* By Category */}
         <div className="flex flex-col w-full text-left">
           <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
             By Category
           </span>
-          <div className="flex items-center w-full border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm">
-            <FiSearch className="text-[#704214] mr-2" size={20} />
-            <input
-              type="text"
-              value={categoryQ}
-              onChange={(e) => {
-                setCategoryQ(e.target.value);
-                setVisibleCount(PAGE_SIZE);
-              }}
-              placeholder="Search category..."
-              className="w-full outline-none bg-transparent placeholder:text-[#704214] text-sm"
-            />
-          </div>
+          <select
+            value={categoryQ}
+            onChange={(e) => {
+              setCategoryQ(e.target.value);
+              setVisibleCount(PAGE_SIZE);
+            }}
+            className="border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm text-sm text-[#704214] focus:outline-none"
+          >
+            <option value="">All categories</option>
+            {categories.map((c) => (
+              <option key={c._id} value={c.slug}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </div>
 
+        {/* By Owner */}
         <div className="flex flex-col w-full text-left">
           <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
             By Owner's Name
           </span>
-          <div className="flex items-center w-full border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm">
-            <FiSearch className="text-[#704214] mr-2" size={20} />
-            <input
-              type="text"
-              value={ownerQ}
-              onChange={(e) => {
-                setOwnerQ(e.target.value);
-                setVisibleCount(PAGE_SIZE);
-              }}
-              placeholder="Search owner's name..."
-              className="w-full outline-none bg-transparent placeholder:text-[#704214] text-sm"
-            />
-          </div>
+          <select
+            value={ownerQ}
+            onChange={(e) => {
+              setOwnerQ(e.target.value);
+              setVisibleCount(PAGE_SIZE);
+            }}
+            className="border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm text-sm text-[#704214] focus:outline-none"
+          >
+            <option value="">All owners</option>
+            {owners.map((o, i) => (
+              <option key={i} value={o}>
+                {o}
+              </option>
+            ))}
+          </select>
         </div>
 
+        {/* By Decade */}
         <div className="flex flex-col w-full text-left">
           <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
             By Decade
           </span>
-          <div className="flex items-center w-full border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm">
-            <FiSearch className="text-[#704214] mr-2" size={20} />
-            <input
-              type="text"
-              value={decadeQ}
-              onChange={(e) => {
-                setDecadeQ(e.target.value);
-                setVisibleCount(PAGE_SIZE);
-              }}
-              placeholder="Search decade (e.g. 1900-1910)..."
-              className="w-full outline-none bg-transparent placeholder:text-[#704214] text-sm"
-            />
-          </div>
+          <select
+            value={decadeQ}
+            onChange={(e) => {
+              setDecadeQ(e.target.value);
+              setVisibleCount(PAGE_SIZE);
+            }}
+            className="border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm text-sm text-[#704214] focus:outline-none"
+          >
+            <option value="">All decades</option>
+            {decadeOptions.map((d, i) => (
+              <option key={i} value={d.value}>
+                {d.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -170,7 +199,7 @@ function LettersPage() {
           <p className="text-center text-red-600 mt-8">{error}</p>
         ) : filtered.length === 0 ? (
           <p className="text-center text-[#704214] mt-8">
-            No approved {lang} letters match your filters.
+            No letters found for the selected filters.
           </p>
         ) : null}
       </div>

@@ -170,7 +170,7 @@ useEffect(() => {
               photo={{
                 overlay: photoImage
                   ? fileUrl(photoImage.path)
-                  : "/images/Card.webp",
+                  :null,
                 title: photoCaption || "Related Photograph",
                 description: photoNarrative || "No description available",
               }}

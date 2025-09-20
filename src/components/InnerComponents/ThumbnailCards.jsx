@@ -28,12 +28,7 @@ const ThumbnailCards = ({ photo }) => {
   return (
     <div className="lg:w-[23%] xl:w-[18%]  w-full flex flex-col lg:justify-start justify-center relative items-center lg:items-start">
       {/* Heading */}
-      <h2
-        className="text-lg sm:text-xl font-bold mb-4 text-center"
-        style={{ fontFamily: "philosopher" }}
-      >
-        Related Photographs
-      </h2>
+      
 
       {/* Cards Loop */}
       <div className="w-full flex flex-col md:flex-row lg:flex-col justify-center gap-4 items-center lg:items-start">

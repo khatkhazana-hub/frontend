@@ -17,7 +17,6 @@ export default function Navbar() {
     { to: "/photographs", label: "Photographs" },
     { to: "/featured", label: "Featured letters & Photographs" },
     { to: "/submission", label: "Submission" },
-    { to: "/admin-login", label: "Admin-Panel" },
     // { to: "/shop", label: "Shop" },
   ];
 

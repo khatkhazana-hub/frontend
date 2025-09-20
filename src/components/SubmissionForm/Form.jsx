@@ -1,12 +1,12 @@
 // components/Form.jsx
 // @ts-nocheck
-import React, { useState } from "react";
-import api from 'axios'
+import React, { useState , useEffect } from "react";
 import FormSection from "./FormSection";
 import InputField from "./InputField";
 import RadioGroup from "./RadioGroup";
 import FileInput from "./FileInput";
 import DropdownField from "./DropdownField";
+import api from "@/utils/api";
 
 export default function Form() {
   // States
@@ -19,6 +19,7 @@ export default function Form() {
   const [letterLanguage, setLetterLanguage] = useState("");
   const [letterCategory, setLetterCategory] = useState("");
   const [decade, setDecade] = useState("");
+   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleUploadTypeChange = (e) => setUploadType(e.target.value);
@@ -50,9 +51,13 @@ export default function Form() {
       formData.set("decade", decade || "");
 
       // post
-      const res = await api.post("http://localhost:8000/api/submissions", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await api.post(
+        "/submissions",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
       console.log("Saved:", res.data);
       alert("Form submitted successfully!");
@@ -78,6 +83,22 @@ export default function Form() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    api
+      .get("/categories")
+      .then((res) => {
+        const data = res.data || [];
+        // only keep active categories
+        const active = data.filter((c) => c.active);
+        // shape for DropdownField
+        setCategories(active.map((c) => ({ value: c.slug, label: c.name })));
+      })
+      .catch((err) => {
+        console.error("Failed to load categories", err);
+        setCategories([]);
+      });
+  }, []);
 
   const renderLetterInfo = uploadType === "Letter" || uploadType === "Both";
   const renderPhotoInfo = uploadType === "Photographs" || uploadType === "Both";
@@ -154,17 +175,7 @@ export default function Form() {
                       required
                       value={letterCategory}
                       onChange={(e) => setLetterCategory(e.target.value)}
-                      options={[
-                        { value: "Family", label: "Family" },
-                        { value: "love Letter", label: "love Letter" },
-                        { value: "War Political", label: "War Political" },
-                        { value: "Travel", label: "Travel" },
-                        { value: "Diary Pages", label: "Diary Pages" },
-                        { value: "PostCards", label: "PostCards" },
-                        { value: "Calenders", label: "Calenders" },
-                        { value: "MoviePosters", label: "MoviePosters" },
-                        { value: "Others", label: "Others" },
-                      ]}
+                      options={categories} // ⬅️ dynamic from backend
                     />
                     <DropdownField
                       label="Language"

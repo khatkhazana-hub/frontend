@@ -1,9 +1,10 @@
 // src/pages/admin/AdminLogin.jsx
 // @ts-nocheck
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-
+import { motion } from "framer-motion";
+import { Mail, Lock, Eye, EyeOff, Loader2, ShieldCheck, AlertCircle } from "lucide-react";
 export default function AdminLogin() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,6 +12,7 @@ export default function AdminLogin() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -19,14 +21,13 @@ export default function AdminLogin() {
     e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
-
     try {
       setLoading(true);
-      await login(email, password);   // set token + admin
-      await getMe();                  // immediately fetch fresh admin
+      await login(email, password);
+      await getMe();
       setSuccessMsg("Login successful! Redirecting...");
       const redirectTo = location.state?.from?.pathname || "/admin-dashboard";
-      navigate(redirectTo, { replace: true }); // redirect immediately
+      setTimeout(() => navigate(redirectTo, { replace: true }), 400);
     } catch (err) {
       setErrorMsg(err?.response?.data?.message || "Login failed. Please try again.");
     } finally {
@@ -35,55 +36,135 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-md rounded-2xl shadow-xl p-8 border border-[#8B4513]/30">
-        <h1 className="text-2xl font-bold text-[#6E4A27] mb-6 text-center">
-          Admin Login
-        </h1>
-
-        {errorMsg && (
-          <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">
-            {errorMsg}
-          </div>
-        )}
-        {successMsg && (
-          <div className="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm">
-            {successMsg}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-semibold mb-1">Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-[#6E4A27]"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1">Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-[#6E4A27]"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full bg-[#6E4A27] text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors ${
-              loading ? "opacity-60 cursor-not-allowed" : "hover:bg-[#79542f]"
-            }`}
+    <div className="relative min-h-screen overflow-hidden">
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 18, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="w-full max-w-md"
+        >
+          {/* CARD */}
+          <motion.div
+            whileHover={{ y: -2 }}
+            transition={{ type: "spring", stiffness: 180, damping: 18 }}
+            className="rounded-2xl border border-[#8B4513]/20  p-8 shadow-xl backdrop-blur"
           >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+            {/* Big logo INSIDE the card, top-center */}
+            <div className="mb-4 flex items-center justify-center">
+              <img
+                src='../images/logo.png'
+                alt="KhatKhazana"
+                className="h-32 w-32 drop-shadow-sm"
+                draggable="false"
+              />
+            </div>
+
+            <div className="mb-6 text-center">
+              <h1 className="mb-1 text-3xl font-extrabold text-[#6E4A27] tracking-wide">
+                Admin Login
+              </h1>
+              <p className="text-sm text-[#6E4A27]/70">Welcome back. Let’s ship something clean.</p>
+            </div>
+
+            {/* alerts */}
+            {errorMsg && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 flex items-start gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700"
+              >
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </motion.div>
+            )}
+            {successMsg && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 flex items-start gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-700"
+              >
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{successMsg}</span>
+              </motion.div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* email */}
+              <div className="group">
+                <label className="mb-1 block text-sm font-semibold">Email</label>
+                <div className="relative">
+                  <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#6E4A27]/60">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-lg border border-[#8B4513]/30 px-10 py-2 outline-none transition focus:border-[#6E4A27 focus:shadow-sm"
+                    placeholder="you@example.com"
+                  />
+                </div>
+              </div>
+
+              {/* password with working eye toggle */}
+              <div className="group">
+                <label className="mb-1 block text-sm font-semibold">Password</label>
+                <div className="relative">
+                  <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#6E4A27]/60">
+                    <Lock className="h-4 w-4" />
+                  </div>
+                  <input
+                    type={showPass ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-lg border border-[#8B4513]/30  px-10 py-2 pr-10 outline-none transition focus:border-[#6E4A27] focus:shadow-sm"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass((v) => !v)}
+                    aria-pressed={showPass}
+                    aria-label={showPass ? "Hide password" : "Show password"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6E4A27]/60 transition hover:text-[#6E4A27]"
+                  >
+                    {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-[#6E4A27] underline underline-offset-2 hover:text-[#5b3e20]"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+
+              <motion.button
+                type="submit"
+                disabled={loading}
+                whileTap={{ scale: loading ? 1 : 0.98 }}
+                className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-[#6E4A27] px-4 py-2 font-semibold text-white shadow-md transition-colors hover:bg-[#79542f] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Logging in…
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="h-4 w-4" />
+                    Login
+                  </>
+                )}
+              </motion.button>
+            </form>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

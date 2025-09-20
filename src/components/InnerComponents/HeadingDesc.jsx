@@ -10,7 +10,7 @@ const HeadingDesc = ({
   return (
     <div className={containerClassName}>
       <h2
-        className={`text-3xl font-bold text-black ${headingClassName}`}
+        className={`text-3xl font-bold text-black capitalize ${headingClassName}`}
         style={{ fontFamily: "philosopher" }}
       >
         {heading}

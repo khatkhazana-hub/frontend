@@ -1,10 +1,19 @@
 // @ts-nocheck
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 const Thumbnails = ({ RelatedImage }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [imageOk, setImageOk] = useState(true);
 
   const caption = "Join our archive mailing list and never miss an update.";
+
+  // basic sanity check (non-empty string)
+  const hasSrc = useMemo(() => {
+    return typeof RelatedImage === "string" && RelatedImage.trim().length > 0;
+  }, [RelatedImage]);
+
+  // if no valid src OR the image errored, render nothing
+  if (!hasSrc || !imageOk) return null;
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
@@ -12,22 +21,33 @@ const Thumbnails = ({ RelatedImage }) => {
   return (
     <>
       {/* Thumbnail Card */}
-      <div
-        onClick={handleOpen}
-        className="w-[180px] sm:w-[200px] h-[200px] rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer hover:scale-105 transition-transform relative"
-      >
-        {/* Background Image */}
-        <img
-          src={RelatedImage}
-          alt="Thumbnail"
-          className="w-full h-full object-fill"
-        />
+      {RelatedImage && RelatedImage.trim() && (
+        <>
+          <h2
+            className="text-lg sm:text-xl font-bold mb-4 text-center"
+            style={{ fontFamily: "philosopher" }}
+          >
+            Related Photographs
+          </h2>
 
-        {/* Caption Overlay */}
-        <p className="absolute bottom-0 left-0 w-full text-[12px] font-semibold text-white italic px-2 py-1 text-center bg-black/80">
-          {caption}
-        </p>
-      </div>
+          <div
+            onClick={handleOpen}
+            className="w-[180px] sm:w-[200px] h-[200px] rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer hover:scale-105 transition-transform relative"
+          >
+            <img
+              src={RelatedImage}
+              alt="Related photograph"
+              className="w-full h-full object-fill"
+              loading="lazy"
+              onError={() => setImageOk(false)}
+            />
+
+            <p className="absolute bottom-0 left-0 w-full text-[12px] font-semibold text-white italic px-2 py-1 text-center bg-black/80">
+              {caption}
+            </p>
+          </div>
+        </>
+      )}
 
       {/* Modal / Popup */}
       {isOpen && (
@@ -39,19 +59,17 @@ const Thumbnails = ({ RelatedImage }) => {
             className="relative rounded-lg overflow-hidden max-w-[70vw] md:h-[80%]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Background Image */}
             <img
               src={RelatedImage}
-              alt="Thumbnail Full"
+              alt="Related photograph (full view)"
               className="w-full h-full object-fill"
+              onError={() => setImageOk(false)}
             />
 
-            {/* Caption Overlay */}
-            <p className="absolute bottom-0 left-0 w-full text-white text-lg lg:text-xl  px-2 py-3 lg:py-5 text-center bg-black/80">
+            <p className="absolute bottom-0 left-0 w-full text-white text-lg lg:text-xl px-2 py-3 lg:py-5 text-center bg-black/80">
               {caption}
             </p>
 
-            {/* Close Button */}
             <button
               onClick={handleClose}
               className="absolute top-4 right-4 bg-white text-black rounded-full px-2 py-1 text-sm shadow cursor-pointer hover:bg-gray-200"
