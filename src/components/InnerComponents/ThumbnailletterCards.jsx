@@ -12,35 +12,47 @@ const buildFileUrl = (p) => {
 };
 
 const ThumbnailletterCards = ({ photo }) => {
-    console.log(photo , 'photo')
-  // If real photo data exists, show the letterImage instead of dummy
+  console.log(photo, "photo");
+
+  // Cards sirf tab banenge jab letterImage ho
   const cards = photo?.letterImage?.path
     ? [
         {
           id: photo._id,
-          img: buildFileUrl(photo.letterImage.path), // ✅ proper CloudFront URL
+          img: buildFileUrl(photo.letterImage.path),
           title: photo.title || "Untitled Letter",
         },
       ]
     : [
-        {
-          id: 1,
-          img: "/images/About-1.webp",
-          title: "Lorem Ipsum #1",
-        },
-        {
-          id: 2,
-          img: "/images/About-2.webp",
-          title: "Lorem Ipsum #2",
-        },
+        { id: 1, img: "/images/About-1.webp", title: "Lorem Ipsum #1" },
+        { id: 2, img: "/images/About-2.webp", title: "Lorem Ipsum #2" },
       ];
 
   return (
-    <div className="lg:w-[23%] xl:w-[18%] w-full flex flex-col lg:justify-start justify-center relative items-center lg:items-start">
-      <div className="w-full flex flex-col md:flex-row lg:flex-col justify-center gap-4 items-center lg:items-start">
-        {cards.map((item) => (
-          <Thumbnails RelatedImage={item.img} key={item.id} />
-        ))}
+    <div className="lg:w-[25%] w-full flex flex-col lg:flex-row lg:justify-start justify-center relative items-center lg:items-start gap-10">
+      <div className="self-center w-full h-px border-t border-black lg:w-px lg:h-[400px] lg:border-t-0 lg:border-l"></div>
+
+      <div className="">
+        {/* Heading hamesha show ho */}
+        <h2
+          className="text-lg sm:text-xl font-bold mb-4 text-center"
+          style={{ fontFamily: "philosopher" }}
+        >
+          Related Photographs
+        </h2>
+
+        {/* Cards sirf tab render ho jab data ho */}
+        {cards?.length > 0 && (
+          <div className="w-full flex flex-col md:flex-row lg:flex-col justify-center gap-4 items-center lg:items-start">
+            {cards.map((item) => (
+              <Thumbnails
+                RelatedImage={item.img}
+                key={item.id}
+                RelatedThumbnailName={"Related Photographs"}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

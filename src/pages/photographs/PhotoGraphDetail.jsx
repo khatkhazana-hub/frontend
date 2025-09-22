@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { IoCalendarOutline } from "react-icons/io5";
+import { FiMaximize2 } from "react-icons/fi"; // fullscreen icon
 import api from "@/utils/api";
 import useSubmissions from "@/hooks/useSubmissions"; // ✅ fetch once here
 import RelatedPhotographs from "@/components/Cards/RelatedPhotographs";
@@ -36,7 +37,9 @@ export default function PhotoGraphDetail() {
         setData(data);
         setErr("");
       } catch (e) {
-        setErr(e?.response?.data?.message || e?.message || "Failed to load photo");
+        setErr(
+          e?.response?.data?.message || e?.message || "Failed to load photo"
+        );
       } finally {
         setLoading(false);
       }
@@ -77,13 +80,19 @@ export default function PhotoGraphDetail() {
   if (err || !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-        <h1 className="text-2xl font-semibold text-red-600">{err || "Not found"}</h1>
-        <Link to="/photographs" className="underline text-[#704214]">Back to Photographs</Link>
+        <h1 className="text-2xl font-semibold text-red-600">
+          {err || "Not found"}
+        </h1>
+        <Link to="/photographs" className="underline text-[#704214]">
+          Back to Photographs
+        </Link>
       </div>
     );
   }
 
-  const photoSrc = data.photoImage?.path ? buildFileUrl(data.photoImage.path) : null;
+  const photoSrc = data.photoImage?.path
+    ? buildFileUrl(data.photoImage.path)
+    : null;
   const caption = data.photoCaption || data.title || "Untitled Photo";
   const category = data.letterCategory || "—";
   const place = data.photoPlace || "";
@@ -92,7 +101,7 @@ export default function PhotoGraphDetail() {
 
   return (
     <div className="min-h-[300px] px-5 lg:px-0 bg-cover bg-center">
-      <div className="py-5 max-w-[1270px] w-full mx-auto text-black">
+      <div className="py-5 max-w-[1270px] w-full mx-auto text-black text-left">
         <div className="flex items-center text-sm mt-10">
           <div className="inline-flex items-center justify-evenly bg-white text-black px-4 py-2 rounded-full shadow-sm space-x-2">
             <IoCalendarOutline className="w-4 h-4 mr-2" />
@@ -100,45 +109,67 @@ export default function PhotoGraphDetail() {
               {created || "—"}
             </span>
             <span className="w-px h-4 bg-black ml-1" />
-            <span className="text-sm">{category}</span>
+            <span className="text-sm capitalize font-bold">{category}</span>
           </div>
         </div>
 
-        <p className="w-full text-left text-2xl md:text-[40px] font-bold capitalize" style={{ fontFamily: "philosopher" }}>
+        <p
+          className="w-full text-left text-2xl md:text-[40px] font-bold capitalize mt-4"
+          style={{ fontFamily: "philosopher" }}
+        >
           {caption}
         </p>
-        {topRightMeta && (<p className="mt-2 text-sm text-gray-700">{topRightMeta}</p>)}
+        {topRightMeta && (
+          <p className="text-sm opacity-80 capitalize">{topRightMeta}</p>
+        )}
       </div>
 
-      <div className="w-full max-w-[1270px] rounded-[16px] py-10 px-5 lg:py-16 lg:px-8 flex flex-col gap-10 bg-cover bg-center mx-auto"
-           style={{ backgroundImage: "url('/images/Card.webp')" }}>
+      <div
+        className="w-full max-w-[1270px] rounded-[16px] py-10 px-5 lg:py-16 lg:px-8 flex flex-col gap-10 bg-cover bg-center mx-auto"
+        style={{ backgroundImage: "url('/images/Card.webp')" }}
+      >
         <div className="w-full text-black">
-          <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6 w-full">
-            <img
-              src={photoSrc}
-              alt={caption}
-              className="rounded-[20px] mx-auto w-[70%] h-[300px] lg:h-[500px] max-h-[500px] object-contain"
-            />
-            <div className="self-center w-full h-px border-t border-black lg:w-px lg:h-[400px] lg:border-t-0 lg:border-l"></div>
+          <div className="flex flex-col lg:flex-row justify-between gap-10 rounded-md">
+            <div className="relative flex justify-center w-full">
+              <img
+                src={photoSrc}
+                alt={caption}
+                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain"
+              />
+
+              <img
+                src="/images/Vector.webp"
+                alt="Watermark"
+                className="absolute top-40 left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
+              />
+            </div>
 
             <ThumbnailletterCards photo={data} />
           </div>
 
-          {(data.photoNarrative || data.photoNarrativeOptional) && (
-            <div className="mt-10 flex flex-col lg:flex-row justify-between gap-10">
-              <div
-                className="lg:w-[70%] xl:w-[80%] w-full text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] text-black leading-7 sm:leading-8 md:leading-9 italic text-left"
-                style={{ fontFamily: "'Ephesis'" }}
-              >
-                {data.photoNarrative ? <p className="mb-4">{data.photoNarrative}</p> : null}
-                {data.photoNarrativeOptional ? <p>{data.photoNarrativeOptional}</p> : null}
-              </div>
+          {data.photoAudioFile?.path && (
+            <div className="mt-6">
+              <audio
+                controls
+                src={buildFileUrl(data.photoAudioFile.path)}
+                className="w-full"
+              />
             </div>
           )}
 
-          {data.photoAudioFile?.path && (
-            <div className="mt-6">
-              <audio controls src={buildFileUrl(data.photoAudioFile.path)} className="w-full" />
+          {(data.photoNarrative || data.photoNarrativeOptional) && (
+            <div className="mt-10 flex flex-col lg:flex-row justify-between gap-10">
+              <div
+                className="lg:w-[70%] xl:w-[80%] capitalize text-[18px] sm:text-[20px] md:text-[26px] lg:text-[30px] text-black leading-7 sm:leading-8 md:leading-10 text-left"
+                style={{ fontFamily: "'Ephesis'" }}
+              >
+                {data.photoNarrative ? (
+                  <p className="">{data.photoNarrative}</p>
+                ) : null}
+                {data.photoNarrativeOptional ? (
+                  <p>{data.photoNarrativeOptional}</p>
+                ) : null}
+              </div>
             </div>
           )}
         </div>

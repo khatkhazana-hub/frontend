@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useRef, useState } from "react";
+import { X } from "lucide-react"; // ❌ icon (install lucide-react if not already)
 
 const FileInput = ({
   label,
@@ -8,32 +9,57 @@ const FileInput = ({
   required = false,
   className = "",
   wrapperClassName = "",
-  previewType = "image", // 👈 "image" | "audio" | "none"
-  ...props // accept, multiple, register, onChange etc.
+  previewType = "image", // "image" | "audio" | "none"
+  ...props
 }) => {
   const fileInputRef = useRef(null);
   const [preview, setPreview] = useState(null);
+  const [fileName, setFileName] = useState("");
+
+  // automatic accept based on previewType
+  let acceptAttr = props.accept;
+  if (!acceptAttr) {
+    if (previewType === "image") acceptAttr = "image/*";
+    if (previewType === "audio") acceptAttr = "audio/*";
+  }
 
   const handleButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    if (fileInputRef.current) fileInputRef.current.click();
   };
 
   const handleFileChange = (e) => {
-    if (props.onChange) props.onChange(e); // parent onChange
+    if (props.onChange) props.onChange(e);
     const file = e.target.files[0];
+
     if (file) {
-      const url = URL.createObjectURL(file);
-      setPreview(url);
+      if (
+        (previewType === "image" && file.type.startsWith("image/")) ||
+        (previewType === "audio" && file.type.startsWith("audio/"))
+      ) {
+        const url = URL.createObjectURL(file);
+        setPreview(url);
+        setFileName(file.name);
+      } else {
+        alert(`Please upload a valid ${previewType} file.`);
+        e.target.value = "";
+        setPreview(null);
+        setFileName("");
+      }
     } else {
       setPreview(null);
+      setFileName("");
     }
+  };
+
+  const handleRemoveFile = () => {
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setPreview(null);
+    setFileName("");
   };
 
   return (
     <div
-      className={`flex justify-between items-center w-full ${wrapperClassName}`}
+      className={`flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-3 ${wrapperClassName}`}
     >
       <div className="flex flex-col">
         {label && (
@@ -47,14 +73,15 @@ const FileInput = ({
           type="file"
           id={name}
           name={name}
-          required={required}
+          required={required && !preview}
           ref={fileInputRef}
           className="hidden"
           onChange={handleFileChange}
-          {...props} // accept/multiple/register
+          accept={acceptAttr}
+          {...props}
         />
 
-        {/* Custom styled button */}
+        {/* Upload Button */}
         <button
           type="button"
           onClick={handleButtonClick}
@@ -63,21 +90,48 @@ const FileInput = ({
           Choose File
         </button>
 
+        {/* File Name */}
+        {fileName && (
+          <p className="text-xs text-gray-600 mt-1 truncate max-w-[200px]">
+            {fileName}
+          </p>
+        )}
+
         {subtext && <p className="text-xs text-red-500 mt-2">{subtext}</p>}
       </div>
-      {/* Preview */}
+
+      {/* Preview with cross button */}
       {preview && previewType === "image" && (
-        <img
-          src={preview}
-          alt="Preview"
-          className="ml-1 w-22 h-22 object-cover rounded-md"
-        />
+        <div className="relative w-24 h-24">
+          <img
+            src={preview}
+            alt="Preview"
+            className="w-22 h-22 border object-cover rounded-md"
+          />
+          <button
+            type="button"
+            onClick={handleRemoveFile}
+            className="absolute top-0 right-0 bg-black/60 hover:bg-black text-white rounded-full p-1"
+          >
+            <X size={14} />
+          </button>
+        </div>
       )}
+
       {preview && previewType === "audio" && (
-        <audio controls className="mt-2 w-[50%]">
-          <source src={preview} type="audio/mpeg" className="ml-3 w-52 h-32" />
-          Your browser does not support the audio element.
-        </audio>
+        <div className="relative inline-block">
+          <audio controls className="mt-2 w-[200px]">
+            <source src={preview} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
+          <button
+            type="button"
+            onClick={handleRemoveFile}
+            className="absolute -top-2 -right-2 bg-black/60 hover:bg-black text-white rounded-full p-1"
+          >
+            <X size={14} />
+          </button>
+        </div>
       )}
     </div>
   );

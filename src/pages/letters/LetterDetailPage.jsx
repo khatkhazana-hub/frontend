@@ -5,6 +5,7 @@ import RelatedCards from "../../components/Cards/Cards";
 import ThumbnailCards from "../../components/InnerComponents/ThumbnailCards";
 import { IoCalendarOutline } from "react-icons/io5";
 import api from "../../utils/api";
+import { FiMaximize2 } from "react-icons/fi"; // fullscreen icon
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL;
 
@@ -16,44 +17,44 @@ const LetterDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    setErr("");
 
+    api
+      .get(`/submissions/${id}`) // baseURL already set in api.js
+      .then((res) => {
+        if (!alive) return;
+        const doc = res.data;
 
-useEffect(() => {
-  let alive = true;
-  setLoading(true);
-  setErr("");
+        if (doc?.status?.toLowerCase() !== "approved") {
+          // redirect back to the correct language list
+          navigate(
+            `/letters/${doc?.letterLanguage?.toLowerCase() || "english"}`,
+            {
+              replace: true,
+            }
+          );
+          return;
+        }
 
-  api
-    .get(`/submissions/${id}`) // baseURL already set in api.js
-    .then((res) => {
-      if (!alive) return;
-      const doc = res.data;
+        setData(doc);
+      })
+      .catch((e) => {
+        if (!alive) return;
+        console.error(e);
+        setErr("Failed to load letter. Check the ID or server.");
+      })
+      .finally(() => {
+        if (!alive) return;
+        setLoading(false);
+      });
 
-      if (doc?.status?.toLowerCase() !== "approved") {
-        // redirect back to the correct language list
-        navigate(`/letters/${doc?.letterLanguage?.toLowerCase() || "english"}`, {
-          replace: true,
-        });
-        return;
-      }
-
-      setData(doc);
-    })
-    .catch((e) => {
-      if (!alive) return;
-      console.error(e);
-      setErr("Failed to load letter. Check the ID or server.");
-    })
-    .finally(() => {
-      if (!alive) return;
-      setLoading(false);
-    });
-
-  return () => {
-    alive = false;
-  };
-}, [id, navigate]);
-
+    return () => {
+      alive = false;
+    };
+  }, [id, navigate]);
 
   const fileUrl = (p) => {
     if (!p) return "";
@@ -123,7 +124,7 @@ useEffect(() => {
 
   return (
     <div className="min-h-[300px] px-5 lg:px-0 bg-cover bg-center">
-      <div className="py-5 max-w-[1270px] w-full mx-auto text-black">
+      <div className="py-5 max-w-[1270px] w-full mx-auto text-black text-left">
         {/* Date + Category */}
         <div className="flex items-center text-sm mt-10">
           <div className="inline-flex items-center bg-white text-black px-4 py-2 rounded-full shadow-sm space-x-2">
@@ -132,7 +133,9 @@ useEffect(() => {
               {prettyDate || "—"}
             </span>
             <span className="w-px h-4 bg-black ml-1" />
-            <span className="text-sm">{letterCategory || "Uncategorized"}</span>
+            <span className="text-sm capitalize font-bold">
+              {letterCategory || "Uncategorized"}
+            </span>
           </div>
         </div>
 
@@ -145,7 +148,7 @@ useEffect(() => {
         </p>
 
         {/* Owner / Decade helper row */}
-        <div className="mt-2 text-sm opacity-80">
+        <div className="text-sm opacity-80 capitalize">
           {fullName ? `By ${fullName}` : ""} {decade ? `· ${decade}` : ""}
         </div>
       </div>
@@ -157,20 +160,23 @@ useEffect(() => {
       >
         <div className="w-full text-black">
           {/* Letter Image + Thumbnails */}
-          <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6 w-full">
-            <img
-              src={heroImage}
-              alt={title || "Letter Image"}
-              className="rounded-[20px] mx-auto w-[70%] h-[300px] lg:h-[500px] object-contain"
-            />
-
-            <div className="self-center w-full h-px border-t border-black lg:w-px lg:h-[400px] lg:border-t-0 lg:border-l"></div>
+          <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6  w-full">
+            <div className="relative flex justify-center w-full">
+              <img
+                src={heroImage}
+                alt={title || "Letter Image"}
+                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain"
+              />
+              <img
+                src="/images/Vector.webp"
+                alt="Watermark"
+                className="absolute top-40 left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
+              />
+            </div>
 
             <ThumbnailCards
               photo={{
-                overlay: photoImage
-                  ? fileUrl(photoImage.path)
-                  :null,
+                overlay: photoImage ? fileUrl(photoImage.path) : null,
                 title: photoCaption || "Related Photograph",
                 description: photoNarrative || "No description available",
               }}
@@ -179,7 +185,7 @@ useEffect(() => {
 
           {/* Letter Audio */}
           {audioSrc && (
-            <div className="mt-4">
+            <div className="mt-6">
               <audio controls className="w-full">
                 <source
                   src={audioSrc}
@@ -192,10 +198,7 @@ useEffect(() => {
 
           {/* Letter Narrative */}
           <div className="mt-10 flex flex-col lg:flex-row justify-between gap-10">
-            <div
-              className="lg:w-[70%] xl:w-[80%] text-[18px] sm:text-[20px] md:text-[26px] lg:text-[30px] text-black leading-7 sm:leading-8 md:leading-10 italic text-left"
-              style={{ fontFamily: "'Ephesis'" }}
-            >
+            <div className="text-xl  text-black leading-10 text-left">
               {letterNarrative && (
                 <>
                   {letterNarrative}
@@ -208,7 +211,6 @@ useEffect(() => {
         </div>
       </div>
 
-    
       {/* Related Letters Section */}
       <div className="w-full lg:py-20 py-10">
         <RelatedCards />

@@ -2,12 +2,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const PhotographCard = ({ to = "#", overlay, overlayImg, title = "", description = "", className = "" }) => {
+const PhotographCard = ({
+  to = "#",
+  overlay,
+  overlayImg,
+  title = "",
+  description = "",
+  className = "",
+}) => {
   const imgSrc = overlay || overlayImg || "";
 
   return (
     <Link to={to}>
-      <div className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto ${className}`}>
+      <div
+        className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto ${className}`}
+      >
         <img
           src="/images/Card.webp"
           alt="Card Background"
@@ -20,7 +29,7 @@ const PhotographCard = ({ to = "#", overlay, overlayImg, title = "", description
             src={imgSrc}
             alt={title || "Photograph"}
             loading="eager"
-            className="object-contain group-hover:drop-shadow-xl transition-all duration-300 w-[190px] rounded-sm h-[250px]"
+            className="object-fill group-hover:shadow-2xl shadow-black/50 transition-all duration-300 w-[200px] rounded-sm h-[250px]"
           />
           <img
             src="/images/Vector.webp"
@@ -29,11 +38,11 @@ const PhotographCard = ({ to = "#", overlay, overlayImg, title = "", description
           />
         </div>
 
-        <div className="absolute left-[23px] top-[300px] w-[310px] text-left">
-          <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher]">
+        <div className="absolute left-[25px] top-[300px] w-[300px] text-left">
+          <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
             {title}
           </h2>
-          <p className="font-[Ephesis] font-normal text-[20px] leading-[100%] text-black m-0 line-clamp-2">
+          <p className="font-[Ephesis] font-normal text-[20px] leading-[100%] text-black m-0 line-clamp-2 capitalize">
             {description}
           </p>
         </div>

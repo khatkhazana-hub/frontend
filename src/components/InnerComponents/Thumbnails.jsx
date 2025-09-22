@@ -23,13 +23,7 @@ const Thumbnails = ({ RelatedImage }) => {
       {/* Thumbnail Card */}
       {RelatedImage && RelatedImage.trim() && (
         <>
-          <h2
-            className="text-lg sm:text-xl font-bold mb-4 text-center"
-            style={{ fontFamily: "philosopher" }}
-          >
-            Related Photographs
-          </h2>
-
+        
           <div
             onClick={handleOpen}
             className="w-[180px] sm:w-[200px] h-[200px] rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer hover:scale-105 transition-transform relative"
@@ -37,7 +31,7 @@ const Thumbnails = ({ RelatedImage }) => {
             <img
               src={RelatedImage}
               alt="Related photograph"
-              className="w-full h-full object-fill"
+              className="w-full h-full object-cover"
               loading="lazy"
               onError={() => setImageOk(false)}
             />
@@ -72,7 +66,7 @@ const Thumbnails = ({ RelatedImage }) => {
 
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 bg-white text-black rounded-full px-2 py-1 text-sm shadow cursor-pointer hover:bg-gray-200"
+               className="absolute top-4 right-4 w-8 h-8 cursor-pointer bg-white rounded-full flex items-center justify-center text-black text-lg font-bold hover:bg-gray-200"
             >
               ✕
             </button>

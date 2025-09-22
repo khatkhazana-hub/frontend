@@ -1,6 +1,6 @@
 // components/Form.jsx
 // @ts-nocheck
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import FormSection from "./FormSection";
 import InputField from "./InputField";
 import RadioGroup from "./RadioGroup";
@@ -19,7 +19,7 @@ export default function Form() {
   const [letterLanguage, setLetterLanguage] = useState("");
   const [letterCategory, setLetterCategory] = useState("");
   const [decade, setDecade] = useState("");
-   const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleUploadTypeChange = (e) => setUploadType(e.target.value);
@@ -51,13 +51,9 @@ export default function Form() {
       formData.set("decade", decade || "");
 
       // post
-      const res = await api.post(
-        "/submissions",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const res = await api.post("/submissions", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       console.log("Saved:", res.data);
       alert("Form submitted successfully!");
@@ -259,7 +255,7 @@ export default function Form() {
                             name="letterNarrative"
                             label="Text"
                             required
-                            type="textarea"
+                            type="textarea" // 👈 textarea aayega
                           />
                         )}
 
@@ -268,7 +264,7 @@ export default function Form() {
                           <FileInput
                             name="letterAudioFile"
                             subtext="Only MP3 Format (Max 5MB)"
-                            previewType="audio"
+                            previewType="audio" // 👈 sirf audio upload + audio preview
                             className="mt-5"
                             label="Audio"
                             required

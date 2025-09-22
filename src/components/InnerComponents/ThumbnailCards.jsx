@@ -8,7 +8,7 @@ const ThumbnailCards = ({ photo }) => {
     ? [
         {
           id: 1,
-          img: photo.overlay, // API photo URL
+          img: photo?.overlay, // API photo URL
           title: photo.title,
         },
       ]
@@ -26,15 +26,29 @@ const ThumbnailCards = ({ photo }) => {
       ];
 
   return (
-    <div className="lg:w-[23%] xl:w-[18%]  w-full flex flex-col lg:justify-start justify-center relative items-center lg:items-start">
-      {/* Heading */}
-      
+    <div className="lg:w-[25%] w-full flex flex-col lg:flex-row lg:justify-start justify-center relative items-center lg:items-start gap-10">
+      <div className="self-center w-full h-px border-t border-black lg:w-px lg:h-[400px] lg:border-t-0 lg:border-l"></div>
 
-      {/* Cards Loop */}
-      <div className="w-full flex flex-col md:flex-row lg:flex-col justify-center gap-4 items-center lg:items-start">
-        {cards.map((item) => (
-          <Thumbnails RelatedImage={item?.img} key={item.id} />
-        ))}
+      <div className="">
+        {/* Heading hamesha show ho */}
+        <h2
+          className="text-lg sm:text-xl font-bold mb-4 text-center"
+          style={{ fontFamily: "philosopher" }}
+        >
+          Related Photographs
+        </h2>
+        {/* Cards Loop */}
+        {cards?.length > 0 && (
+          <div className="w-full flex flex-col md:flex-row lg:flex-col justify-center gap-4 items-center lg:items-start">
+            {cards.map((item) => (
+              <Thumbnails
+                RelatedImage={item?.img}
+                key={item.id}
+                RelatedThumbnailName={"Related Letters"}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

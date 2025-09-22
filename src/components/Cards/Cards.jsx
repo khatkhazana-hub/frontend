@@ -38,7 +38,9 @@ const RelatedCards = () => {
     (async () => {
       try {
         // ✅ put /api back (you removed it accidentally)
-        const res = await fetch(`${API_BASE}/submissions`, { cache: "no-store" });
+        const res = await fetch(`${API_BASE}/submissions`, {
+          cache: "no-store",
+        });
         const json = await res.json();
         const arr = Array.isArray(json) ? json : json?.data || [];
         const featured = arr.filter((item) => item?.featuredLetter === true);
@@ -72,11 +74,18 @@ const RelatedCards = () => {
     );
   }
 
-
-  console.log(letters , 'letters')
+  console.log(letters, "letters");
 
   return (
-    <div className="mt-14 w-full flex justify-center">
+    <div className="w-full flex flex-col items-center gap-10 lg:gap-20">
+      {/* Heading */}
+      <h2
+        className="text-4xl font-bold text-black"
+        style={{ fontFamily: "philosopher" }}
+      >
+        Related Letters
+      </h2>
+
       <div className="w-full max-w-[1270px]">
         <Swiper
           modules={[Pagination, Navigation]}
@@ -93,8 +102,12 @@ const RelatedCards = () => {
         >
           {letters.map((r) => {
             const title = r?.title || "Untitled";
-            const descSrc = r?.letterNarrativeOptional || r?.letterNarrative || "No description";
-            const description = descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
+            const descSrc =
+              r?.letterNarrativeOptional ||
+              r?.letterNarrative ||
+              "No description";
+            const description =
+              descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
 
             const overlayUrl =
               fileUrl(r?.photoImage?.path) ||
@@ -102,7 +115,9 @@ const RelatedCards = () => {
               "";
 
             // ✅ build the route exactly like you asked
-            const lang = encodeURIComponent((r?.letterLanguage || "english").toLowerCase());
+            const lang = encodeURIComponent(
+              (r?.letterLanguage || "english").toLowerCase()
+            );
             const id = encodeURIComponent(r?._id);
             const href = `/letters/${lang}/${id}`;
 

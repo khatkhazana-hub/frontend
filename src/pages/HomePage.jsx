@@ -35,7 +35,7 @@ const Homepage = () => {
           block 
           align-top 
           cursor-pointer
-        -mt-20 md:-mt-36
+        -mt-20 md:-mt-40
         
         "
       />

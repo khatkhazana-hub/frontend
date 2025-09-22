@@ -55,7 +55,7 @@ export default function AdminLogin() {
               <img
                 src='../images/logo.png'
                 alt="KhatKhazana"
-                className="h-32 w-32 drop-shadow-sm"
+                className="h-28 w-fit drop-shadow-sm"
                 draggable="false"
               />
             </div>
@@ -89,7 +89,7 @@ export default function AdminLogin() {
               </motion.div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 text-left">
               {/* email */}
               <div className="group">
                 <label className="mb-1 block text-sm font-semibold">Email</label>

@@ -5,7 +5,6 @@ const RelatedCards = () => {
   return (
     <div className="w-full flex flex-col items-center">
       {/* Heading */}
-
       <h2
         className="text-4xl font-bold text-black"
         style={{ fontFamily: "philosopher" }}
