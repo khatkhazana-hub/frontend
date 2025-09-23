@@ -18,7 +18,10 @@ const Letters = () => {
   };
 
   return (
-    <main className="flex items-center justify-center h-[90vh]">
+    <main
+      className="flex items-center justify-center h-screen lg:-mt-5 bg-repeat bg-cover no-repeat bg-center"
+      style={{ backgroundImage: "url('/images/bg-letter.webp')" }}
+    >
       <div className="flex flex-col items-center justify-center gap-8">
         <h2 className="text-5xl text-black mb-8 font-['Philosopher'] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
           View letter by

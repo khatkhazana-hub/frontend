@@ -26,7 +26,8 @@ const ThumbnailCards = ({ photo }) => {
       ];
 
   return (
-    <div className="lg:w-[25%] w-full flex flex-col lg:flex-row lg:justify-start justify-center relative items-center lg:items-start gap-10">
+    <div className="lg:w-[25%] w-full flex flex-col lg:flex-row lg:justify-start justify-center relative items-center lg:items-start gap-5 lg:gap-5 xl:gap-10">
+    
       <div className="self-center w-full h-px border-t border-black lg:w-px lg:h-[400px] lg:border-t-0 lg:border-l"></div>
 
       <div className="">

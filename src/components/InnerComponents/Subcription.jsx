@@ -1,6 +1,5 @@
 // @ts-nocheck
 import React, { useState } from "react";
-import HeadingDesc from "./HeadingDesc";
 import ParchmentButton from "./ParchmentButton";
 
 const Subcription = () => {
@@ -21,11 +20,21 @@ const Subcription = () => {
 
   return (
     <div className="flex flex-col justify-center items-center gap-10 w-full  py-10">
-      <HeadingDesc
-        headingClassName="text-[40px]"
-        heading="Subscribe for a Monthly Glimpse?"
-        description="Into the Past - One Treasured Letter and Photograph, Shared with You Each Month."
-      />
+      <div className="max-w-2xl">
+        <h2
+          className={`text-3xl font-bold text-black capitalize`}
+          style={{ fontFamily: "philosopher" }}
+        >
+          Subscribe for a Monthly Glimpse?
+        </h2>
+        <p
+          className={`text-2xl text-black mt-5`}
+          style={{ fontFamily: "'Ephesis'" }}
+        >
+          Into the Past - One Treasured Letter and Photograph, Shared with You
+          Each Month.
+        </p>
+      </div>
 
       <form
         onSubmit={handleSubmit}

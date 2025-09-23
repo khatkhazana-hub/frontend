@@ -8,7 +8,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 top-14 px-5 lg:px-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 pt-10 px-5 lg:px-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-[#F7DBB9] rounded-lg max-w-2xl w-full p-8 relative">
         {/* Close Button */}
         <button
@@ -183,8 +183,6 @@ const SubmissionForm = () => {
               updated version will be posted on this page and will apply to all
               future submissions.
             </p>
-
-          
           </div>
         )}
 
@@ -265,15 +263,15 @@ const SubmissionForm = () => {
               6. Quick Checklist Before Submitting
             </h3>
             <ul className="list-disc pl-5 space-y-1">
-              <li>✔ Letters: Full page, legible, no glare or blur</li>
+              <li>Letters: Full page, legible, no glare or blur</li>
               <li>
-                ✔ Photographs: Minimum 1200 x 1800 px, JPEG/PNG/TIFF, authentic
+                Photographs: Minimum 1200 x 1800 px, JPEG/PNG/TIFF, authentic
                 and clear
               </li>
-              <li>✔ Audio: MP3/WAV/AAC, clear recordings (optional)</li>
-              <li>✔ File Naming: Use descriptive names</li>
+              <li> Audio: MP3/WAV/AAC, clear recordings (optional)</li>
+              <li> File Naming: Use descriptive names</li>
               <li>
-                ✔ Extra Info: Date, place, short description (optional but
+                Extra Info: Date, place, short description (optional but
                 helpful)
               </li>
             </ul>
@@ -294,7 +292,7 @@ const SubmissionForm = () => {
               For letters, Please include either a{" "}
               <strong>typed/clearly written version</strong> or an{" "}
               <strong>audio recording</strong> of the text. Submissions without
-              one of these may be   <strong>Rejected if the{" "} </strong>
+              one of these may be <strong>Rejected if the </strong>
               <strong>Handwriting is not legible</strong> . Adding one ensures
               your contribution can be properly preserved and shared.
             </p>

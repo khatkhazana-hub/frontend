@@ -32,7 +32,7 @@ export default function Navbar() {
         backgroundSize: "100% 100%",
       }}
     >
-      <div className="mx-auto w-full px-5 xl:px-20 py-2 flex items-center justify-between z-50">
+      <div className="mx-auto w-full px-5 lg:px-10 xl:px-20 py-2 flex items-center justify-between z-50">
         {/* LEFT: Logo */}
         <Link
           to="/"

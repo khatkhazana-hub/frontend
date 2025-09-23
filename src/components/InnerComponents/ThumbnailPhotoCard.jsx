@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from "react";
-import Thumbnails from "./Thumbnails";
+import ThumbnailForPhotograph from "./ThumbnailForPhotograph";
 
 const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
 
@@ -11,7 +11,7 @@ const buildFileUrl = (p) => {
   return `${FILE_BASE}/${rel}`;
 };
 
-const ThumbnailletterCards = ({ photo }) => {
+const ThumbnailPhotoCard = ({ photo }) => {
   console.log(photo, "photo");
 
   // Cards sirf tab banenge jab letterImage ho
@@ -38,14 +38,14 @@ const ThumbnailletterCards = ({ photo }) => {
           className="text-lg sm:text-xl font-bold mb-4 text-center"
           style={{ fontFamily: "philosopher" }}
         >
-          Related Photographs
+          Related Letters
         </h2>
 
         {/* Cards sirf tab render ho jab data ho */}
         {cards?.length > 0 && (
           <div className="w-full flex flex-col md:flex-row lg:flex-col justify-center gap-4 items-center lg:items-start">
             {cards.map((item) => (
-              <Thumbnails
+              <ThumbnailForPhotograph
                 RelatedImage={item.img}
                 key={item.id}
                 RelatedThumbnailName={"Related Letters"}
@@ -58,4 +58,4 @@ const ThumbnailletterCards = ({ photo }) => {
   );
 };
 
-export default ThumbnailletterCards;
+export default ThumbnailPhotoCard;

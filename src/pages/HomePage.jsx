@@ -5,13 +5,11 @@ const Homepage = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="w-full container relative bg-black overflow-hidden">
+    <section className="w-full  relative bg-black overflow-hidden">
       {/* 🔹 Video Section */}
       <video
         className="
-          w-full 
-       h-[410px]
-        lg:h-[550px]
+          w-full   h-[410px] lg:h-[550px]
           object-cover
           block
           align-top
@@ -35,7 +33,7 @@ const Homepage = () => {
           block 
           align-top 
           cursor-pointer
-        -mt-20 md:-mt-40
+        -mt-10 md:-mt-20
         
         "
       />

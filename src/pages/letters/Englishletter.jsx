@@ -29,6 +29,11 @@ function LettersPage() {
     return { value: `${start}-${end}`, label: `${start} - ${end}` };
   });
 
+  // ⬅️ naya effect add kiya: jab bhi lang change ho, page top se show kare
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" }); // ya behavior: "smooth"
+  }, [lang]);
+
   // 🔹 fetch submissions
   useEffect(() => {
     let alive = true;
@@ -81,15 +86,23 @@ function LettersPage() {
 
   // 🔹 unique owners (fullName)
   const owners = useMemo(() => {
-    const names = Array.from(new Set(all.map((item) => item.fullName).filter(Boolean)));
+    const names = Array.from(
+      new Set(all.map((item) => item.fullName).filter(Boolean))
+    );
     return names.sort();
   }, [all]);
 
   // 🟢 compute filtered + visible inline
   const filtered = all.filter((item) => {
-    const matchC = categoryQ ? (item.letterCategory || "").toLowerCase() === categoryQ.toLowerCase() : true;
-    const matchO = ownerQ ? (item.fullName || "").toLowerCase() === ownerQ.toLowerCase() : true;
-    const matchD = decadeQ ? (item.decade || "").toLowerCase() === decadeQ.toLowerCase() : true;
+    const matchC = categoryQ
+      ? (item.letterCategory || "").toLowerCase() === categoryQ.toLowerCase()
+      : true;
+    const matchO = ownerQ
+      ? (item.fullName || "").toLowerCase() === ownerQ.toLowerCase()
+      : true;
+    const matchD = decadeQ
+      ? (item.decade || "").toLowerCase() === decadeQ.toLowerCase()
+      : true;
     return matchC && matchO && matchD;
   });
 
@@ -121,7 +134,7 @@ function LettersPage() {
       />
 
       {/* Filters */}
-      <div className="w-[90%] md:w-full max-w-5xl mt-10 md:mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+      <div className="w-[90%] max-w-5xl mt-10 md:mt-16 flex flex-col md:flex-row justify-between items-end gap-5 lg:gap-5">
         {/* By Category */}
         <div className="flex flex-col w-full text-left">
           <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
@@ -187,6 +200,22 @@ function LettersPage() {
             ))}
           </select>
         </div>
+
+        {/* Clear Filters Button */}
+        <div className="flex items-end justify-end w-fit">
+          <button
+            onClick={() => {
+              setCategoryQ("");
+              setOwnerQ("");
+              setDecadeQ("");
+              setVisibleCount(PAGE_SIZE);
+            }}
+            className="px-4 whitespace-nowrap py-2 text-[#704214] font-semibold border border-[#704214] rounded-full hover:bg-[#704214] hover:text-white transition"
+          >
+            Clear Filters
+          </button>
+        </div>
+
       </div>
 
       {/* Loading / Error / Empty */}

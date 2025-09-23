@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState, useMemo } from "react";
 
-const Thumbnails = ({ RelatedImage }) => {
+const ThumbnailForPhotograph = ({ RelatedImage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [imageOk, setImageOk] = useState(true);
 
@@ -20,43 +20,20 @@ const Thumbnails = ({ RelatedImage }) => {
     <>
       {/* Thumbnail Card */}
       {RelatedImage && RelatedImage.trim() && (
-        <div className="flex flex-col items-center w-full gap-10">
+        <>
           <div
-            className="relative flex justify-center items-center group cursor-pointer mt-3"
             onClick={handleOpen}
+            className="w-[180px] sm:w-[160px] h-[200px] rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer hover:scale-105 transition-transform relative"
           >
-            {/* Frame */}
-            <div className="absolute left-1/2 -translate-x-1/2 w-[300px] h-[230px] z-30">
-              <img
-                src="/images/Vertical-Frame.webp"
-                alt="Frame"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            {/* Overlay Image */}
             <img
               src={RelatedImage}
-              alt="Overlay"
-              loading="eager"
+              alt="Related photograph"
+              className="w-full h-full object-cover"
               loading="lazy"
               onError={() => setImageOk(false)}
-              className="object-cover group-hover:drop-shadow-xl transition-all duration-300 w-[130px] rounded-sm h-[190px]"
-            />
-
-            {/* ✅ Watermark Image (Full Overlay Area) */}
-            <img
-              src="/images/Vector.webp"
-              alt="Watermark"
-              className="
-            absolute 
-            top-14
-            w-[80px] h-[80px]   /* same size as overlay */
-            opacity-20     /* adjust transparency */
-            object-cover          /* cover full area */
-            pointer-events-none select-none "
             />
           </div>
-        </div>
+        </>
       )}
 
       {/* Modal / Popup */}
@@ -89,4 +66,4 @@ const Thumbnails = ({ RelatedImage }) => {
   );
 };
 
-export default Thumbnails;
+export default ThumbnailForPhotograph;

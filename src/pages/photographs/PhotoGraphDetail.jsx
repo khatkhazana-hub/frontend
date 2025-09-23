@@ -6,7 +6,7 @@ import { FiMaximize2 } from "react-icons/fi"; // fullscreen icon
 import api from "@/utils/api";
 import useSubmissions from "@/hooks/useSubmissions"; // ✅ fetch once here
 import RelatedPhotographs from "@/components/Cards/RelatedPhotographs";
-import ThumbnailletterCards from "@/components/InnerComponents/ThumbnailletterCards";
+import ThumbnailPhotoCard from "@/components/InnerComponents/ThumbnailPhotoCard";
 
 const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
 
@@ -144,7 +144,7 @@ export default function PhotoGraphDetail() {
               />
             </div>
 
-            <ThumbnailletterCards photo={data} />
+            <ThumbnailPhotoCard photo={data} />
           </div>
 
           {data.photoAudioFile?.path && (
@@ -159,16 +159,26 @@ export default function PhotoGraphDetail() {
 
           {(data.photoNarrative || data.photoNarrativeOptional) && (
             <div className="mt-10 flex flex-col lg:flex-row justify-between gap-10">
-              <div
-                className="lg:w-[70%] xl:w-[80%] capitalize text-[18px] sm:text-[20px] md:text-[26px] lg:text-[30px] text-black leading-7 sm:leading-8 md:leading-10 text-left"
-                style={{ fontFamily: "'Ephesis'" }}
-              >
-                {data.photoNarrative ? (
-                  <p className="">{data.photoNarrative}</p>
-                ) : null}
-                {data.photoNarrativeOptional ? (
-                  <p>{data.photoNarrativeOptional}</p>
-                ) : null}
+              <div className="text-black text-left leading-10">
+                {/* Photo Narrative */}
+                {data.photoNarrative && (
+                  <>
+                    <h2 className="text-2xl font-bold mb-2">Text</h2>
+                    <p className="text-xl leading-10 mb-4">
+                      {data.photoNarrative}
+                    </p>
+                  </>
+                )}
+
+                {/* Photo Narrative Optional */}
+                {data.photoNarrativeOptional && (
+                  <>
+                    <h3 className="text-2xl font-bold mb-2">Narrative</h3>
+                    <p className="text-xl leading-10">
+                      {data.photoNarrativeOptional}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           )}

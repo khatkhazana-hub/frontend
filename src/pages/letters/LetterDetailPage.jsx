@@ -123,7 +123,7 @@ const LetterDetailPage = () => {
     [letterCategory, decade].filter(Boolean).join(" · ");
 
   return (
-    <div className="min-h-[300px] px-5 lg:px-0 bg-cover bg-center">
+    <div className="min-h-[300px] px-5 lg:px-10 xl:px-0 bg-cover bg-center">
       <div className="py-5 max-w-[1270px] w-full mx-auto text-black text-left">
         {/* Date + Category */}
         <div className="flex items-center text-sm mt-10">
@@ -160,8 +160,9 @@ const LetterDetailPage = () => {
       >
         <div className="w-full text-black">
           {/* Letter Image + Thumbnails */}
+
           <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6  w-full">
-            <div className="relative flex justify-center w-full">
+            <div className="relative flex justify-center lg:w-[70%] xl:w-full">
               <img
                 src={heroImage}
                 alt={title || "Letter Image"}
@@ -170,7 +171,7 @@ const LetterDetailPage = () => {
               <img
                 src="/images/Vector.webp"
                 alt="Watermark"
-                className="absolute top-40 left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
+                className="absolute top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
               />
             </div>
 
@@ -185,7 +186,7 @@ const LetterDetailPage = () => {
 
           {/* Letter Audio */}
           {audioSrc && (
-            <div className="mt-6">
+            <div className="mt-10">
               <audio controls className="w-full">
                 <source
                   src={audioSrc}
@@ -198,14 +199,22 @@ const LetterDetailPage = () => {
 
           {/* Letter Narrative */}
           <div className="mt-10 flex flex-col lg:flex-row justify-between gap-10">
-            <div className="text-xl  text-black leading-10 text-left">
+            <div className="text-black text-left leading-10">
+              {/* Narrative text */}
               {letterNarrative && (
                 <>
-                  {letterNarrative}
-                  <br />
+                  <h2 className="text-2xl font-bold mb-2">Text</h2>
+                  <p className="text-xl leading-10 mb-4">{letterNarrative}</p>
                 </>
               )}
-              {caption}
+
+              {/* Caption text */}
+              {caption && (
+                <>
+                  <h2 className="text-2xl font-bold mb-2">Narrative</h2>
+                  <p className="text-xl leading-10">{caption}</p>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -70,6 +70,7 @@ export default function CreateCategories() {
       enqueueSnackbar(err.message || "Delete failed", { variant: "error" });
     }
   };
+  
 
   return (
     <Card className="max-w-2xl mx-auto shadow-lg border border-neutral-200">

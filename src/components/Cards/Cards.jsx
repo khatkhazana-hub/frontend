@@ -83,7 +83,7 @@ const RelatedCards = () => {
         className="text-4xl font-bold text-black"
         style={{ fontFamily: "philosopher" }}
       >
-        Related Letters
+        Featured Letters
       </h2>
 
       <div className="w-full max-w-[1270px]">
@@ -91,8 +91,6 @@ const RelatedCards = () => {
           modules={[Pagination, Navigation]}
           spaceBetween={20}
           slidesPerView={1}
-          pagination={{ clickable: true }}
-          navigation
           breakpoints={{
             320: { slidesPerView: 1 },
             640: { slidesPerView: 2 },

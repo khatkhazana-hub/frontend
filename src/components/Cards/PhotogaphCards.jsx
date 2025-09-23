@@ -20,30 +20,40 @@ const fileUrl = (p) => {
   if (!p) return "";
   if (/^https?:\/\//i.test(p)) return p;
   let rel = String(p).replace(/^\/+/, "");
-  if (shouldStripPublic() && rel.startsWith("public/")) rel = rel.replace(/^public\//, "");
+  if (shouldStripPublic() && rel.startsWith("public/"))
+    rel = rel.replace(/^public\//, "");
   return `${String(FILE_BASE).replace(/\/+$/, "")}/${rel}`;
 };
 
 // guards so we never pass an audio file as an image
 const isImageMime = (m) => typeof m === "string" && m.startsWith("image/");
-const isImageExt = (p) => /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(String(p || ""));
+const isImageExt = (p) =>
+  /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(String(p || ""));
 const pickPhotoImagePath = (r) => {
-  if (r?.photoImage && (isImageMime(r.photoImage?.mimeType) || isImageExt(r.photoImage?.path))) {
+  if (
+    r?.photoImage &&
+    (isImageMime(r.photoImage?.mimeType) || isImageExt(r.photoImage?.path))
+  ) {
     return r.photoImage.path;
   }
-  if (r?.letterImage && (isImageMime(r.letterImage?.mimeType) || isImageExt(r.letterImage?.path))) {
+  if (
+    r?.letterImage &&
+    (isImageMime(r.letterImage?.mimeType) || isImageExt(r.letterImage?.path))
+  ) {
     return r.letterImage.path;
   }
   return "";
 };
 
 const PhotogaphCards = ({ items = [] }) => {
-  // We expect parent already filtered featured+approved,
-  // but we’ll keep a small guard to hide entries with no image path.
   const photos = items.filter((it) => !!pickPhotoImagePath(it));
 
   if (!photos.length) {
-    return <div className="text-center opacity-70 py-6">no related photographs found.</div>;
+    return (
+      <div className="text-center opacity-70 py-6">
+        no related photographs found.
+      </div>
+    );
   }
 
   return (
@@ -53,8 +63,6 @@ const PhotogaphCards = ({ items = [] }) => {
           modules={[Pagination, Navigation]}
           spaceBetween={20}
           slidesPerView={1}
-          pagination={{ clickable: true }}
-          navigation
           breakpoints={{
             320: { slidesPerView: 1 },
             640: { slidesPerView: 2 },
@@ -64,14 +72,26 @@ const PhotogaphCards = ({ items = [] }) => {
         >
           {photos.map((r) => {
             const title = r?.photoCaption || r?.title || "Untitled Photo";
-            const descSrc = r?.photoNarrativeOptional || r?.photoNarrative || r?.letterNarrative || "";
-            const description = descSrc && descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc || "—";
+            const descSrc =
+              r?.photoNarrativeOptional ||
+              r?.photoNarrative ||
+              r?.letterNarrative ||
+              "";
+            const description =
+              descSrc && descSrc.length > 80
+                ? `${descSrc.slice(0, 80)}...`
+                : descSrc || "—";
             const overlay = fileUrl(pickPhotoImagePath(r));
             const href = `/photographs/${encodeURIComponent(r?._id)}`;
 
             return (
               <SwiperSlide key={r._id} className="flex justify-start">
-                <PhotographCard to={href} overlay={overlay} title={title} description={description} />
+                <PhotographCard
+                  to={href}
+                  overlay={overlay}
+                  title={title}
+                  description={description}
+                />
               </SwiperSlide>
             );
           })}

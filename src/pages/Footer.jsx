@@ -22,7 +22,10 @@ export default function Footer() {
   ];
 
   const SUPPORT_INFO = [
-    { label: "Email: info@example.com", href: "mailto:info@example.com" },
+    {
+      label: "Email: info@lastlongletter.com",
+      href: "mailto:info@lastlongletter.com",
+    },
     {
       label: "Location: 123 Main St, City",
       href: "https://maps.google.com/?q=123 Main St, City",
@@ -151,7 +154,7 @@ export default function Footer() {
       {/* 🔹 Bottom: Copyright */}
       <div className="absolute bottom-5 text-center">
         <p className="text-sm ">
-          © {new Date().getFullYear()} long last Letter. All rights reserved.
+          © {new Date().getFullYear()} Long Last Letter. All rights reserved.
         </p>
       </div>
     </footer>
