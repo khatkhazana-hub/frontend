@@ -163,7 +163,7 @@ export default function PhotoGraphDetail() {
                 {/* Photo Narrative */}
                 {data.photoNarrative && (
                   <>
-                    <h2 className="text-2xl font-bold mb-2">Text</h2>
+                    <h2 className="text-2xl font-bold mb-2">Photographs Transcript</h2>
                     <p className="text-xl leading-10 mb-4">
                       {data.photoNarrative}
                     </p>

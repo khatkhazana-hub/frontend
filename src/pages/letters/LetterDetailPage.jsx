@@ -203,7 +203,7 @@ const LetterDetailPage = () => {
               {/* Narrative text */}
               {letterNarrative && (
                 <>
-                  <h2 className="text-2xl font-bold mb-2">Text</h2>
+                  <h2 className="text-2xl font-bold mb-2">Letter Transcript </h2>
                   <p className="text-xl leading-10 mb-4">{letterNarrative}</p>
                 </>
               )}
