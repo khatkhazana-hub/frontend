@@ -19,21 +19,15 @@ const Subcription = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center gap-10 w-full  py-10">
-      <div className="max-w-2xl">
+    <div className="flex flex-col justify-center items-center gap-10 w-full  py-20">
+      <div className="max-w-5xl">
         <h2
-          className={`text-3xl font-bold text-black capitalize`}
+          className={`text-2xl md:text-3xl font-bold text-black capitalize md:leading-14`}
           style={{ fontFamily: "philosopher" }}
         >
-          Subscribe for a Monthly Glimpse?
+          Subscribe for a Monthly Glimpse Into the Past - One Treasured Letter
+          and Photograph, Shared with You Each Month.
         </h2>
-        <p
-          className={`text-2xl text-black mt-5`}
-          style={{ fontFamily: "'Ephesis'" }}
-        >
-          Into the Past - One Treasured Letter and Photograph, Shared with You
-          Each Month.
-        </p>
       </div>
 
       <form
