@@ -61,14 +61,8 @@ const PhotogaphCards = ({ items = [] }) => {
       <div className="w-full max-w-[1270px]">
         <Swiper
           modules={[Pagination, Navigation]}
-          spaceBetween={20}
-          slidesPerView={1}
-          breakpoints={{
-            320: { slidesPerView: 1 },
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 2.3 },
-            1440: { slidesPerView: 3.2 },
-          }}
+          spaceBetween={50} // ✅ 50px gap stays
+          slidesPerView="auto" // ✅ automatic number of slides
         >
           {photos.map((r) => {
             const title = r?.photoCaption || r?.title || "Untitled Photo";
@@ -85,7 +79,10 @@ const PhotogaphCards = ({ items = [] }) => {
             const href = `/photographs/${encodeURIComponent(r?._id)}`;
 
             return (
-              <SwiperSlide key={r._id} className="flex justify-start">
+              <SwiperSlide
+                key={r._id}
+                className="flex justify-start !w-[350px]"
+              >
                 <PhotographCard
                   to={href}
                   overlay={overlay}
