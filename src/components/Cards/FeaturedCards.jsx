@@ -21,12 +21,12 @@ export default function FeaturedCards({ items = [], loading = false, error = "" 
         slidesPerView={1}
         // pagination={{ clickable: true }}
         // navigation
-        breakpoints={{
-          320: { slidesPerView: 1 },
-          640: { slidesPerView: 2 },
-          1024: { slidesPerView: 2.3 },
-          1440: { slidesPerView: 3.2 },
-        }}
+        // breakpoints={{
+        //   320: { slidesPerView: 1 },
+        //   640: { slidesPerView: 2 },
+        //   1024: { slidesPerView: 2.3 },
+        //   1440: { slidesPerView: 3.2 },
+        // }}
       >
         {items.map((r) => {
           const title = r?.title || "Untitled";
@@ -39,7 +39,7 @@ export default function FeaturedCards({ items = [], loading = false, error = "" 
           const to = `/letters/${lang}/${id}`;
 
           return (
-            <SwiperSlide key={r._id} className="flex justify-start ">
+            <SwiperSlide key={r._id} className="flex justify-start !w-[350px]">
               <LetterCard to={to} overlay={overlay} title={title} description={description} />
             </SwiperSlide>
           );

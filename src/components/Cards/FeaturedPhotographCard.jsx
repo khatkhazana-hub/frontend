@@ -19,14 +19,14 @@ export default function FeaturedPhotographCard({ items = [], loading = false, er
         modules={[Pagination, Navigation]}
         spaceBetween={20}
         slidesPerView={1}
-        pagination={{ clickable: true }}
-        navigation
-        breakpoints={{
-          320: { slidesPerView: 1 },
-          640: { slidesPerView: 2 },
-          1024: { slidesPerView: 2.3 },
-          1440: { slidesPerView: 3.2 },
-        }}
+        // pagination={{ clickable: true }}
+        // navigation
+        // breakpoints={{
+        //   320: { slidesPerView: 1 },
+        //   640: { slidesPerView: 2 },
+        //   1024: { slidesPerView: 2.3 },
+        //   1440: { slidesPerView: 3.2 },
+        // }}
       >
         {items.map((r) => {
           const title = r?.photoCaption || r?.title || "Untitled Photo";
@@ -37,7 +37,7 @@ export default function FeaturedPhotographCard({ items = [], loading = false, er
           const to = `/photographs/${encodeURIComponent(r?._id)}`;
 
           return (
-            <SwiperSlide key={r._id} className="flex justify-start">
+            <SwiperSlide key={r._id} className="flex justify-start !w-[350px]">
               <PhotographCard to={to} overlay={overlay} title={title} description={description} />
             </SwiperSlide>
           );

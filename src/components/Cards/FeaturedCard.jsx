@@ -13,7 +13,7 @@ const FeaturedCard = ({
   return (
     <Link to={to}>
       <div
-        className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto ${className}`}
+        className={`relative cursor-pointer rounded-[20px] overflow-hidden lg:w-[350px] h-[410px] group mx-auto ${className}`}
       >
         {/* Card Background Image */}
         <img
@@ -26,7 +26,7 @@ const FeaturedCard = ({
         {/* Featured Badge */}
         {isFeatured && (
           <span
-            className="absolute top-12 right-24 bg-white text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md z-20"
+            className="absolute top-12 lg:right-24 bg-white text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md z-20"
             style={{ fontFamily: "Philosopher" }}
           >
             Featured

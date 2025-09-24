@@ -13,10 +13,16 @@ export default function Form() {
   // States
   const [uploadType, setUploadType] = useState("Both");
   const [before2000, setBefore2000] = useState("No");
+
+  // narrative formats
   const [letterNarrativeFormat, setLetterNarrativeFormat] = useState("both");
   const [photoNarrativeFormat, setPhotoNarrativeFormat] = useState("both");
+
+  // ✅ checkboxes
   const [hasReadGuidelines, setHasReadGuidelines] = useState(false);
   const [agreedTermsSubmission, setAgreedTermsSubmission] = useState(false);
+
+  // letter info
   const [letterLanguage, setLetterLanguage] = useState("");
   const [letterCategory, setLetterCategory] = useState("");
   const [decade, setDecade] = useState("");
@@ -34,13 +40,18 @@ export default function Form() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!hasReadGuidelines || !agreedTermsSubmission) {
+      alert("Please check both boxes before submitting.");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
       const formEl = e.target;
       const formData = new FormData(formEl);
 
-      // normalize controlled state -> formData (overwrite in case of mismatch)
+      // normalize controlled state -> formData
       formData.set("uploadType", uploadType);
       formData.set("before2000", before2000);
       formData.set("letterNarrativeFormat", letterNarrativeFormat);
@@ -51,7 +62,6 @@ export default function Form() {
       formData.set("letterCategory", letterCategory || "");
       formData.set("decade", decade || "");
 
-      // post
       const res = await api.post("/submissions", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -86,9 +96,7 @@ export default function Form() {
       .get("/categories")
       .then((res) => {
         const data = res.data || [];
-        // only keep active categories
         const active = data.filter((c) => c.active);
-        // shape for DropdownField
         setCategories(active.map((c) => ({ value: c.slug, label: c.name })));
       })
       .catch((err) => {
@@ -110,330 +118,287 @@ export default function Form() {
             <InputField label="Email" name="email" type="email" required />
             <InputField label="Phone" name="phone" />
             <InputField label="Current Location" name="location" />
-            <RadioGroup
-              label="Have you read the submission guidelines?"
-              subLabel="If yes, please select 'Yes'. If not, please read first."
-              name="guidelines"
-              required
-              value={hasReadGuidelines ? "Yes" : "No"}
-              onChange={(e) => setHasReadGuidelines(e.target.value === "Yes")}
-              options={[
-                { value: "Yes", label: "Yes" },
-                { value: "No", label: "No" },
-              ]}
-            />
-            <RadioGroup
-              label="Have you read the term of submission?"
-              subLabel="If yes, please select 'Yes'. If not, please read first."
-              name="termsSubmission"
-              required
-              value={agreedTermsSubmission ? "Yes" : "No"}
-              onChange={(e) =>
-                setAgreedTermsSubmission(e.target.value === "Yes")
-              }
-              options={[
-                { value: "Yes", label: "Yes" },
-                { value: "No", label: "No" },
-              ]}
-            />
           </div>
         </FormSection>
 
-        {hasReadGuidelines && agreedTermsSubmission && (
+        {/* UPLOAD TYPE */}
+        <div className="md:col-span-2 mb-8">
+          <RadioGroup
+            label="Are you uploading letters or photographs?"
+            name="uploadType"
+            required
+            value={uploadType}
+            onChange={handleUploadTypeChange}
+            options={[
+              { value: "Letter", label: "Letter" },
+              { value: "Photographs", label: "Photographs" },
+              { value: "Both", label: "Both" },
+            ]}
+          />
+        </div>
+
+        {/* LETTER INFO */}
+        {renderLetterInfo && (
           <>
-            {/* UPLOAD TYPE */}
-            <div className="md:col-span-2 mb-8">
-              <RadioGroup
-                label="Are you uploading letters or photographs?"
-                name="uploadType"
-                required
-                value={uploadType}
-                onChange={handleUploadTypeChange}
-                options={[
-                  { value: "Letter", label: "Letter" },
-                  { value: "Photographs", label: "Photographs" },
-                  { value: "Both", label: "Both" },
-                ]}
-              />
-            </div>
-
-            {/* LETTER INFO */}
-            {renderLetterInfo && (
-              <>
-                <FormSection title="Letter Information">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
-                    {/* <InputField
-                      label="Title"
-                      name="Title"
-                      type="text"
-                      required
-                    /> */}
-                    <DropdownField
-                      label="Category"
-                      name="letterCategory"
-                      required
-                      value={letterCategory}
-                      onChange={(e) => setLetterCategory(e.target.value)}
-                      options={categories} // ⬅️ dynamic from backend
-                    />
-                    <DropdownField
-                      label="Language"
-                      name="letterLanguage"
-                      required
-                      value={letterLanguage}
-                      onChange={(e) => setLetterLanguage(e.target.value)}
-                      options={[
-                        { value: "English", label: "English" },
-                        { value: "Urdu", label: "Urdu" },
-                        { value: "Punjabi", label: "Punjabi" },
-                      ]}
-                    />
-                    <DropdownField
-                      label="Decade"
-                      name="decade"
-                      required
-                      value={decade}
-                      onChange={(e) => setDecade(e.target.value)}
-                      options={decadeOptions}
-                    />
-                    <FileInput
-                      label="Upload"
-                      name="letterImage"
-                      subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
-                      required
-                      previewType="image"
-                    />
-                  </div>
-                </FormSection>
-
-                {/* Letter Transcript */}
-                <FormSection>
-                  <div className="flex flex-col md:flex-row justify-between gap-3">
-                    <div className="flex flex-col justify-between w-full">
-                      <div className="flex justify-between">
-                        <label className="font-bold text-sm block">
-                          Letter Transcript{" "}
-                          <span className="text-red-600">*</span>
-                        </label>
-                        <span className="flex gap-4 text-sm">
-                          <label className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name="letterNarrativeFormat"
-                              value="text"
-                              checked={letterNarrativeFormat === "text"}
-                              onChange={() => setLetterNarrativeFormat("text")}
-                            />
-                            Text
-                          </label>
-                          <label className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name="letterNarrativeFormat"
-                              value="audio"
-                              checked={letterNarrativeFormat === "audio"}
-                              onChange={() => setLetterNarrativeFormat("audio")}
-                            />
-                            Audio
-                          </label>
-                          <label className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name="letterNarrativeFormat"
-                              value="both"
-                              checked={letterNarrativeFormat === "both"}
-                              onChange={() => setLetterNarrativeFormat("both")}
-                            />
-                            Both
-                          </label>
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col lg:flex-row justify-between gap-10">
-                        {(letterNarrativeFormat === "text" ||
-                          letterNarrativeFormat === "both") && (
-                          <InputField
-                            wrapperClassName="w-full mt-4"
-                            className="h-24"
-                            name="letterNarrative"
-                            label="Text"
-                            required
-                            type="textarea" // 👈 textarea aayega
-                          />
-                        )}
-
-                        {(letterNarrativeFormat === "audio" ||
-                          letterNarrativeFormat === "both") && (
-                          <FileInput
-                            name="letterAudioFile"
-                            subtext="Accepted formats: MP3, WAV, or AAC."
-                            previewType="audio" // 👈 sirf audio upload + audio preview
-                            className="mt-5"
-                            label="Audio"
-                            required
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* <InputField
-                    wrapperClassName="w-full mt-6"
-                    className="h-24"
-                    label="Narrative (Optional)"
-                    name="letterNarrativeOptional"
-                    type="textarea"
-                  /> */}
-                </FormSection>
-              </>
-            )}
-
-            {/* PHOTO INFO */}
-            {renderPhotoInfo && (
-              <>
-                <FormSection title="Photographs Information">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
-                    <InputField
-                      label="Photograph Caption"
-                      name="photoCaption"
-                      required
-                      className="md:col-span-2"
-                    />
-                    <InputField
-                      label="Place Taken (Optional)"
-                      name="photoPlace"
-                    />
-                    <FileInput
-                      label="Upload"
-                      name="photoImage"
-                      subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
-                      required
-                      previewType="image"
-                    />
-                  </div>
-                </FormSection>
-
-                {/* Photo Transcript */}
-                <FormSection>
-                  <div className="flex flex-col md:flex-row justify-between gap-3">
-                    <div className="flex flex-col justify-between w-full">
-                      <div className="flex justify-between">
-                        <label className="font-bold text-sm block">
-                          About the Photograph{" "}
-                          <span className="text-red-600">*</span>
-                        </label>
-                        <span className="flex gap-4 text-sm">
-                          <label className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name="photoNarrativeFormat"
-                              value="text"
-                              checked={photoNarrativeFormat === "text"}
-                              onChange={() => setPhotoNarrativeFormat("text")}
-                            />
-                            Text
-                          </label>
-                          <label className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name="photoNarrativeFormat"
-                              value="audio"
-                              checked={photoNarrativeFormat === "audio"}
-                              onChange={() => setPhotoNarrativeFormat("audio")}
-                            />
-                            Audio
-                          </label>
-                          <label className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name="photoNarrativeFormat"
-                              value="both"
-                              checked={photoNarrativeFormat === "both"}
-                              onChange={() => setPhotoNarrativeFormat("both")}
-                            />
-                            Both
-                          </label>
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col lg:flex-row justify-between gap-10">
-                        {(photoNarrativeFormat === "text" ||
-                          photoNarrativeFormat === "both") && (
-                          <InputField
-                            wrapperClassName="w-full mt-4"
-                            className="h-24"
-                            name="photoNarrative"
-                            label="Text"
-                            required
-                            type="textarea"
-                          />
-                        )}
-
-                        {(photoNarrativeFormat === "audio" ||
-                          photoNarrativeFormat === "both") && (
-                          <FileInput
-                            name="photoAudioFile"
-                            subtext="Accepted formats: MP3, WAV, or AAC."
-                            previewType="audio"
-                            className="mt-5"
-                            label="Audio"
-                            required
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  {/* 
-                  <InputField
-                    wrapperClassName="w-full mt-6"
-                    className="h-24"
-                    label="Narrative (Optional)"
-                    name="photoNarrativeOptional"
-                    type="textarea"
-                  /> */}
-                </FormSection>
-              </>
-            )}
-
-            {/* VERIFICATION */}
-            <FormSection title="Verification">
+            <FormSection title="Letter Information">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
-                <RadioGroup
-                  label="Is the image from before 2000?"
-                  name="before2000"
+                <DropdownField
+                  label="Category"
+                  name="letterCategory"
+                  required
+                  value={letterCategory}
+                  onChange={(e) => setLetterCategory(e.target.value)}
+                  options={categories}
+                />
+                <DropdownField
+                  label="Language"
+                  name="letterLanguage"
+                  required
+                  value={letterLanguage}
+                  onChange={(e) => setLetterLanguage(e.target.value)}
                   options={[
-                    { value: "Yes", label: "Yes" },
-                    { value: "No", label: "No" },
+                    { value: "English", label: "English" },
+                    { value: "Urdu", label: "Urdu" },
+                    { value: "Punjabi", label: "Punjabi" },
                   ]}
-                  value={before2000}
-                  onChange={(e) => setBefore2000(e.target.value)}
+                />
+                <DropdownField
+                  label="Decade"
+                  name="decade"
+                  required
+                  value={decade}
+                  onChange={(e) => setDecade(e.target.value)}
+                  options={decadeOptions}
+                />
+                <FileInput
+                  label="Upload"
+                  name="letterImage"
+                  subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
+                  required
+                  previewType="image"
                 />
               </div>
             </FormSection>
 
-            <div className="mt-10">
-              {/* <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`w-full bg-[#6E4A27] text-white font-bold text-lg py-3 px-6 rounded-lg transition-colors duration-300 shadow-lg cursor-pointer ${
-                  isSubmitting
-                    ? "opacity-60 cursor-not-allowed"
-                    : "hover:bg-[#79542f]"
-                }`}
-              >
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </button> */}
+            {/* Letter Transcript */}
+            <FormSection>
+              <div className="flex flex-col md:flex-row justify-between gap-3">
+                <div className="flex flex-col justify-between w-full">
+                  <div className="flex justify-between">
+                    <label className="font-bold text-sm block">
+                      Letter Transcript <span className="text-red-600">*</span>
+                    </label>
+                    <span className="flex gap-4 text-sm">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="letterNarrativeFormat"
+                          value="text"
+                          checked={letterNarrativeFormat === "text"}
+                          onChange={() => setLetterNarrativeFormat("text")}
+                        />
+                        Text
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="letterNarrativeFormat"
+                          value="audio"
+                          checked={letterNarrativeFormat === "audio"}
+                          onChange={() => setLetterNarrativeFormat("audio")}
+                        />
+                        Audio
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="letterNarrativeFormat"
+                          value="both"
+                          checked={letterNarrativeFormat === "both"}
+                          onChange={() => setLetterNarrativeFormat("both")}
+                        />
+                        Both
+                      </label>
+                    </span>
+                  </div>
 
-              <ParchmentButton
-                className="w-full"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </ParchmentButton>
-            </div>
+                  <div className="flex flex-col lg:flex-row justify-between gap-10">
+                    {(letterNarrativeFormat === "text" ||
+                      letterNarrativeFormat === "both") && (
+                      <InputField
+                        wrapperClassName="w-full mt-4"
+                        className="h-24"
+                        name="letterNarrative"
+                        label="Text"
+                        required
+                        type="textarea"
+                      />
+                    )}
+
+                    {(letterNarrativeFormat === "audio" ||
+                      letterNarrativeFormat === "both") && (
+                      <FileInput
+                        name="letterAudioFile"
+                        subtext="Accepted formats: MP3, WAV, or AAC."
+                        previewType="audio"
+                        className="mt-5"
+                        label="Audio"
+                        required
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </FormSection>
           </>
         )}
+
+        {/* PHOTO INFO */}
+        {renderPhotoInfo && (
+          <>
+            <FormSection title="Photographs Information">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
+                <InputField
+                  label="Photograph Caption"
+                  name="photoCaption"
+                  required
+                  className="md:col-span-2"
+                />
+                <InputField label="Place Taken (Optional)" name="photoPlace" />
+                <FileInput
+                  label="Upload"
+                  name="photoImage"
+                  subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
+                  required
+                  previewType="image"
+                />
+              </div>
+            </FormSection>
+
+            {/* Photo Transcript */}
+            <FormSection>
+              <div className="flex flex-col md:flex-row justify-between gap-3">
+                <div className="flex flex-col justify-between w-full">
+                  <div className="flex justify-between">
+                    <label className="font-bold text-sm block">
+                      About the Photograph{" "}
+                      <span className="text-red-600">*</span>
+                    </label>
+                    <span className="flex gap-4 text-sm">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="photoNarrativeFormat"
+                          value="text"
+                          checked={photoNarrativeFormat === "text"}
+                          onChange={() => setPhotoNarrativeFormat("text")}
+                        />
+                        Text
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="photoNarrativeFormat"
+                          value="audio"
+                          checked={photoNarrativeFormat === "audio"}
+                          onChange={() => setPhotoNarrativeFormat("audio")}
+                        />
+                        Audio
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="photoNarrativeFormat"
+                          value="both"
+                          checked={photoNarrativeFormat === "both"}
+                          onChange={() => setPhotoNarrativeFormat("both")}
+                        />
+                        Both
+                      </label>
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col lg:flex-row justify-between gap-10">
+                    {(photoNarrativeFormat === "text" ||
+                      photoNarrativeFormat === "both") && (
+                      <InputField
+                        wrapperClassName="w-full mt-4"
+                        className="h-24"
+                        name="photoNarrative"
+                        label="Text"
+                        required
+                        type="textarea"
+                      />
+                    )}
+
+                    {(photoNarrativeFormat === "audio" ||
+                      photoNarrativeFormat === "both") && (
+                      <FileInput
+                        name="photoAudioFile"
+                        subtext="Accepted formats: MP3, WAV, or AAC."
+                        previewType="audio"
+                        className="mt-5"
+                        label="Audio"
+                        required
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </FormSection>
+          </>
+        )}
+
+        {/* VERIFICATION */}
+        <FormSection title="Verification">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
+            <RadioGroup
+              label="Is the image from before 2000?"
+              name="before2000"
+              options={[
+                { value: "Yes", label: "Yes" },
+                { value: "No", label: "No" },
+              ]}
+              value={before2000}
+              onChange={(e) => setBefore2000(e.target.value)}
+            />
+          </div>
+          <div className="mt-4 space-y-2 text-sm text-black font-medium ">
+            <label className="flex items-center gap-2 text-sm md:text-base">
+              <input
+                type="checkbox"
+                checked={hasReadGuidelines}
+                onChange={(e) => setHasReadGuidelines(e.target.checked)}
+                className="h-4 w-4"
+              />
+              I have read the submission guidelines?
+            </label>
+
+            {/* ✅ Checkbox Terms */}
+            <label className="flex items-center gap-2 text-sm md:text-base">
+              <input
+                type="checkbox"
+                checked={agreedTermsSubmission}
+                onChange={(e) => setAgreedTermsSubmission(e.target.checked)}
+                className="h-4 w-4"
+              />
+              I agree with term of submission?
+            </label>
+          </div>
+        </FormSection>
+
+        {/* SUBMIT */}
+        <div className="mt-10">
+          <ParchmentButton
+            className="w-full"
+            type="submit"
+            disabled={
+              isSubmitting || !hasReadGuidelines || !agreedTermsSubmission
+            }
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </ParchmentButton>
+        </div>
       </form>
     </section>
   );

@@ -19,7 +19,7 @@ const TestimonialPhotographCard = ({ name, designation, description }) => {
   return (
     <div className="relative flex flex-col lg:flex-row justify-between items-center gap-10 xl:w-[1230px] xl:h-[460px] w-full h-full mx-auto rounded-[20px] border-2 border-[#6E4A27] px-5 xl:px-[80px] py-[20px]">
       {/* Text Block */}
-      <div className="flex flex-col justify-center items-start gap-2 w-fit text-left">
+      <div className="flex flex-col justify-center items-start gap-2 w-fit text-left ">
         <span className=" text-[20px] font-bold font-[Philosopher] text-[#23262F]">
           {name}
         </span>
@@ -33,12 +33,13 @@ const TestimonialPhotographCard = ({ name, designation, description }) => {
       </div>
 
       {/* Right Image Block */}
-
-      <PhotographFeaturedCard
-        overlayImg={card.overlay} // ✅ current card ka overlay
-        title={card.title || "Default Title"} // ✅ dynamic title agar ho
-        description={card.description || "Default description"} // ✅ dynamic desc agar ho
-      />
+      <div className="">
+        <PhotographFeaturedCard
+          overlayImg={card.overlay} // ✅ current card ka overlay
+          title={card.title || "Default Title"} // ✅ dynamic title agar ho
+          description={card.description || "Default description"} // ✅ dynamic desc agar ho
+        />
+      </div>
     </div>
   );
 };
