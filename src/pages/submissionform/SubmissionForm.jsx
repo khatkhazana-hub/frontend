@@ -19,12 +19,12 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         </button>
         {/* Title */}
         <h2
-          className="text-2xl font-bold text-[#4A2C2A] mb-4 text-center"
+          className="text-2xl font-bold text-[#4A2C2A] mb-4 text-center capitalize"
           style={{ fontFamily: "Philosopher, serif" }}
         >
           {title}
         </h2>
-        <div className="text-[#5C4033] leading-relaxed">{children}</div>
+        <div className="text-[#5C4033] leading-relaxed sentence">{children}</div>
       </div>
     </div>
   );
@@ -38,7 +38,7 @@ const SubmissionForm = () => {
   const closeModal = () => setModalData({ open: false, type: null });
 
   return (
-    <main className="container mx-auto px-5 lg:px-8 py-20">
+    <main className="container mx-auto px-5 lg:px-8 py-20 ">
       <div className="flex flex-col justify-center items-center gap-10 text-center">
         <h1 className="text-3xl md:text-[50px] font-['Philosopher',_serif] font-bold text-black">
           How To Submit Your Letter
@@ -79,7 +79,7 @@ const SubmissionForm = () => {
         }
       >
         {modalData.type === "terms" && (
-          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto max-h-[70vh]">
+          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto sentence max-h-[60vh]">
             <p>
               These Terms of Submission (“Terms”) govern the content that you
               (“Contributor,” “You,” or “Your”) submit to longlostletters.com
@@ -187,7 +187,7 @@ const SubmissionForm = () => {
         )}
 
         {modalData.type === "guidelines" && (
-          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto max-h-[70vh]">
+          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto sentence max-h-[60vh]">
             <p>
               Thank you for contributing to our archive of handwritten letters
               and analog photographs. To help us preserve your memories in the
@@ -287,7 +287,7 @@ const SubmissionForm = () => {
 
         {/* Important Notice */}
         {modalData.type === "notice" && (
-          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto max-h-[70vh] capitalize">
+          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto sentence max-h-[60vh]">
             <p>
               For letters, Please include either a{" "}
               <strong>typed/clearly written version</strong> or an{" "}

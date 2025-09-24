@@ -3,6 +3,7 @@ import React from "react";
 
 const RadioGroup = ({
   label,
+  subLabel, // 🔹 new prop
   name,
   options = [],
   value,
@@ -14,10 +15,16 @@ const RadioGroup = ({
 }) => {
   return (
     <div className={`flex flex-col ${wrapperClassName}`}>
+      {/* 🔹 Main Label */}
       {label && (
-        <label className="font-bold text-sm mb-2 capitalize">
+        <label className="font-bold text-sm mb-1 capitalize">
           {label} {required && <span className="text-red-600">*</span>}
         </label>
+      )}
+
+      {/* 🔹 Subheading / SubLabel */}
+      {subLabel && (
+        <p className="text-xs text-gray-500 mb-1 capitalize">{subLabel}</p>
       )}
 
       <div className={`flex flex-wrap gap-6 pt-2 ${className}`}>

@@ -23,15 +23,15 @@ export default function Footer() {
 
   const SUPPORT_INFO = [
     {
-      label: "Email: info@lastlongletter.com",
-      href: "mailto:info@lastlongletter.com",
+      label: "Email: info@LongLostLetter.com",
+      href: "mailto:info@LongLostLetter.com",
     },
     {
-      label: "Location: 123 Main St, City",
-      href: "https://maps.google.com/?q=123 Main St, City",
+      label: "Location: Plano, TX , USA",
+      href: "https://maps.google.com/?q=Plano,TX,USA",
     },
-    { label: "Phone: +123 456 7890", href: "tel:+1234567890" },
-    { label: "Working Hours: Mon–Fri, 9am–6pm" },
+    // { label: "Phone: +123 456 7890", href: "tel:+1234567890" },
+    // { label: "Working Hours: Mon–Fri, 9am–6pm" },
   ];
   const SOCIAL_LINKS = [
     { icon: <FaLinkedinIn />, href: "#", label: "LinkedIn" },
@@ -154,7 +154,7 @@ export default function Footer() {
       {/* 🔹 Bottom: Copyright */}
       <div className="absolute bottom-5 text-center">
         <p className="text-sm ">
-          © {new Date().getFullYear()} Long Last Letter. All rights reserved.
+          © {new Date().getFullYear()} Long Lost Letters. All rights reserved.
         </p>
       </div>
     </footer>

@@ -12,11 +12,13 @@ export default function Navbar() {
 
   // Nav links
   const NAV_LINKS = [
+    { to: "/", label: "Home" },
     { to: "/about", label: "About" },
     { to: "/letters", label: "Letters" },
     { to: "/photographs", label: "Photographs" },
     { to: "/featured", label: "Featured letters & Photographs" },
     { to: "/submission", label: "Submission" },
+    { to: "/contact", label: "Contact" },
     // { to: "/shop", label: "Shop" },
   ];
 
@@ -42,13 +44,13 @@ export default function Navbar() {
           <img
             src="/images/logo.svg"
             alt="Logo"
-            className="h-[60px] w-fit object-fill"
+            className="h-[60px] w-full object-cover cursor-pointer"
           />
         </Link>
 
         {/* CENTER: Desktop nav */}
         <nav
-          className="hidden xl:flex items-center justify-center gap-x-6 flex-1"
+          className="hidden xl:flex items-center justify-center gap-x-6 flex-1 capitalize"
           aria-label="Main"
         >
           {NAV_LINKS.map((link) => (
@@ -61,12 +63,12 @@ export default function Navbar() {
         {/* RIGHT: Contact Us Button + Hamburger */}
         <div className="flex items-center gap-3">
           {/* Contact Us Button */}
-          <Link
+          {/* <Link
             to="/contact"
             className="hidden  bg-[#6E4A27] text-white font-bold px-7 leading-8 py-2 xl:flex justify-center items-center text-center rounded-full transition"
           >
             Contact Us
-          </Link>
+          </Link> */}
 
           {/* Hamburger (mobile right) */}
           <button
@@ -136,13 +138,13 @@ export default function Navbar() {
           ))}
 
           {/* Contact Us button in mobile menu */}
-          <Link
+          {/* <Link
             to="/contact"
             onClick={() => setMenuOpen(false)}
             className="mt-4 block text-center bg-[#6E4A27] text-white font-medium px-7 leading-8 py-1  rounded-full"
           >
             Contact Us
-          </Link>
+          </Link> */}
           <Link
             to="/contact"
             className="hidden  bg-[#6E4A27] text-white font-bold px-7 leading-8 py-2 xl:flex justify-center items-center text-center rounded-full transition"

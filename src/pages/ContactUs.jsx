@@ -4,6 +4,7 @@ import EmailOrPhone from "../components/InnerComponents/EmailOrPhone";
 import { FaFacebook, FaInstagramSquare, FaTwitter } from "react-icons/fa";
 import { RiInstagramFill } from "react-icons/ri";
 import HeadingDesc from "../components/InnerComponents/HeadingDesc";
+import ParchmentButton from "@/components/InnerComponents/ParchmentButton";
 
 export default function ContactUs() {
   return (
@@ -21,9 +22,9 @@ export default function ContactUs() {
         description={undefined}
       />
 
-      <section className="flex flex-col-reverse xl:flex-row w-full max-w-[1200px] rounded-[16px] p-5 lg:p-10 overflow-hidden shadow-2xl shadow-black/20 bg-[#FFE1B8]/50">
+      <section className="flex flex-col-reverse xl:flex-row w-full max-w-5xl p-5 lg:p-10 overflow-hidden rounded-2xl shadow-2xl border border-[#8B4513]/30">
         {/* LEFT: How to Contact Us */}
-        <div
+        {/* <div
           className="relative flex flex-col justify-center items-center lg:py-8 lg:bg-contain bg-no-repeat bg-center w-full h-[700px] object-cover  md:w-[500px] "
           style={{ backgroundImage: "url('/images/Union.webp')" }}
         >
@@ -65,7 +66,7 @@ export default function ContactUs() {
               </div>
             </div>
 
-            {/* Social Icons */}
+           
             <div className="flex gap-4  mt-10 text-3xl">
               <a
                 href="https://instagram.com"
@@ -94,7 +95,7 @@ export default function ContactUs() {
               </a>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* RIGHT: Form */}
         <form className="flex-1 p-6 xl:p-10 backdrop-blur-md text-left">
@@ -112,14 +113,14 @@ export default function ContactUs() {
 
           {/* Row 3 */}
           <div className="grid md:grid-cols-3 gap-3 mt-3">
-            <Field label="City" required />
-            <Field label="State" required />
+            <Field label="City" />
+            <Field label="State" />
             <Field label="Zip" />
           </div>
 
           {/* Address */}
           <div className="mt-3">
-            <Field label="Address" required />
+            <Field label="Address" />
           </div>
 
           {/* Message */}
@@ -150,12 +151,9 @@ export default function ContactUs() {
 
           {/* Button */}
           <div className="mt-4">
-            <button
-              type="submit"
-              className="w-full h-[50px] rounded-[10px] bg-[#5a3c1e] text-white text-[14px] px-[20px] py-[10px] shadow-md hover:bg-[#3f2b15] transition cursor-pointer"
-            >
+            <ParchmentButton className="w-full" type="submit">
               Send Message
-            </button>
+            </ParchmentButton>
           </div>
         </form>
       </section>

@@ -19,8 +19,8 @@ export default function FeaturedCards({ items = [], loading = false, error = "" 
         modules={[Pagination, Navigation]}
         spaceBetween={20}
         slidesPerView={1}
-        pagination={{ clickable: true }}
-        navigation
+        // pagination={{ clickable: true }}
+        // navigation
         breakpoints={{
           320: { slidesPerView: 1 },
           640: { slidesPerView: 2 },
@@ -39,7 +39,7 @@ export default function FeaturedCards({ items = [], loading = false, error = "" 
           const to = `/letters/${lang}/${id}`;
 
           return (
-            <SwiperSlide key={r._id} className="flex justify-start">
+            <SwiperSlide key={r._id} className="flex justify-start ">
               <LetterCard to={to} overlay={overlay} title={title} description={description} />
             </SwiperSlide>
           );

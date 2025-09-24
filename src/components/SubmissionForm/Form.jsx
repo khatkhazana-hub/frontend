@@ -7,6 +7,7 @@ import RadioGroup from "./RadioGroup";
 import FileInput from "./FileInput";
 import DropdownField from "./DropdownField";
 import api from "@/utils/api";
+import ParchmentButton from "../InnerComponents/ParchmentButton";
 
 export default function Form() {
   // States
@@ -110,7 +111,8 @@ export default function Form() {
             <InputField label="Phone" name="phone" />
             <InputField label="Current Location" name="location" />
             <RadioGroup
-              label="I have read the submission guidelines?"
+              label="Have you read the submission guidelines?"
+              subLabel="If yes, please select 'Yes'. If not, please read first."
               name="guidelines"
               required
               value={hasReadGuidelines ? "Yes" : "No"}
@@ -121,7 +123,8 @@ export default function Form() {
               ]}
             />
             <RadioGroup
-              label="I agree with term of submission?"
+              label="Have you read the term of submission?"
+              subLabel="If yes, please select 'Yes'. If not, please read first."
               name="termsSubmission"
               required
               value={agreedTermsSubmission ? "Yes" : "No"}
@@ -159,12 +162,12 @@ export default function Form() {
               <>
                 <FormSection title="Letter Information">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
-                    <InputField
+                    {/* <InputField
                       label="Title"
                       name="Title"
                       type="text"
                       required
-                    />
+                    /> */}
                     <DropdownField
                       label="Category"
                       name="letterCategory"
@@ -196,7 +199,7 @@ export default function Form() {
                     <FileInput
                       label="Upload"
                       name="letterImage"
-                      subtext="Hi Res Jpegs only. 10” width scanned in 300 DPI (Max 5MB)"
+                      subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
                       required
                       previewType="image"
                     />
@@ -263,7 +266,7 @@ export default function Form() {
                           letterNarrativeFormat === "both") && (
                           <FileInput
                             name="letterAudioFile"
-                            subtext="Only MP3 Format (Max 5MB)"
+                            subtext="Accepted formats: MP3, WAV, or AAC."
                             previewType="audio" // 👈 sirf audio upload + audio preview
                             className="mt-5"
                             label="Audio"
@@ -274,13 +277,13 @@ export default function Form() {
                     </div>
                   </div>
 
-                  <InputField
+                  {/* <InputField
                     wrapperClassName="w-full mt-6"
                     className="h-24"
                     label="Narrative (Optional)"
                     name="letterNarrativeOptional"
                     type="textarea"
-                  />
+                  /> */}
                 </FormSection>
               </>
             )}
@@ -303,7 +306,7 @@ export default function Form() {
                     <FileInput
                       label="Upload"
                       name="photoImage"
-                      subtext="Hi Res Jpegs only. 10” width scanned in 300 DPI (Max 5MB)"
+                      subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
                       required
                       previewType="image"
                     />
@@ -316,7 +319,7 @@ export default function Form() {
                     <div className="flex flex-col justify-between w-full">
                       <div className="flex justify-between">
                         <label className="font-bold text-sm block">
-                          Photographs Transcript{" "}
+                          About the Photograph{" "}
                           <span className="text-red-600">*</span>
                         </label>
                         <span className="flex gap-4 text-sm">
@@ -370,7 +373,7 @@ export default function Form() {
                           photoNarrativeFormat === "both") && (
                           <FileInput
                             name="photoAudioFile"
-                            subtext="Only MP3 Format (Max 5MB)"
+                            subtext="Accepted formats: MP3, WAV, or AAC."
                             previewType="audio"
                             className="mt-5"
                             label="Audio"
@@ -380,14 +383,14 @@ export default function Form() {
                       </div>
                     </div>
                   </div>
-
+                  {/* 
                   <InputField
                     wrapperClassName="w-full mt-6"
                     className="h-24"
                     label="Narrative (Optional)"
                     name="photoNarrativeOptional"
                     type="textarea"
-                  />
+                  /> */}
                 </FormSection>
               </>
             )}
@@ -409,7 +412,7 @@ export default function Form() {
             </FormSection>
 
             <div className="mt-10">
-              <button
+              {/* <button
                 type="submit"
                 disabled={isSubmitting}
                 className={`w-full bg-[#6E4A27] text-white font-bold text-lg py-3 px-6 rounded-lg transition-colors duration-300 shadow-lg cursor-pointer ${
@@ -419,7 +422,15 @@ export default function Form() {
                 }`}
               >
                 {isSubmitting ? "Submitting..." : "Submit"}
-              </button>
+              </button> */}
+
+              <ParchmentButton
+                className="w-full"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </ParchmentButton>
             </div>
           </>
         )}

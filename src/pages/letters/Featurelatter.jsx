@@ -27,7 +27,7 @@ const Featurelatter = () => {
   );
 
   return (
-    <div className="flex flex-col justify-center items-start gap-20 lg:py-20 py-10 max-w-[1270px] mx-auto px-5">
+    <div className="flex flex-col justify-center items-start gap-20 lg:py-20 py-10 max-w-[1270px] mx-auto px-5 lg:px-10 xl:px-0">
       {/* Featured Letter (hero) */}
       <div className="flex flex-col items-start justify-center gap-10">
         <h1 className="font-bold text-4xl lg:text-[50px] leading-[130%] capitalize" style={{ fontFamily: "Philosopher" }}>

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useRef, useState } from "react";
 import { X } from "lucide-react"; // ❌ icon (install lucide-react if not already)
+import ParchmentButton from "../InnerComponents/ParchmentButton";
 
 const FileInput = ({
   label,
@@ -82,13 +83,20 @@ const FileInput = ({
         />
 
         {/* Upload Button */}
-        <button
+        {/* <button
           type="button"
           onClick={handleButtonClick}
           className={`bg-[#8B5E3C] whitespace-nowrap text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-[#A17A5D] transition-colors w-max ${className}`}
         >
           Choose File
-        </button>
+        </button> */}
+        <ParchmentButton
+          className="w-fit !text-[14px] !py-2"  
+          type="button"
+          onClick={handleButtonClick}
+        >
+          Choose File
+        </ParchmentButton>
 
         {/* File Name */}
         {fileName && (

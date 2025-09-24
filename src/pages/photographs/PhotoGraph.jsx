@@ -49,7 +49,7 @@ export default function PhotoGraph() {
   return (
     <div className="min-h-screen bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
       <HeadingDesc
-        headingClassName="md:text-[40px] text-center"
+        headingClassName="text-xl md:text-[50px] text-center"
         heading="Photographs"
         containerClassName="mt-6"
       />
@@ -57,14 +57,14 @@ export default function PhotoGraph() {
       {err && <div className="mt-10 text-red-600 text-sm">{err}</div>}
 
       {(loadingRows && !photos.length) ? (
-        <div className="mt-16 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="mt-16 w-full max-w-[1270px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {Array.from({ length: 9 }).map((_, i) => (
             <div key={i} className="h-64 rounded-xl bg-gray-200/60 animate-pulse" />
           ))}
         </div>
       ) : (
         <>
-          <div className="mt-16 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="mt-16 w-full max-w-[1270px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {visibleRows.map((r) => (
               <PhotographCard
                 key={r._id}

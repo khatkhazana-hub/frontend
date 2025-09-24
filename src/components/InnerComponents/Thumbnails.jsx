@@ -38,7 +38,6 @@ const Thumbnails = ({ RelatedImage }) => {
               src={RelatedImage}
               alt="Overlay"
               loading="eager"
-              loading="lazy"
               onError={() => setImageOk(false)}
               className="object-cover group-hover:drop-shadow-xl transition-all duration-300 w-[130px] rounded-sm h-[190px]"
             />

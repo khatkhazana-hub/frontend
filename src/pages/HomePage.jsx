@@ -5,7 +5,7 @@ const Homepage = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="w-full  relative bg-black overflow-hidden">
+    <section className="w-full container relative bg-black overflow-hidden">
       {/* 🔹 Video Section */}
       <video
         className="

@@ -2,10 +2,10 @@
 import React from "react";
 
 function ParchmentButton({
-  children = "Shop Now",
+  children = "",
   onClick,
   className = "",
-  disabled = false,
+  disabled = "",
   type = "button",
 }) {
   return (

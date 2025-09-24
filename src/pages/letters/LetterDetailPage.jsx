@@ -162,11 +162,11 @@ const LetterDetailPage = () => {
           {/* Letter Image + Thumbnails */}
 
           <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6  w-full">
-            <div className="relative flex justify-center lg:w-[70%] xl:w-full">
+            <div className="relative flex justify-center lg:w-[70%] xl:w-full ">
               <img
                 src={heroImage}
                 alt={title || "Letter Image"}
-                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain"
+                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain border-2 border-[#6E4A27]/50 "
               />
               <img
                 src="/images/Vector.webp"
@@ -203,18 +203,22 @@ const LetterDetailPage = () => {
               {/* Narrative text */}
               {letterNarrative && (
                 <>
-                  <h2 className="text-2xl font-bold mb-2">Letter Transcript </h2>
-                  <p className="text-xl leading-10 mb-4">{letterNarrative}</p>
+                  <h2 className="text-2xl font-bold mb-2">
+                    Letter Transcript{" "}
+                  </h2>
+                  <p className="text-xl leading-10 mb-4">
+                    {letterNarrative} <br /> {caption}
+                  </p>
                 </>
               )}
 
               {/* Caption text */}
-              {caption && (
+              {/* {caption && (
                 <>
                   <h2 className="text-2xl font-bold mb-2">Narrative</h2>
                   <p className="text-xl leading-10">{caption}</p>
                 </>
-              )}
+              )} */}
             </div>
           </div>
         </div>

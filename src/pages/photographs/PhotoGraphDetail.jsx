@@ -130,11 +130,11 @@ export default function PhotoGraphDetail() {
       >
         <div className="w-full text-black">
           <div className="flex flex-col lg:flex-row justify-between gap-10 rounded-md">
-            <div className="relative flex justify-center w-full">
+            <div className="relative flex justify-center w-full ">
               <img
                 src={photoSrc}
                 alt={caption}
-                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain"
+                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain border-2 border-[#6E4A27]/50 "
               />
 
               <img
@@ -165,20 +165,20 @@ export default function PhotoGraphDetail() {
                   <>
                     <h2 className="text-2xl font-bold mb-2">Photographs Transcript</h2>
                     <p className="text-xl leading-10 mb-4">
-                      {data.photoNarrative}
+                      {data.photoNarrative} <br/>  {data.photoNarrativeOptional}
                     </p>
                   </>
                 )}
 
                 {/* Photo Narrative Optional */}
-                {data.photoNarrativeOptional && (
+                {/* {data.photoNarrativeOptional && (
                   <>
                     <h3 className="text-2xl font-bold mb-2">Narrative</h3>
                     <p className="text-xl leading-10">
                       {data.photoNarrativeOptional}
                     </p>
                   </>
-                )}
+                )} */}
               </div>
             </div>
           )}

@@ -5,6 +5,7 @@ import HeadingDesc from "../../components/InnerComponents/HeadingDesc";
 import Subcription from "../../components/InnerComponents/Subcription";
 import LetterCard from "../../components/Cards/LetterCard";
 import api from "../../utils/api"; // axios wrapper
+import FilterDropdownCOD from "@/components/Letter/FilterDropdownCOD";
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL;
 const PAGE_SIZE = 12;
@@ -124,82 +125,52 @@ function LettersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 ">
       {/* Heading */}
       <HeadingDesc
-        headingClassName="md:text-[40px] text-center"
+        headingClassName="text-xl md:text-[50px] text-center"
         heading={`${lang} Letters`}
         containerClassName="mt-6"
-        description={`Browse only approved submissions in ${lang}.`}
+        // description={`Browse only approved submissions in ${lang}.`}
       />
 
       {/* Filters */}
-      <div className="w-[90%] max-w-5xl mt-10 md:mt-16 flex flex-col md:flex-row justify-between items-end gap-5 lg:gap-5">
+      <div className="w-[90%] max-w-[1270px] mt-10 md:mt-16 flex flex-col md:flex-row justify-between items-end gap-5 lg:gap-5">
         {/* By Category */}
-        <div className="flex flex-col w-full text-left">
-          <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
-            By Category
-          </span>
-          <select
-            value={categoryQ}
-            onChange={(e) => {
-              setCategoryQ(e.target.value);
-              setVisibleCount(PAGE_SIZE);
-            }}
-            className="border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm text-sm text-[#704214] focus:outline-none"
-          >
-            <option value="">All categories</option>
-            {categories.map((c) => (
-              <option key={c._id} value={c.slug}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterDropdownCOD
+          label="By Category"
+          value={categoryQ}
+          onChange={(e) => {
+            setCategoryQ(e.target.value);
+            setVisibleCount(PAGE_SIZE);
+          }}
+          placeholder="All categories"
+          options={categories.map((c) => ({ value: c.slug, label: c.name }))}
+        />
 
         {/* By Owner */}
-        <div className="flex flex-col w-full text-left">
-          <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
-            By Owner's Name
-          </span>
-          <select
-            value={ownerQ}
-            onChange={(e) => {
-              setOwnerQ(e.target.value);
-              setVisibleCount(PAGE_SIZE);
-            }}
-            className="border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm text-sm text-[#704214] focus:outline-none"
-          >
-            <option value="">All owners</option>
-            {owners.map((o, i) => (
-              <option key={i} value={o}>
-                {o}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterDropdownCOD
+          label="By Owner's Name"
+          value={ownerQ}
+          onChange={(e) => {
+            setOwnerQ(e.target.value);
+            setVisibleCount(PAGE_SIZE);
+          }}
+          placeholder="All owners"
+          options={owners.map((o) => ({ value: o, label: o }))}
+        />
 
         {/* By Decade */}
-        <div className="flex flex-col w-full text-left">
-          <span className="text-lg font-semibold text-[#704214] hover:text-black mb-2">
-            By Decade
-          </span>
-          <select
-            value={decadeQ}
-            onChange={(e) => {
-              setDecadeQ(e.target.value);
-              setVisibleCount(PAGE_SIZE);
-            }}
-            className="border-2 border-[#704214] rounded-full px-4 py-2 bg-white/20 backdrop-blur-sm text-sm text-[#704214] focus:outline-none"
-          >
-            <option value="">All decades</option>
-            {decadeOptions.map((d, i) => (
-              <option key={i} value={d.value}>
-                {d.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterDropdownCOD
+          label="By Decade"
+          value={decadeQ}
+          onChange={(e) => {
+            setDecadeQ(e.target.value);
+            setVisibleCount(PAGE_SIZE);
+          }}
+          placeholder="All decades"
+          options={decadeOptions}
+        />
 
         {/* Clear Filters Button */}
         <div className="flex items-end justify-end w-fit">
@@ -215,7 +186,6 @@ function LettersPage() {
             Clear Filters
           </button>
         </div>
-
       </div>
 
       {/* Loading / Error / Empty */}
@@ -235,7 +205,7 @@ function LettersPage() {
 
       {/* Cards */}
       {!loading && !error && filtered.length > 0 && (
-        <div className="mt-8 w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+        <div className="mt-8 w-full max-w-[1270px] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
           {visible.map((item, i) => {
             const img =
               (item.letterImage && fileUrl(item.letterImage.path)) ||
