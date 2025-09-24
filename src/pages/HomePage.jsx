@@ -6,21 +6,21 @@ const Homepage = () => {
 
   return (
     <>
-<div className="relative flex flex-col items-center justify-center min-h-screen capitalize bg-gradient-to-b from-[#d9a46e] to-[#f6d0aa] text-white overflow-hidden">
+<div className="relative flex flex-col items-center justify-center min-h-screen capitalize bg-[#6E4A27] text-white overflow-hidden">
   {/* Glowing background accents */}
-  <div className="absolute w-96 h-96 bg-[#6E4A27]/50 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
-  <div className="absolute w-96 h-96 bg-[#6E4A27]/50 rounded-full blur-3xl bottom-10 right-10 animate-pulse"></div>
+  <div className="absolute w-96 h-96 bg-white/10 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
+  <div className="absolute w-96 h-96 bg-white/10 rounded-full blur-3xl bottom-10 right-10 animate-pulse"></div>
 
   {/* Subtle Stars */}
-  <div className="absolute w-[10px] h-[10px] bg-[#6E4A27]/50 rounded-full top-1/3 left-1/4 animate-pulse"></div>
-  <div className="absolute w-[5px] h-[5px] bg-[#6E4A27]/50 rounded-full top-1/2 left-2/3 animate-ping"></div>
-  <div className="absolute w-[5px] h-[5px] bg-[#6E4A27]/50 rounded-full bottom-1/3 right-1/5 animate-pulse"></div>
+  <div className="absolute w-[10px] h-[10px] bg-white rounded-full top-1/3 left-1/4 animate-pulse"></div>
+  <div className="absolute w-[5px] h-[5px] bg-white rounded-full top-1/2 left-2/3 animate-ping"></div>
+  <div className="absolute w-[5px] h-[5px] bg-white rounded-full bottom-1/3 right-1/5 animate-pulse"></div>
 
   {/* Icon */}
   <div className="relative w-28 h-28 mb-8">
-    <div className="absolute inset-0 bg-[#6E4A27]/30 rounded-full animate-ping"></div>
-    <div className="relative w-28 h-28 bg-white/5 rounded-full flex items-center justify-center shadow-xl backdrop-blur-md border border-[#6E4A27]/40">
-      <span className="text-6xl text-[#6E4A27]">📜</span>
+    <div className="absolute inset-0 bg-white/10 rounded-full animate-ping"></div>
+    <div className="relative w-28 h-28 bg-white/5 rounded-full flex items-center justify-center shadow-xl backdrop-blur-md border border-white">
+      <span className="text-6xl ">📜</span>
     </div>
   </div>
 
@@ -37,7 +37,7 @@ const Homepage = () => {
     className="text-3xl md:text-5xl font-extrabold mb-6 text-center drop-shadow-xl"
     style={{ fontFamily: 'philosopher' }}
   >
-    Coming <span className="text-[#6E4A27]">Soon</span>
+    Coming <span className="">Soon</span>
   </h2>
 
   {/* Subtitle */}
@@ -46,13 +46,13 @@ const Homepage = () => {
     style={{ fontFamily: 'philosopher' }}
   >
     Letters from the past, feelings for the future.  
-    We’re preparing something <span className="font-bold text-[#6E4A27]">special</span> for you.
+    We’re preparing something <span className="font-bold ">special</span> for you.
   </p>
 
   {/* Animated Loader */}
   <div className="relative mt-14">
-    <div className="w-20 h-20 border-4 border-[#6E4A27] border-t-transparent rounded-full animate-spin"></div>
-    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-[#6E4A27] text-sm tracking-widest uppercase">
+    <div className="w-20 h-20 border-4 border-t-transparent rounded-full animate-spin"></div>
+    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-sm tracking-widest uppercase">
       Loading Magic…
     </span>
   </div>
