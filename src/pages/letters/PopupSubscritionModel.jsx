@@ -39,12 +39,12 @@ const PopupSubscritionModel = ({ onSubscribe }) => {
       className="flex flex-col items-center gap-5 w-full"
     >
       <img
-        src="/images/Vector.webp"
+        src="/images/logo.svg"
         alt="Watermark"
         className="w-fit h-[200px] object-cover"
       />
 
-      <h2 className="text-xl font-bold text-center">
+      <h2 className="text-xl font-bold text-center text-[#6E4A27]">
         Subscribe to receive featured letters or photographs delivered to your
         inbox every month.
       </h2>

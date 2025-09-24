@@ -36,7 +36,7 @@ const PhotographCard = ({
 
             {/* Watermark on top of image */}
             <img
-              src="/images/Vector.webp"
+              src="/images/logo.png"
               alt="Watermark"
               className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[100px] h-[100px] opacity-20 object-cover pointer-events-none select-none z-20"
             />

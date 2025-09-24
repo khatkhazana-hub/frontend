@@ -169,7 +169,7 @@ const LetterDetailPage = () => {
                 className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain border-2 border-[#6E4A27]/50 "
               />
               <img
-                src="/images/Vector.webp"
+                src="/images/logo.png"
                 alt="Watermark"
                 className="absolute top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
               />

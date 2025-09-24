@@ -63,9 +63,9 @@ const Featurelatter = () => {
       )}
 
       {/* Featured Letter (hero) */}
-      <div className="flex flex-col items-start justify-center gap-10 w-full">
+      <div className="flex flex-col items-start justify-center  gap-10 w-full">
         <h1
-          className="font-bold text-4xl lg:text-[50px] leading-[130%] capitalize"
+          className="font-bold text-4xl lg:text-[40px]  capitalize"
           style={{ fontFamily: "Philosopher" }}
         >
           Featured Letter
@@ -82,7 +82,7 @@ const Featurelatter = () => {
       <div className="flex flex-col gap-[50px] w-full">
         <div className="flex justify-between items-start lg:items-center w-full">
           <h1
-            className="font-bold text-left text-2xl lg:text-[50px]  capitalize"
+            className="font-bold text-left text-2xl lg:text-[40px]  capitalize"
             style={{ fontFamily: "Philosopher" }}
           >
             Featured Letters
@@ -101,7 +101,7 @@ const Featurelatter = () => {
       {/* Featured Photograph (hero) */}
       <div className="flex flex-col items-start justify-center gap-10 w-full">
         <h1
-          className="font-bold text-4xl lg:text-[50px] capitalize"
+          className="font-bold text-4xl lg:text-[40px] capitalize"
           style={{ fontFamily: "Philosopher" }}
         >
           Featured Photograph
@@ -117,7 +117,7 @@ const Featurelatter = () => {
       <div className="flex flex-col gap-[50px] w-full">
         <div className="flex justify-between items-start lg:items-center w-full">
           <h1
-            className="font-bold text-left text-2xl lg:text-[50px] capitalize"
+            className="font-bold text-left text-2xl lg:text-[40px] capitalize"
             style={{ fontFamily: "Philosopher" }}
           >
             Featured photographs

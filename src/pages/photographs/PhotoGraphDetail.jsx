@@ -138,7 +138,7 @@ export default function PhotoGraphDetail() {
               />
 
               <img
-                src="/images/Vector.webp"
+                src="/images/logo.png"
                 alt="Watermark"
                 className="absolute top-40 left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
               />

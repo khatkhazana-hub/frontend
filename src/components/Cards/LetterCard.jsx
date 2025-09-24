@@ -27,7 +27,7 @@ const LetterCard = ({ to, overlay, title, description, className }) => {
             className="object-fill group-hover:shadow-2xl shadow-black/50 transition-all duration-300 w-[200px] rounded-sm h-[250px]"
           />
           <img
-            src="/images/Vector.webp"
+            src="/images/logo.png"
             alt="Watermark"
             className="absolute top-20 left-[100px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
           />

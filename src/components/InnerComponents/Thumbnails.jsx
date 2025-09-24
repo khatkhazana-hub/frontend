@@ -44,7 +44,7 @@ const Thumbnails = ({ RelatedImage }) => {
 
             {/* ✅ Watermark Image (Full Overlay Area) */}
             <img
-              src="/images/Vector.webp"
+              src="/images/logo.png"
               alt="Watermark"
               className="
             absolute 
