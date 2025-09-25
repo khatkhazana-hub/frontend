@@ -121,7 +121,7 @@ function Aboutus() {
       {/* ✅ Lightbox Modal */}
       {selectedIndex !== null && (
         <div
-          className="fixed inset-0 backdrop-blur-sm bg-black/50 flex justify-center items-center z-[999]"
+          className="fixed inset-0 backdrop-blur-sm bg-black/80 flex justify-center items-center z-[999]"
           ref={containerRef}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}

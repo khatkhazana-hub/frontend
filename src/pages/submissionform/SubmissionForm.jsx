@@ -8,7 +8,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0  px-5 lg:px-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0  px-5 lg:px-0 z-[999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <div className="bg-[#F7DBB9] rounded-lg max-w-2xl w-full p-8 relative ">
         {/* Close Button */}
         <button
@@ -24,7 +24,9 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         >
           {title}
         </h2>
-        <div className="text-[#5C4033] leading-relaxed sentence overflow-auto max-h-[80%] ">{children}</div>
+        <div className="text-[#5C4033] leading-relaxed sentence overflow-auto max-h-[80%] ">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -88,25 +90,25 @@ const SubmissionForm = () => {
             </p>
 
             <p>
-              <strong>1. Eligibility:</strong> You affirm that You are at least
+              <strong>1. Eligibility:</strong> You affirm that you are at least
               18 years of age (or have the consent of a parent/guardian if under
-              18) and that You have full legal capacity to enter into this
+              18) and that you have full legal capacity to enter into this
               agreement.
             </p>
 
             <p>
               <strong>2. Ownership and Rights:</strong> You agree and warrant
-              that You are the owner of the handwritten letter(s),
+              that you are the owner of the handwritten letter(s),
               photograph(s), audio file(s), transcript(s), description(s), or
-              any other material You submit (collectively, “Content”). You
-              further warrant that Your submission does not infringe upon the
+              any other material you submit (collectively, “content”). You
+              further warrant that your submission does not infringe upon the
               rights of any third party, including intellectual property,
-              privacy, or publicity rights. By submitting Content, You grant
+              privacy, or publicity rights. By submitting content, you grant
               longlostletters.com a non-exclusive, royalty-free, worldwide,
               perpetual license to reproduce, publish, display, distribute,
-              archive, and otherwise use the Content on any platform, including
-              but not limited to Our website, social media channels, and print
-              materials. You retain ownership of Your Content but authorize Us
+              archive, and otherwise use the content on any platform, including
+              but not limited to our website, social media channels, and print
+              materials. You retain ownership of your content but authorize us
               to use it as described above without the need for additional
               consent or compensation.
             </p>
@@ -114,50 +116,50 @@ const SubmissionForm = () => {
             <p>
               <strong>3. Right to Reject Submissions:</strong> We reserve the
               right to reject, remove, or decline to publish any submission for
-              any reason whatsoever, at Our sole discretion. By submitting
-              Content, You expressly agree that You have no right to challenge,
-              dispute, or contest Our decision to accept or reject Your
+              any reason whatsoever, at our sole discretion. By submitting
+              content, you expressly agree that you have no right to challenge,
+              dispute, or contest our decision to accept or reject your
               submission.
             </p>
 
             <p>
-              <strong>4. Limitation of Liability:</strong> Once Content is
-              published on Our platform(s), We cannot control or prevent third
+              <strong>4. Limitation of Liability:</strong> Once content is
+              published on our platform(s), we cannot control or prevent third
               parties from copying, downloading, misusing, or distributing it
-              elsewhere. By submitting Content, You agree that
+              elsewhere. By submitting content, you agree that
               longlostletters.com, its affiliates, and representatives cannot be
               held responsible or liable for any unauthorized use, reproduction,
-              or distribution of Your Content by third parties.
+              or distribution of your content by third parties.
             </p>
 
             <p>
-              <strong>5. Prohibited Content:</strong> You may not submit Content
-              that includes or promotes: Material directed against any religion,
+              <strong>5. Prohibited Content:</strong> You may not submit content
+              that includes or promotes: material directed against any religion,
               sect, political party, organization, or individual. Nudity,
               vulgarity, obscenity, or offensive material. Any unlawful,
               defamatory, harassing, discriminatory, or otherwise inappropriate
               material. Submissions violating these standards may be removed at
-              Our sole discretion without notice.
+              our sole discretion without notice.
             </p>
 
             <p>
-              <strong>6. Editorial Rights:</strong> We reserve the right, at Our
+              <strong>6. Editorial Rights:</strong> We reserve the right, at our
               sole discretion, to review, format, reject, or remove any
               submission, in whole or in part, at any time.
             </p>
 
             <p>
               <strong>No Compensation:</strong> Unless explicitly agreed in
-              writing: You will not be entitled to any financial or other
-              compensation for Your submissions.
+              writing: you will not be entitled to any financial or other
+              compensation for your submissions.
             </p>
 
             <p>
               <strong>7. Privacy and Personal Information:</strong> Do not
               include personal, sensitive, or confidential information (such as
-              phone numbers, or financial data) in Your submissions. You
+              phone numbers, or financial data) in your submissions. You
               understand that any personal information voluntarily included in
-              Your Content is shared publicly at Your own risk.
+              your content is shared publicly at your own risk.
             </p>
 
             <p>
@@ -166,20 +168,20 @@ const SubmissionForm = () => {
               affiliates, and their respective officers, employees, and agents
               from and against any and all claims, liabilities, damages, losses,
               or expenses (including reasonable attorneys’ fees) arising out of
-              or in connection with Your submission or breach of these Terms.
+              or in connection with your submission or breach of these terms.
             </p>
 
             <p>
-              <strong>9. Governing Law and Jurisdiction:</strong> These Terms
+              <strong>9. Governing Law and Jurisdiction:</strong> These terms
               shall be governed by and construed in accordance with the laws of
-              United States of America. Any disputes arising under or in
-              connection with these Terms shall be subject to the exclusive
+              the United States of America. Any disputes arising under or in
+              connection with these terms shall be subject to the exclusive
               jurisdiction of the courts located in Plano, TX 75074.
             </p>
 
             <p>
               <strong>10. Changes to Terms:</strong> We reserve the right to
-              update or modify these Terms at any time without prior notice. The
+              update or modify these terms at any time without prior notice. The
               updated version will be posted on this page and will apply to all
               future submissions.
             </p>
@@ -211,12 +213,17 @@ const SubmissionForm = () => {
 
             <h3 className="text-xl font-bold mt-4">2. Photographs</h3>
             <ul className="list-disc pl-5 space-y-1">
-              <li>Resolution must be at least 1200 x 1800 pixels (300 DPI).</li>
+              <li>
+                Resolution must be at least{" "}
+                <strong>1200 x 1800 pixels (300 dpi)</strong>.
+              </li>
               <li>
                 Images should be sharp, in focus, and free from heavy blur or
                 pixelation.
               </li>
-              <li>Accepted file formats: JPEG, PNG, or TIFF.</li>
+              <li>
+                Accepted file formats: <strong>JPEG, PNG, or TIFF.</strong>
+              </li>
               <li>
                 If scanning, please clean the scanner glass to prevent smudges
                 or dust marks.
@@ -228,29 +235,35 @@ const SubmissionForm = () => {
             </ul>
 
             <h3 className="text-xl font-bold mt-4">
-              3. Audio Recordings (Optional)
+              3. Audio recordings (optional)
             </h3>
             <ul className="list-disc pl-5 space-y-1">
               <li>
                 You may submit an audio file of your letter being read aloud or
                 a short background story about the photograph/letter.
               </li>
-              <li>Accepted formats: MP3, WAV, or AAC.</li>
+              <li>
+                Accepted formats: <strong>MP3, WAV, or AAC.</strong>
+              </li>
               <li>Ensure recordings are clear and audible.</li>
             </ul>
 
-            <h3 className="text-xl font-bold mt-4">4. File Naming</h3>
+            <h3 className="text-xl font-bold mt-4">4. File naming</h3>
             <ul className="list-disc pl-5 space-y-1">
               <li>
                 To help us organize the archive, please name your files in a
                 clear and descriptive way, for example:
               </li>
-              <li className="ml-5 list-[circle]">Letter_Grandfather_1965</li>
-              <li className="ml-5 list-[circle]">Photo_Wedding_1972</li>
+              <li className="ml-5 list-[circle]">
+                <strong>Letter_Grandfather_1965</strong>
+              </li>
+              <li className="ml-5 list-[circle]">
+                <strong>Photo_Wedding_1972</strong>
+              </li>
             </ul>
 
             <h3 className="text-xl font-bold mt-4">
-              5. Additional Information (Optional but Encouraged)
+              5. Additional information (optional but encouraged)
             </h3>
             <ul className="list-disc pl-5 space-y-1">
               <li>Date or approximate year</li>
@@ -260,18 +273,21 @@ const SubmissionForm = () => {
             </ul>
 
             <h3 className="text-xl font-bold mt-4">
-              6. Quick Checklist Before Submitting
+              6. Quick checklist before submitting
             </h3>
             <ul className="list-disc pl-5 space-y-1">
-              <li>Letters: Full page, legible, no glare or blur</li>
+              <li>Letters: full page, legible, no glare or blur</li>
               <li>
-                Photographs: Minimum 1200 x 1800 px, JPEG/PNG/TIFF, authentic
-                and clear
+                Photographs: minimum{" "}
+                <strong> 1200 x 1800 px, JPEG/PNG/TIFF</strong> , authentic and
+                clear
               </li>
-              <li> Audio: MP3/WAV/AAC, clear recordings (optional)</li>
-              <li> File Naming: Use descriptive names</li>
               <li>
-                Extra Info: Date, place, short description (optional but
+                Audio: <strong>MP3/WAV/AAC</strong>, clear recordings (optional)
+              </li>
+              <li>File naming: use descriptive names</li>
+              <li>
+                Extra info: date, place, short description (optional but
                 helpful)
               </li>
             </ul>
@@ -289,12 +305,13 @@ const SubmissionForm = () => {
         {modalData.type === "notice" && (
           <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto sentence max-h-[60vh]">
             <p>
-              For letters, Please include either a{" "}
+              For letters, please include either a{" "}
               <strong>typed/clearly written version</strong> or an{" "}
               <strong>audio recording</strong> of the text. Submissions without
-              one of these may be <strong>Rejected if the </strong>
-              <strong>Handwriting is not legible</strong> . Adding one ensures
-              your contribution can be properly preserved and shared.
+              one of these may be{" "}
+              <strong>rejected if the handwriting is not legible</strong>.
+              Adding one ensures your contribution can be properly preserved and
+              shared.
             </p>
           </div>
         )}

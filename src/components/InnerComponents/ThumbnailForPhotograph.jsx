@@ -38,7 +38,7 @@ const ThumbnailForPhotograph = ({ RelatedImage }) => {
 
       {/* Modal / Popup */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999]">
           <button
             onClick={handleClose}
             className="absolute top-5 right-5 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow cursor-pointer"

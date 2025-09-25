@@ -1,8 +1,4 @@
 import React from "react";
-import ContactDetail from "../components/InnerComponents/ContactDetail";
-import EmailOrPhone from "../components/InnerComponents/EmailOrPhone";
-import { FaFacebook, FaInstagramSquare, FaTwitter } from "react-icons/fa";
-import { RiInstagramFill } from "react-icons/ri";
 import HeadingDesc from "../components/InnerComponents/HeadingDesc";
 import ParchmentButton from "@/components/InnerComponents/ParchmentButton";
 
@@ -107,30 +103,29 @@ export default function ContactUs() {
 
           {/* Row 2 */}
           <div className="grid md:grid-cols-2 gap-3 mt-3">
-            <Field label="Country" />
             <Field label="Phone" type="tel" />
+            <Field label="Address" />
           </div>
 
           {/* Row 3 */}
-          <div className="grid md:grid-cols-3 gap-3 mt-3">
-            <Field label="City" />
+          <div className="grid md:grid-cols-4 gap-3 mt-3">
+            <Field label="City " />
             <Field label="State" />
+            <Field label="Country" />
             <Field label="Zip" />
           </div>
 
           {/* Address */}
-          <div className="mt-3">
+          {/* <div className="mt-3">
             <Field label="Address (Optional)" />
-          </div>
+          </div> */}
 
           {/* Message */}
           <div className="mt-3">
-            <label className="block text-[13px] font-medium text-black mb-1">
-              Message
-            </label>
+            <label className="font-bold text-sm text-black mb-2">Message</label>
             <textarea
               rows={5}
-              className="w-full rounded-md bg-transparent border border-black/30 px-3 py-2 text-[13px] text-black placeholder-black/50 outline-none focus:ring-2 focus:ring-black/15 focus:border-black/50 shadow-sm"
+              className="border border-[#8B4513]/50 mt-1 text-[#4A2C2A] text-sm rounded-lg focus:ring-[#8B4513] focus:border-[#8B4513] w-full flex justify-start items-start p-2.5 text-start"
             />
           </div>
 
@@ -164,14 +159,14 @@ export default function ContactUs() {
 /** Reusable input field */
 function Field({ label, required, type = "text" }) {
   return (
-    <div>
-      <label className="block text-[13px] font-medium text-black mb-1">
+    <div className="flex flex-col">
+      <label htmlFor={name} className="font-bold text-sm mb-2">
         {label} {required && <span className="text-red-600">*</span>}
       </label>
       <input
         type={type}
         required={required}
-        className="w-full rounded-md bg-transparent border border-black/30 px-3 py-2 text-[13px] text-black placeholder-black/50 outline-none focus:ring-2 focus:ring-black/15 focus:border-black/50 shadow-sm"
+        className="border border-[#8B4513]/50 text-[#4A2C2A] text-sm rounded-lg focus:ring-[#8B4513] focus:border-[#8B4513] w-full flex justify-start items-start p-2.5 text-start "
       />
     </div>
   );

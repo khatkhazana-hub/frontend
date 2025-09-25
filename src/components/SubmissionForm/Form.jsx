@@ -31,12 +31,17 @@ export default function Form() {
 
   const handleUploadTypeChange = (e) => setUploadType(e.target.value);
 
-  const decadeOptions = Array.from({ length: 10 }, (_, i) => {
-    const start = 1900 + i * 10;
-    const end = start + 10;
-    return { value: `${start}-${end}`, label: `${start} - ${end}` };
-  });
+  // Pehle apni decade list banayen
+  const decadeOptions = [
+    { value: "unknown", label: "Unknown" }, // akhri option
+    { value: "before-1900", label: "Before 1900" }, // pehla option
 
+    ...Array.from({ length: 10 }, (_, i) => {
+      const start = 1900 + i * 10;
+      const end = start + 10;
+      return { value: `${start}-${end}`, label: `${start} - ${end}` };
+    }),
+  ];
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -184,9 +189,9 @@ export default function Form() {
             <FormSection>
               <div className="flex flex-col md:flex-row justify-between gap-3">
                 <div className="flex flex-col justify-between w-full">
-                  <div className="flex justify-between">
+                  <div className="flex w-1/2 justify-between">
                     <label className="font-bold text-sm block">
-                      Letter Transcript
+                      Letter Transcript (Optional)
                     </label>
                     <span className="flex gap-4 text-sm">
                       <label className="flex items-center gap-2">
@@ -240,7 +245,7 @@ export default function Form() {
                         name="letterAudioFile"
                         subtext="Accepted formats: MP3, WAV, or AAC."
                         previewType="audio"
-                        className="mt-5"
+                        wrapperClassName="w-full mt-4"
                         label="Audio"
                       />
                     )}
@@ -277,9 +282,9 @@ export default function Form() {
             <FormSection>
               <div className="flex flex-col md:flex-row justify-between gap-3">
                 <div className="flex flex-col justify-between w-full">
-                  <div className="flex justify-between">
+                  <div className="flex w-1/2 justify-between">
                     <label className="font-bold text-sm block">
-                      About the Photograph{" "}
+                      About the Photograph (Optional)
                     </label>
                     <span className="flex gap-4 text-sm">
                       <label className="flex items-center gap-2">
@@ -333,7 +338,7 @@ export default function Form() {
                         name="photoAudioFile"
                         subtext="Accepted formats: MP3, WAV, or AAC."
                         previewType="audio"
-                        className="mt-5"
+                         wrapperClassName="w-full mt-4"
                         label="Audio"
                       />
                     )}

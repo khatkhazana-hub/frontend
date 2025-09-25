@@ -24,11 +24,16 @@ function LettersPage() {
   const [ownerQ, setOwnerQ] = useState(""); // fullName
   const [decadeQ, setDecadeQ] = useState(""); // decade
 
-  const decadeOptions = Array.from({ length: 10 }, (_, i) => {
-    const start = 1900 + i * 10;
-    const end = start + 10;
-    return { value: `${start}-${end}`, label: `${start} - ${end}` };
-  });
+  const decadeOptions = [
+    { value: "unknown", label: "Unknown" }, // akhri option
+    { value: "before-1900", label: "Before 1900" }, // pehla option
+
+    ...Array.from({ length: 10 }, (_, i) => {
+      const start = 1900 + i * 10;
+      const end = start + 10;
+      return { value: `${start}-${end}`, label: `${start} - ${end}` };
+    }),
+  ];
 
   // ⬅️ naya effect add kiya: jab bhi lang change ho, page top se show kare
   useEffect(() => {
