@@ -121,7 +121,7 @@ function Aboutus() {
       {/* ✅ Lightbox Modal */}
       {selectedIndex !== null && (
         <div
-          className="fixed inset-0 backdrop-blur-sm lg:pt-10 bg-black/50 flex justify-center items-center z-50"
+          className="fixed inset-0 backdrop-blur-sm bg-black/50 flex justify-center items-center z-[999]"
           ref={containerRef}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -129,10 +129,10 @@ function Aboutus() {
         >
           {/* Close Button */}
           <button
-            className="absolute top-24 right-5 text-white text-3xl cursor-pointer"
+            className="absolute top-5 right-5 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow cursor-pointer"
             onClick={handleClose}
           >
-            <FaTimes />
+            ✕
           </button>
 
           {/* Left Arrow */}

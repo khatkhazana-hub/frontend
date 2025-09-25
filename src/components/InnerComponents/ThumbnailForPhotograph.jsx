@@ -38,28 +38,20 @@ const ThumbnailForPhotograph = ({ RelatedImage }) => {
 
       {/* Modal / Popup */}
       {isOpen && (
-        <div
-          className="fixed inset-0  backdrop-blur-sm bg-black/50 flex items-center justify-center z-50"
-          onClick={handleClose}
-        >
-          <div
-            className="relative rounded-lg overflow-hidden max-w-[70vw] md:h-[80%] mx-auto"
-            onClick={(e) => e.stopPropagation()}
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
+          <button
+            onClick={handleClose}
+            className="absolute top-5 right-5 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow cursor-pointer"
           >
-            <img
-              src={RelatedImage}
-              alt="Related photograph (full view)"
-              className="w-full h-full object-fill"
-              onError={() => setImageOk(false)}
-            />
+            ✕
+          </button>
 
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 w-8 h-8 cursor-pointer bg-white rounded-full flex items-center justify-center text-black text-lg font-bold hover:bg-gray-200"
-            >
-              ✕
-            </button>
-          </div>
+          <img
+            src={RelatedImage}
+            alt="Related photograph (full view)"
+            className="max-h-[70%] max-w-[70%] object-contain rounded-lg"
+            onError={() => setImageOk(false)}
+          />
         </div>
       )}
     </>

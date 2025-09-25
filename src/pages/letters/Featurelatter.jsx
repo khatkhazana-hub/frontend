@@ -44,7 +44,7 @@ const Featurelatter = () => {
     <div className="flex flex-col justify-center items-start gap-20 lg:py-20 py-10 max-w-[1270px] mx-auto px-5 ">
       {/* ✅ Subscription Popup */}
       {showPopup && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-50 ">
+        <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-[999] ">
           <div className="bg-[#FFE1B8] rounded-lg shadow-lg p-10 max-w-md w-full relative mx-4">
             <button
               onClick={() => setShowPopup(false)}

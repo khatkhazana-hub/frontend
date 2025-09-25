@@ -8,8 +8,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 pt-10 px-5 lg:px-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-[#F7DBB9] rounded-lg max-w-2xl w-full p-8 relative">
+    <div className="fixed inset-0  px-5 lg:px-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-[#F7DBB9] rounded-lg max-w-2xl w-full p-8 relative ">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -24,7 +24,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         >
           {title}
         </h2>
-        <div className="text-[#5C4033] leading-relaxed sentence">{children}</div>
+        <div className="text-[#5C4033] leading-relaxed sentence overflow-auto max-h-[80%] ">{children}</div>
       </div>
     </div>
   );
@@ -79,7 +79,7 @@ const SubmissionForm = () => {
         }
       >
         {modalData.type === "terms" && (
-          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto sentence max-h-[60vh]">
+          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto sentence max-h-[60vh] ">
             <p>
               These Terms of Submission (“Terms”) govern the content that you
               (“Contributor,” “You,” or “Your”) submit to longlostletters.com

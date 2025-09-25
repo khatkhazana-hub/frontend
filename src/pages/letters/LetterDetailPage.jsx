@@ -16,6 +16,7 @@ const LetterDetailPage = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+  const [isOpen, setIsOpen] = useState(false); // fullscreen modal state
 
   useEffect(() => {
     let alive = true;
@@ -106,9 +107,7 @@ const LetterDetailPage = () => {
     letterImage,
     letterAudioFile,
     photoCaption,
-    photoPlace,
     photoImage,
-    photoAudioFile,
     photoNarrative,
     fullName,
   } = data;
@@ -162,16 +161,33 @@ const LetterDetailPage = () => {
           {/* Letter Image + Thumbnails */}
 
           <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6  w-full">
-            <div className="relative flex justify-center lg:w-[70%] xl:w-full ">
+            <div className="relative flex justify-center lg:w-[70%] xl:w-full">
+              {/* Hero Image */}
               <img
                 src={heroImage}
                 alt={title || "Letter Image"}
-                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain border-2 border-[#6E4A27]/50 "
+                className="rounded-md mx-auto w-[230px] lg:w-[330px] h-[350px] lg:h-[500px] max-h-[500px] object-cover"
               />
+              {/* Fullscreen Icon */}
+              <button
+                onClick={() => setIsOpen(true)}
+                className="absolute lg:top-2 right-2 bg-white/50 hover:bg-white p-2 rounded-full shadow z-30"
+              >
+                <FiMaximize2 className="text-black w-6 h-6" />
+              </button>
+
+              {/* Watermark */}
               <img
                 src="/images/logo.png"
                 alt="Watermark"
-                className="absolute top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
+                className="absolute top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none z-10"
+              />
+
+              {/* Frame – sabse top par */}
+              <img
+                src="/images/DetailPageBorder.webp" // yahan apka frame image path
+                alt="Frame"
+                className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none select-none z-20"
               />
             </div>
 
@@ -183,6 +199,25 @@ const LetterDetailPage = () => {
               }}
             />
           </div>
+
+          {/* Fullscreen Modal */}
+          {isOpen && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
+              {/* Close Button */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute top-5 right-5 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow cursor-pointer"
+              >
+                ✕
+              </button>
+
+              <img
+                src={heroImage}
+                alt={title || "Letter Image"}
+                className="max-h-[70%] max-w-[70%] object-contain rounded-lg"
+              />
+            </div>
+          )}
 
           {/* Letter Audio */}
           {audioSrc && (
