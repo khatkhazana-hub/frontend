@@ -128,7 +128,7 @@ function LettersPage() {
     <div className="min-h-screen bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 ">
       {/* Heading */}
       <HeadingDesc
-        headingClassName="text-xl md:text-[50px] text-center"
+        headingClassName="text-4xl md:text-[50px] text-center"
         heading={`${lang} Letters`}
         containerClassName="mt-6"
         // description={`Browse only approved submissions in ${lang}.`}
