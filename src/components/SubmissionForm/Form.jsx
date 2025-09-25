@@ -186,7 +186,7 @@ export default function Form() {
                 <div className="flex flex-col justify-between w-full">
                   <div className="flex justify-between">
                     <label className="font-bold text-sm block">
-                      Letter Transcript <span className="text-red-600">*</span>
+                      Letter Transcript
                     </label>
                     <span className="flex gap-4 text-sm">
                       <label className="flex items-center gap-2">
@@ -230,7 +230,6 @@ export default function Form() {
                         className="h-24"
                         name="letterNarrative"
                         label="Text"
-                        required
                         type="textarea"
                       />
                     )}
@@ -243,7 +242,6 @@ export default function Form() {
                         previewType="audio"
                         className="mt-5"
                         label="Audio"
-                        required
                       />
                     )}
                   </div>
@@ -282,7 +280,6 @@ export default function Form() {
                   <div className="flex justify-between">
                     <label className="font-bold text-sm block">
                       About the Photograph{" "}
-                      <span className="text-red-600">*</span>
                     </label>
                     <span className="flex gap-4 text-sm">
                       <label className="flex items-center gap-2">
@@ -326,7 +323,6 @@ export default function Form() {
                         className="h-24"
                         name="photoNarrative"
                         label="Text"
-                        required
                         type="textarea"
                       />
                     )}
@@ -339,7 +335,6 @@ export default function Form() {
                         previewType="audio"
                         className="mt-5"
                         label="Audio"
-                        required
                       />
                     )}
                   </div>

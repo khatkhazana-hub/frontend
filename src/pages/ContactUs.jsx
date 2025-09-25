@@ -120,7 +120,7 @@ export default function ContactUs() {
 
           {/* Address */}
           <div className="mt-3">
-            <Field label="Address" />
+            <Field label="Address (Optional)" />
           </div>
 
           {/* Message */}

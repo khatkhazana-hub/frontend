@@ -16,7 +16,7 @@ export default function Navbar() {
     { to: "/about", label: "About" },
     { to: "/letters", label: "Letters" },
     { to: "/photographs", label: "Photographs" },
-    { to: "/featured", label: "Featured letters & Photographs" },
+    { to: "/featured", label: "Featured Letters & Photographs" },
     { to: "/submission", label: "Submission" },
     { to: "/contact", label: "Contact" },
     // { to: "/shop", label: "Shop" },
@@ -27,14 +27,14 @@ export default function Navbar() {
 
   return (
     <header
-      className="sticky top-0 z-[999] bg-no-repeat bg-top"
+      className="sticky top-0 z-[999] bg-no-repeat bg-top "
       style={{
         fontFamily: "Philosopher, sans-serif",
         backgroundImage: "url('/images/navbar-bg.webp')",
         backgroundSize: "100% 100%",
       }}
     >
-      <div className="mx-auto w-full px-5 lg:px-10 xl:px-20 py-2 flex items-center justify-between z-50">
+      <div className="mx-auto w-full px-5 lg:px-10 xl:px-20 py-2 flex items-center justify-between z-50 max-w-[1920px]">
         {/* LEFT: Logo */}
         <Link
           to="/"

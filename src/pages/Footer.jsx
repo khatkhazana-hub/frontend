@@ -18,13 +18,13 @@ export default function Footer() {
   const SUBMISSION_LINKS = [
     { label: "Submit a Letter", href: "/submission" },
     { label: "Submit a Paragraph", href: "/submission" },
-    { label: "Featured letters & Photographs", href: "/featured" },
+    { label: "Featured Letters & Photographs", href: "/featured" },
   ];
 
   const SUPPORT_INFO = [
     {
-      label: "Email: info@LongLostLetter.com",
-      href: "mailto:info@LongLostLetter.com",
+      label: "Email: info@longlostletter.com",
+      href: "mailto:info@longlostletter.com",
     },
     {
       label: "Location: Plano, TX , USA",

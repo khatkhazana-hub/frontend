@@ -19,8 +19,8 @@ const Subcription = () => {
   };
 
   return (
-    <div className="flex justify-center items-end w-full relative mt-32 mb-20">
-      <img src="/images/InkPot.webp" alt="Logo" className="absolute -left-20 lg:-left-32 w-fit h-fit opacity-50 lg:opacity-100" />
+    <div className="flex justify-center items-end w-full relative my-20">
+      {/* <img src="/images/InkPot.webp" alt="Logo" className="absolute -left-20 lg:-left-32 w-fit h-fit opacity-50 lg:opacity-100" /> */}
 
       <div className="flex flex-col justify-center items-center gap-10 ">
       
@@ -32,11 +32,11 @@ const Subcription = () => {
             Subscribe for a Monthly Glimpse Into the Past - One Treasured Letter
             and Photograph, Shared with You Each Month.
           </h2>
-          <img
+          {/* <img
             src="/images/letterBox.webp"
             alt="Logo"
             className="absolute right-0 -top-5  w-fit h-50 opacity-50 lg:opacity-100"
-          />
+          /> */}
         </div>
 
         <form

@@ -96,7 +96,7 @@ function Aboutus() {
           <img
             src="/images/About-header.webp"
             alt="About Khat-Khazana"
-            className="w-full h-[200px] md:h-fit object-cover rounded-xl shadow-lg"
+            className="w-full h-fit md:h-fit object-cover rounded-xl shadow-lg"
           />
         </div>
 
