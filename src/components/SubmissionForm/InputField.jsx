@@ -2,14 +2,19 @@ import React from "react";
 
 const InputField = ({
   label,
-  type = "text", // 👈 agar 'textarea' pass karoge to textarea render hoga
+  type = "text",
   name,
   required = false,
   wrapperClassName = "",
   className = "",
-  ...props // extra props like onChange, value, ref, etc.
+  ...props
 }) => {
   const isTextArea = type === "textarea";
+
+  // sirf digits allow karne ka handler
+  const handleTelInput = (e) => {
+    e.target.value = e.target.value.replace(/\D/g, ""); // \D = non-digits
+  };
 
   return (
     <div className={`flex flex-col ${wrapperClassName}`}>
@@ -31,6 +36,10 @@ const InputField = ({
           name={name}
           type={type}
           required={required}
+          // agar tel hai to sirf number allow karo
+          onInput={type === "tel" ? handleTelInput : undefined}
+          inputMode={type === "tel" ? "numeric" : undefined} // mobile keyboard number wala
+          pattern={type === "tel" ? "[0-9]*" : undefined} // browser ko bhi hint
           className={`border border-[#8B4513]/50 text-[#4A2C2A] text-sm rounded-lg focus:ring-[#8B4513] focus:border-[#8B4513] w-full flex justify-start items-start p-2.5 text-start ${className}`}
           {...props}
         />

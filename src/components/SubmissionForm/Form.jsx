@@ -121,7 +121,7 @@ export default function Form() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6 items-center">
             <InputField label="Full Name" name="fullName" required />
             <InputField label="Email" name="email" type="email" required />
-            <InputField label="Phone" name="phone" />
+            <InputField label="Phone" name="phone" type="tel" />
             <InputField label="Current Location" name="location" />
           </div>
         </FormSection>
