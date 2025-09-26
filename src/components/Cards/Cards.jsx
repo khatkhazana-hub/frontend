@@ -1,11 +1,12 @@
 // @ts-nocheck
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import LetterCard from "./LetterCard";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || "http://localhost:8000";
@@ -54,6 +55,10 @@ const RelatedCards = () => {
     })();
   }, []);
 
+  // new refs for arrows
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+
   if (loading) {
     return (
       <div className="mt-14 w-full flex justify-center">
@@ -77,20 +82,46 @@ const RelatedCards = () => {
   console.log(letters, "letters");
 
   return (
-    <div className="w-full flex flex-col items-center gap-10 lg:gap-20">
+    <div className="flex flex-col justify-center items-start gap-14 lg:px-0 max-w-[1270px] mx-auto ">
       {/* Heading */}
-      <h2
-        className="text-4xl font-bold text-black"
-        style={{ fontFamily: "philosopher" }}
-      >
-        Featured Letters
-      </h2>
+      <div className="flex justify-between items-center lg:items-center w-full">
+        <h1
+          className="font-bold text-left text-3xl lg:text-[40px]  capitalize"
+          style={{ fontFamily: "Philosopher" }}
+        >
+          Featured Letters
+        </h1>
+
+        {/* arrow buttons */}
+        <div className="flex items-center gap-3 ">
+          <button
+            ref={prevRef}
+            className="bg-[#6E4A27] text-white rounded-full p-3 text-xl cursor-pointer hover:bg-[#8b5e34] transition"
+          >
+            <FaArrowLeft />
+          </button>
+          <button
+            ref={nextRef}
+            className="bg-[#6E4A27] text-white rounded-full p-3 text-xl cursor-pointer hover:bg-[#8b5e34] transition"
+          >
+            <FaArrowRight />
+          </button>
+        </div>
+      </div>
 
       <div className="w-full max-w-[1270px]">
         <Swiper
           modules={[Pagination, Navigation]}
-          spaceBetween={50} // ✅ 50px gap stays
-          slidesPerView="auto" // ✅ automatic number of slides
+          spaceBetween={50}
+          slidesPerView="auto"
+          navigation={{
+            prevEl: prevRef.current,
+            nextEl: nextRef.current,
+          }}
+          onBeforeInit={(swiper) => {
+            swiper.params.navigation.prevEl = prevRef.current;
+            swiper.params.navigation.nextEl = nextRef.current;
+          }}
         >
           {letters.map((r) => {
             const title = r?.title || "Untitled";

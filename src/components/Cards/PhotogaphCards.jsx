@@ -1,11 +1,12 @@
 // @ts-nocheck
-import React from "react";
+import React, { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import PhotographCard from "./PhotographCard";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
 const shouldStripPublic = () => {
@@ -16,6 +17,7 @@ const shouldStripPublic = () => {
     return true;
   }
 };
+
 const fileUrl = (p) => {
   if (!p) return "";
   if (/^https?:\/\//i.test(p)) return p;
@@ -48,6 +50,10 @@ const pickPhotoImagePath = (r) => {
 const PhotogaphCards = ({ items = [] }) => {
   const photos = items.filter((it) => !!pickPhotoImagePath(it));
 
+  // ✅ add refs for navigation buttons
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+
   if (!photos.length) {
     return (
       <div className="text-center opacity-70 py-6">
@@ -57,12 +63,46 @@ const PhotogaphCards = ({ items = [] }) => {
   }
 
   return (
-    <div className="mt-14 w-full flex justify-start">
+       <div className="flex flex-col justify-center items-start gap-14 lg:px-0 max-w-[1270px] mx-auto ">
+      {/* Heading */}
+      <div className="flex justify-between items-center lg:items-center w-full">
+        <h1
+          className="font-bold text-left text-3xl lg:text-[40px]  capitalize"
+          style={{ fontFamily: "Philosopher" }}
+        >
+          Featured photographs
+        </h1>
+
+        {/* arrow buttons */}
+        <div className="flex items-center gap-3 ">
+          <button
+            ref={prevRef}
+            className="bg-[#6E4A27] text-white rounded-full p-3 text-xl cursor-pointer hover:bg-[#8b5e34] transition"
+          >
+            <FaArrowLeft />
+          </button>
+          <button
+            ref={nextRef}
+            className="bg-[#6E4A27] text-white rounded-full p-3 text-xl cursor-pointer hover:bg-[#8b5e34] transition"
+          >
+            <FaArrowRight />
+          </button>
+        </div>
+      </div>
+
       <div className="w-full max-w-[1270px]">
         <Swiper
           modules={[Pagination, Navigation]}
-          spaceBetween={50} // ✅ 50px gap stays
-          slidesPerView="auto" // ✅ automatic number of slides
+          spaceBetween={50}
+          slidesPerView="auto"
+          navigation={{
+            prevEl: prevRef.current,
+            nextEl: nextRef.current,
+          }}
+          onBeforeInit={(swiper) => {
+            swiper.params.navigation.prevEl = prevRef.current;
+            swiper.params.navigation.nextEl = nextRef.current;
+          }}
         >
           {photos.map((r) => {
             const title = r?.photoCaption || r?.title || "Untitled Photo";

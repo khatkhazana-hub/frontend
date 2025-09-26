@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useSubmissions from "@/hooks/useSubmissions";
 import TestimonialCard from "../../components/InnerComponents/TestimonialCard";
 import FeaturedCards from "../../components/Cards/FeaturedCards";
@@ -7,6 +7,7 @@ import FeaturedPhotographCard from "../../components/Cards/FeaturedPhotographCar
 import TestimonialPhotographCard from "../../components/InnerComponents/TestimonialPhotographCard";
 import Subcription from "../../components/InnerComponents/Subcription";
 import PopupSubscritionModel from "./PopupSubscritionModel";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const Featurelatter = () => {
   const { rows, loading, err } = useSubmissions(); // ✅ one API call here
@@ -40,11 +41,18 @@ const Featurelatter = () => {
     [rows]
   );
 
+  // for letters
+  const prevLetterRef = useRef(null);
+  const nextLetterRef = useRef(null);
+
+  // for photos
+  const prevPhotoRef = useRef(null);
+  const nextPhotoRef = useRef(null);
+
   return (
-    <div className="flex flex-col justify-center items-start gap-20 lg:py-20 py-10 max-w-[1270px] mx-auto px-5 ">
-      {/* ✅ Subscription Popup */}
+    <div className="flex flex-col justify-center items-start gap-14 lg:px-10 xl:px-0 max-w-[1270px] mx-auto px-5 lg:py-20 py-10">
       {showPopup && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-[999] ">
+        <div className="fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm z-[999] ">
           <div className="bg-[#FFE1B8] rounded-lg shadow-lg p-10 max-w-md w-full relative mx-4">
             <button
               onClick={() => setShowPopup(false)}
@@ -80,22 +88,38 @@ const Featurelatter = () => {
 
       {/* Featured Letters */}
       <div className="flex flex-col gap-[50px] w-full">
-        <div className="flex justify-between items-start lg:items-center w-full">
+        <div className="flex justify-between items-center  w-full">
           <h1
             className="font-bold text-left text-2xl lg:text-[40px]  capitalize"
             style={{ fontFamily: "Philosopher" }}
           >
             Featured Letters
           </h1>
-          <button
-            className="bg-[#6E4A27] text-sm lg:text-base text-white whitespace-nowrap font-bold px-4 py-2 leading-5 rounded-full hover:bg-[#8b5e34] transition"
-            style={{ fontFamily: "Philosopher" }}
-          >
-            View All
-          </button>
+
+          {/* arrow buttons */}
+          <div className="flex items-center gap-3 ">
+            <button
+              ref={prevLetterRef}
+              className="bg-[#6E4A27] text-white rounded-full p-3 text-xl cursor-pointer hover:bg-[#8b5e34] transition"
+            >
+              <FaArrowLeft />
+            </button>
+            <button
+              ref={nextLetterRef}
+              className="bg-[#6E4A27] text-white rounded-full p-3 text-xl cursor-pointer hover:bg-[#8b5e34] transition"
+            >
+              <FaArrowRight />
+            </button>
+          </div>
         </div>
 
-        <FeaturedCards items={featuredLetters} loading={loading} error={err} />
+        <FeaturedCards
+          items={featuredLetters}
+          loading={loading}
+          error={err}
+          prevRef={prevLetterRef}
+          nextRef={nextLetterRef}
+        />
       </div>
 
       {/* Featured Photograph (hero) */}
@@ -115,28 +139,38 @@ const Featurelatter = () => {
 
       {/* Featured Photographs */}
       <div className="flex flex-col gap-[50px] w-full">
-        <div className="flex justify-between items-start lg:items-center w-full">
+        <div className="flex justify-between items-center  w-full">
           <h1
-            className="font-bold text-left text-2xl lg:text-[40px] capitalize"
+            className="font-bold text-left text-2xl lg:text-[40px]  capitalize"
             style={{ fontFamily: "Philosopher" }}
           >
-            Featured photographs
+            Featured Photographs
           </h1>
-          <button
-            className="bg-[#6E4A27] text-sm lg:text-base text-white whitespace-nowrap font-bold px-4 py-2 leading-5 rounded-full hover:bg-[#8b5e34] transition"
-            style={{ fontFamily: "Philosopher" }}
-          >
-            View All
-          </button>
+
+          {/* arrow buttons */}
+          <div className="flex items-center gap-3 ">
+            <button
+              ref={prevPhotoRef}
+              className="bg-[#6E4A27] text-white rounded-full p-3 text-xl cursor-pointer hover:bg-[#8b5e34] transition"
+            >
+              <FaArrowLeft />
+            </button>
+            <button
+              ref={nextPhotoRef}
+              className="bg-[#6E4A27] text-white rounded-full p-3 text-xl cursor-pointer hover:bg-[#8b5e34] transition"
+            >
+              <FaArrowRight />
+            </button>
+          </div>
         </div>
 
-        <div className="w-full">
-          <FeaturedPhotographCard
-            items={featuredPhotos}
-            loading={loading}
-            error={err}
-          />
-        </div>
+        <FeaturedPhotographCard
+          items={featuredPhotos}
+          loading={loading}
+          error={err}
+          nextRef={nextPhotoRef}
+          prevRef={prevPhotoRef}
+        />
       </div>
 
       <div className="w-full my-10">

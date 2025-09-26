@@ -17,7 +17,7 @@ const TestimonialCard = ({ name, designation, description }) => {
   const card = cards[0];
 
   return (
-    <div className="relative flex flex-col lg:flex-row justify-between items-center gap-10 xl:w-[1230px] xl:h-[460px] w-full h-full mx-auto rounded-[20px] border-2 border-[#6E4A27] px-5 xl:px-[80px] py-[20px]">
+    <div className="relative flex flex-col lg:flex-row justify-between items-center gap-10 xl:h-[460px] w-full h-full mx-auto rounded-[20px] border-2 border-[#6E4A27] px-5 xl:px-[80px] py-[20px]">
       {/* Text Block */}
       <div className="flex flex-col justify-center items-start gap-2 w-fit text-left">
         <span className=" text-[20px] font-bold font-[Philosopher] text-[#23262F]">
