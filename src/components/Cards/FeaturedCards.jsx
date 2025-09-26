@@ -20,6 +20,9 @@ export default function FeaturedCards({
   if (!items.length)
     return <div className="opacity-70">no featured letters.</div>;
 
+
+  console.log(items)
+
   return (
     <div className="w-full max-w-[1270px]">
       <Swiper
@@ -37,11 +40,8 @@ export default function FeaturedCards({
         }}
       >
         {items?.map((r) => {
-          const title = r?.title || "Untitled";
-          const descSrc =
-            r?.letterNarrativeOptional || r?.letterNarrative || "—";
-          const description =
-            descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
+          const title = r?.fullName || "Untitled";
+          const category =r?.letterCategory
 
           const overlay = fileUrl(pickLetterImagePath(r));
           const lang = encodeURIComponent(
@@ -56,7 +56,7 @@ export default function FeaturedCards({
                 to={to}
                 overlay={overlay}
                 title={title}
-                description={description}
+                category={category}
               />
             </SwiperSlide>
           );

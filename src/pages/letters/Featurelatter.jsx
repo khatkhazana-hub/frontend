@@ -101,8 +101,10 @@ const Featurelatter = () => {
     const rightDescription =
       descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
     const overlay = fileUrl(pickPhotoImagePath(heroPhoto));
-    const name = heroPhoto?.fullName || "Unknown";
-    return { overlay, title, rightDescription, name };
+    const name = heroPhoto?.photoCaption || "Unknown";
+    const placetaken = heroLetter?.photoPlace || "Unknown";
+    const phototrabscript = heroLetter?.photoNarrative || "Unknown";
+    return { overlay, title, rightDescription, name , placetaken , phototrabscript };
   }, [heroPhoto]);
 
   // for letters
@@ -204,6 +206,8 @@ const Featurelatter = () => {
         {heroPhotoCard ? (
           <TestimonialPhotographCard
             name={heroPhotoCard.name}
+            phototrabscript={heroPhotoCard.phototrabscript}
+            placetaken={heroPhotoCard.placetaken}
             designation="Manager of The New York Times"
             description="“They are have a perfect touch for make something so professional ...”"
             overlay={heroPhotoCard.overlay}

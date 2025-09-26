@@ -37,13 +37,7 @@ export default function FeaturedPhotographCard({
       >
         {items.map((r) => {
           const title = r?.photoCaption || r?.title || "Untitled Photo";
-          const descSrc =
-            r?.photoNarrativeOptional ||
-            r?.photoNarrative ||
-            r?.letterNarrative ||
-            "—";
-          const description =
-            descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
+          const photoPlace = r?.photoPlace
 
           const overlay = fileUrl(pickPhotoImagePath(r));
           const to = `/photographs/${encodeURIComponent(r?._id)}`;
@@ -54,7 +48,7 @@ export default function FeaturedPhotographCard({
                 to={to}
                 overlay={overlay}
                 title={title}
-                description={description}
+                description={photoPlace}
               />
             </SwiperSlide>
           );

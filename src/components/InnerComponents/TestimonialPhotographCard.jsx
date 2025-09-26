@@ -2,7 +2,7 @@
 import React from "react";
 import PhotographFeaturedCard from "../Cards/PhotographFeaturedCard";
 
-const TestimonialPhotographCard = ({ name, designation, description, overlay, title, rightDescription }) => {
+const TestimonialPhotographCard = ({ name, placetaken, phototrabscript, overlay, title, rightDescription }) => {
   return (
     <div className="relative flex flex-col lg:flex-row justify-between items-center gap-10 xl:h-[460px] w-full h-full mx-auto rounded-[20px] border-2 border-[#6E4A27] px-5 xl:px-[80px] py-[20px]">
       {/* Left text */}
@@ -11,11 +11,11 @@ const TestimonialPhotographCard = ({ name, designation, description, overlay, ti
           {name}
         </span>
         <span className="text-[16px] font-bold font-[Philosopher] text-[#23262F] opacity-50">
-          {designation}
+          {placetaken}
         </span>
 
         <p className="mt-5 lg:mt-10 xl:w-[570px] text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal">
-          {description}
+          {phototrabscript}
         </p>
       </div>
 
