@@ -9,19 +9,33 @@ import Subcription from "../../components/InnerComponents/Subcription";
 import PopupSubscritionModel from "./PopupSubscritionModel";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
+// 👇 you'll need these to build image urls for the hero cards
+import {
+  fileUrl,
+  pickLetterImagePath,
+  pickPhotoImagePath,
+} from "@/utils/files";
+
 const Featurelatter = () => {
-  const { rows, loading, err } = useSubmissions(); // ✅ one API call here
+  const { rows, loading, err } = useSubmissions();
   const [showPopup, setShowPopup] = useState(false);
 
-  // ✅ Page load hone pr check kare
   useEffect(() => {
     const subscribed = localStorage.getItem("isSubscribed");
-    if (!subscribed) {
-      setShowPopup(true); // agar subscribed nahi hai to popup show karo
-    }
+    if (!subscribed) setShowPopup(true);
   }, []);
 
-  const featuredLetters = useMemo(
+  // helpers
+  const getDate = (r) => {
+    const d = r?.updatedAt || r?.createdAt || r?.publishedAt || r?.date;
+    return d ? new Date(d) : new Date(0);
+  };
+
+  const sortNewestFirst = (arr) =>
+    [...arr].sort((a, b) => getDate(b) - getDate(a));
+
+  // filter featured + approved
+  const featuredLettersRaw = useMemo(
     () =>
       rows.filter(
         (r) =>
@@ -31,7 +45,7 @@ const Featurelatter = () => {
     [rows]
   );
 
-  const featuredPhotos = useMemo(
+  const featuredPhotosRaw = useMemo(
     () =>
       rows.filter(
         (r) =>
@@ -41,6 +55,56 @@ const Featurelatter = () => {
     [rows]
   );
 
+  // newest first
+  const featuredLettersSorted = useMemo(
+    () => sortNewestFirst(featuredLettersRaw),
+    [featuredLettersRaw]
+  );
+
+  const featuredPhotosSorted = useMemo(
+    () => sortNewestFirst(featuredPhotosRaw),
+    [featuredPhotosRaw]
+  );
+
+  // pick hero (latest) + remainder for sliders
+  const heroLetter = featuredLettersSorted[0] || null;
+  const restLetters = featuredLettersSorted.slice(1);
+
+  const heroPhoto = featuredPhotosSorted[0] || null;
+  const restPhotos = featuredPhotosSorted.slice(1);
+
+  // map hero content to card props
+  const heroLetterCard = useMemo(() => {
+    if (!heroLetter) return null;
+    const title = heroLetter?.title || "Untitled";
+    const descSrc =
+      heroLetter?.letterNarrativeOptional || heroLetter?.letterNarrative || "—";
+    const rightDescription =
+      descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
+    const overlay = fileUrl(pickLetterImagePath(heroLetter));
+    const name = heroLetter?.fullName || "Unknown";
+    const category = heroLetter?.letterCategory || "Unknown";
+    const decade = heroLetter?.decade || "Unknown";
+    const lettertrabscript = heroLetter?.letterNarrative || "Unknown";
+    return { overlay, title, rightDescription, name , category , decade  , lettertrabscript};
+  }, [heroLetter]);
+
+  const heroPhotoCard = useMemo(() => {
+    if (!heroPhoto) return null;
+    const title =
+      heroPhoto?.photoCaption || heroPhoto?.title || "Untitled Photo";
+    const descSrc =
+      heroPhoto?.photoNarrativeOptional ||
+      heroPhoto?.photoNarrative ||
+      heroPhoto?.letterNarrative ||
+      "—";
+    const rightDescription =
+      descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
+    const overlay = fileUrl(pickPhotoImagePath(heroPhoto));
+    const name = heroPhoto?.fullName || "Unknown";
+    return { overlay, title, rightDescription, name };
+  }, [heroPhoto]);
+
   // for letters
   const prevLetterRef = useRef(null);
   const nextLetterRef = useRef(null);
@@ -48,6 +112,7 @@ const Featurelatter = () => {
   // for photos
   const prevPhotoRef = useRef(null);
   const nextPhotoRef = useRef(null);
+  console.log(rows);
 
   return (
     <div className="flex flex-col justify-center items-start gap-14 lg:px-10 xl:px-0 max-w-[1270px] mx-auto px-5 lg:py-20 py-10">
@@ -60,17 +125,12 @@ const Featurelatter = () => {
             >
               ✖
             </button>
-            <PopupSubscritionModel
-              onSubscribe={() => {
-                // Jab subscribe ho jaye tab popup band kar do
-                setShowPopup(false);
-              }}
-            />
+            <PopupSubscritionModel onSubscribe={() => setShowPopup(false)} />
           </div>
         </div>
       )}
 
-      {/* Featured Letter (hero) */}
+      {/* Featured Letter (hero = newest) */}
       <div className="flex flex-col items-start justify-center  gap-10 w-full">
         <h1
           className="font-bold text-4xl lg:text-[40px]  capitalize"
@@ -79,14 +139,24 @@ const Featurelatter = () => {
           Featured Letter
         </h1>
 
-        <TestimonialCard
-          name="Josh Smith"
-          designation="Manager of The New York Times"
-          description="“They are have a perfect touch for make something so professional ...”"
-        />
+        {heroLetterCard ? (
+          <TestimonialCard
+            name={heroLetterCard.name}
+            letCategory={heroLetterCard.category}
+            decade={heroLetterCard.decade}
+            lettertrabscript={heroLetterCard.lettertrabscript}
+            designation="Manager of The New York Times"
+            description="“They are have a perfect touch for make something so professional ...”"
+            overlay={heroLetterCard.overlay}
+            title={heroLetterCard.title}
+            rightDescription={heroLetterCard.rightDescription}
+          />
+        ) : (
+          <div className="opacity-70">no featured letters.</div>
+        )}
       </div>
 
-      {/* Featured Letters */}
+      {/* Featured Letters list (the rest) */}
       <div className="flex flex-col gap-[50px] w-full">
         <div className="flex justify-between items-center  w-full">
           <h1
@@ -96,7 +166,7 @@ const Featurelatter = () => {
             Featured Letters
           </h1>
 
-          {/* arrow buttons */}
+          {/* arrows */}
           <div className="flex items-center gap-3 ">
             <button
               ref={prevLetterRef}
@@ -114,7 +184,7 @@ const Featurelatter = () => {
         </div>
 
         <FeaturedCards
-          items={featuredLetters}
+          items={restLetters}
           loading={loading}
           error={err}
           prevRef={prevLetterRef}
@@ -122,7 +192,7 @@ const Featurelatter = () => {
         />
       </div>
 
-      {/* Featured Photograph (hero) */}
+      {/* Featured Photograph (hero = newest) */}
       <div className="flex flex-col items-start justify-center gap-10 w-full">
         <h1
           className="font-bold text-4xl lg:text-[40px] capitalize"
@@ -130,14 +200,22 @@ const Featurelatter = () => {
         >
           Featured Photograph
         </h1>
-        <TestimonialPhotographCard
-          name="Josh Smith"
-          designation="Manager of The New York Times"
-          description="“They are have a perfect touch for make something so professional ...”"
-        />
+
+        {heroPhotoCard ? (
+          <TestimonialPhotographCard
+            name={heroPhotoCard.name}
+            designation="Manager of The New York Times"
+            description="“They are have a perfect touch for make something so professional ...”"
+            overlay={heroPhotoCard.overlay}
+            title={heroPhotoCard.title}
+            rightDescription={heroPhotoCard.rightDescription}
+          />
+        ) : (
+          <div className="opacity-70">no featured photographs.</div>
+        )}
       </div>
 
-      {/* Featured Photographs */}
+      {/* Featured Photographs list (the rest) */}
       <div className="flex flex-col gap-[50px] w-full">
         <div className="flex justify-between items-center  w-full">
           <h1
@@ -147,7 +225,7 @@ const Featurelatter = () => {
             Featured Photographs
           </h1>
 
-          {/* arrow buttons */}
+          {/* arrows */}
           <div className="flex items-center gap-3 ">
             <button
               ref={prevPhotoRef}
@@ -165,7 +243,7 @@ const Featurelatter = () => {
         </div>
 
         <FeaturedPhotographCard
-          items={featuredPhotos}
+          items={restPhotos}
           loading={loading}
           error={err}
           nextRef={nextPhotoRef}

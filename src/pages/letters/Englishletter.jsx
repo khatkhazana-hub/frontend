@@ -215,7 +215,8 @@ function LettersPage() {
             const img =
               (item.letterImage && fileUrl(item.letterImage.path)) ||
               "/images/About-1.webp";
-            const title = item.title || "Untitled Letter";
+            const title = item.fullName || "Untitled Letter";
+            const category = item.letterCategory || "Untitled Letter";
             const desc =
               item.photoCaption ||
               item.letterNarrativeOptional ||
@@ -229,6 +230,7 @@ function LettersPage() {
                 to={`/letters/${lang}/${item._id || i}`}
                 overlay={img}
                 title={title}
+                letcategory={category}
                 description={desc}
               />
             );

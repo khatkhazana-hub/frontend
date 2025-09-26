@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const LetterCard = ({ to, overlay, title, description, className }) => {
+const LetterCard = ({ to, overlay, title, letcategory , description, className }) => {
   const imgSrc = overlay;
 
   console.log(imgSrc);
@@ -38,7 +38,7 @@ const LetterCard = ({ to, overlay, title, description, className }) => {
             {title}
           </h2>
           <p className="font-[Ephesis] font-normal text-[20px] leading-[100%] text-black m-0 line-clamp-2 capitalize">
-            {description}
+            {letcategory}
           </p>
         </div>
       </div>
