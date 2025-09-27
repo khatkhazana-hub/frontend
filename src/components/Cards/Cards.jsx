@@ -79,7 +79,7 @@ const RelatedCards = () => {
     );
   }
 
-  console.log(letters, "letters");
+ 
 
   return (
     <div className="flex flex-col justify-center items-start gap-14 lg:px-0 max-w-[1270px] mx-auto ">
@@ -124,13 +124,8 @@ const RelatedCards = () => {
           }}
         >
           {letters.map((r) => {
-            const title = r?.title || "Untitled";
-            const descSrc =
-              r?.letterNarrativeOptional ||
-              r?.letterNarrative ||
-              "No description";
-            const description =
-              descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
+            const title = r?.fullName || "Untitled";
+            const category = r?.letterCategory 
 
             const overlayUrl =
               fileUrl(r?.photoImage?.path) ||
@@ -153,7 +148,7 @@ const RelatedCards = () => {
                   to={href}
                   overlay={overlayUrl}
                   title={title}
-                  description={description}
+                  letcategory={category}
                 />
               </SwiperSlide>
             );

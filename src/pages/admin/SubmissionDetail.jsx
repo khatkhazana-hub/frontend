@@ -6,14 +6,14 @@ import api from "@/utils/api";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-  const FILE_BASE =
-    import.meta.env.VITE_FILE_BASE_URL || "http://localhost:8000";
-  export const buildFileUrl = (p) => {
-    if (!p) return "";
-    if (/^https?:\/\//i.test(p)) return p;
-    const key = p.replace(/^\/+/, "");
-    return `${FILE_BASE}/${key}`;
-  };
+const FILE_BASE =
+  import.meta.env.VITE_FILE_BASE_URL || "http://localhost:8000";
+export const buildFileUrl = (p) => {
+  if (!p) return "";
+  if (/^https?:\/\//i.test(p)) return p;
+  const key = p.replace(/^\/+/, "");
+  return `${FILE_BASE}/${key}`;
+};
 
 export default function SubmissionDetail() {
   const { id } = useParams();
@@ -21,8 +21,6 @@ export default function SubmissionDetail() {
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
-
-
 
   useEffect(() => {
     (async () => {
@@ -51,7 +49,6 @@ export default function SubmissionDetail() {
       </Button>
 
       <div className="rounded-xl border bg-white p-6">
-        <h2 className="mb-1 text-xl font-semibold">{s.title || "Untitled"}</h2>
         <p className="text-sm text-muted-foreground">
           {s.fullName} • {s.email}
         </p>
@@ -136,6 +133,25 @@ export default function SubmissionDetail() {
             <p className="mb-2 text-sm font-medium">Description</p>
             <p className="whitespace-pre-wrap text-sm text-muted-foreground">
               {s.description}
+            </p>
+          </div>
+        )}
+
+        {/* Narratives */}
+        {s.letterNarrative && (
+          <div className="mt-6">
+            <p className="mb-2 text-sm font-medium">Letter Narrative</p>
+            <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+              {s.letterNarrative}
+            </p>
+          </div>
+        )}
+
+        {s.photoNarrative && (
+          <div className="mt-6">
+            <p className="mb-2 text-sm font-medium">Photo Narrative</p>
+            <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+              {s.photoNarrative}
             </p>
           </div>
         )}

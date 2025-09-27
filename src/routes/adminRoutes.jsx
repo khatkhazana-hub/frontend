@@ -12,6 +12,7 @@ import SubmissionEdit from "@/pages/admin/SubmissionEdit";
 import AdminLetters from "@/pages/admin/AdminLetters";
 import AdminPhotos from "@/pages/admin/AdminPhotos";
 import CreateCategories from "@/pages/admin/CreateCategories";
+import ContactData from "@/pages/admin/ContactData";
 
 const adminRoutes = [
   {
@@ -44,8 +45,9 @@ const adminRoutes = [
         ),
       },
       { path: "submissions/:id", element: <SubmissionDetail /> },
-      { path: "submissions/:id/edit", element: <SubmissionEdit /> }, // stub
-      { path: "categories", element: <CreateCategories /> }, // stub
+      { path: "submissions/:id/edit", element: <SubmissionEdit /> }, 
+      { path: "categories", element: <CreateCategories /> }, 
+      { path: "contact-data", element: <ContactData/> }, 
     ],
   },
 ];

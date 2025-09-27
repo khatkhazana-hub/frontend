@@ -139,12 +139,12 @@ const LetterDetailPage = () => {
         </div>
 
         {/* Title */}
-        <p
+        {/* <p
           className="w-full text-left text-2xl md:text-[40px] font-bold capitalize mt-4"
           style={{ fontFamily: "philosopher" }}
         >
           {title || "Untitled Letter"}
-        </p>
+        </p> */}
 
         {/* Owner / Decade helper row */}
         <div className="text-sm opacity-80 capitalize">
