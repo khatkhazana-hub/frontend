@@ -9,7 +9,7 @@ import { ArrowLeft } from "lucide-react";
 const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || "http://localhost:8000";
 export const buildFileUrl = (p) => {
   if (!p) return "";
-  if (/^https?:\/\//i.test(p)) return p;
+  if (/^https?:\/\//i.test(p)) return p
   const key = p.replace(/^\/+/, "");
   return `${FILE_BASE}/${key}`;
 };
