@@ -23,10 +23,7 @@ const ThumbnailPhotoCard = ({ photo }) => {
           title: photo.title || "Untitled Letter",
         },
       ]
-    : [
-        { id: 1, img: "/images/About-1.webp", title: "Lorem Ipsum #1" },
-        { id: 2, img: "/images/About-2.webp", title: "Lorem Ipsum #2" },
-      ];
+    : [];
 
   return (
     <div className="lg:w-[25%] w-full flex flex-col lg:flex-row lg:justify-start justify-center relative items-center lg:items-start gap-10">

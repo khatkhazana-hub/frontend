@@ -15,7 +15,7 @@ const PhotographCard = ({
   return (
     <Link to={to}>
       <div
-        className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto ${className}`}
+        className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[420px] group mx-auto ${className}`}
       >
         <img
           src="/images/Card.webp"

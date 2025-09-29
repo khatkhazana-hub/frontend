@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from "react";
 import FeaturedCard from "../Cards/FeaturedCard";
+import { Link } from "react-router-dom";
 
  
     //  const to = `/photographs/${encodeURIComponent(r?._id)}`;
@@ -24,9 +25,21 @@ const TestimonialCard = ({
           {decade}
         </span>
 
-        <p className="mt-5 lg:mt-10 xl:w-[570px] text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal">
-          {lettertrabscript}
-        </p>
+ 
+        {/* Letter text truncated */}
+        <div className="mt-5 xl:w-[570px]">
+          <p className="text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal max-h-[200px] overflow-hidden">
+            {lettertrabscript}
+          </p>
+
+          {/* Read more link */}
+          <Link
+            to={to} // yahan apka detail page ka URL aayega
+            className="text-[#6E4A27] hover:underline text-lg font-medium inline-block mt-1"
+          >
+            ... Read more
+          </Link>
+        </div>
       </div>
 
       {/* Right card pulled from latest featured LETTER */}

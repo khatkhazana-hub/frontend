@@ -195,7 +195,7 @@ export default function ContactUs() {
           </div>
 
           {/* Checkbox */}
-          <label className="mt-3 flex items-start gap-2 text-[12.5px] text-black">
+          {/* <label className="mt-3 flex items-start gap-2 text-[12.5px] text-black">
             <input
               type="checkbox"
               name="subscribe"
@@ -210,10 +210,10 @@ export default function ContactUs() {
                 (we will never share your email address with anyone)
               </p>
             </span>
-          </label>
+          </label> */}
 
           {/* Button */}
-          <div className="mt-4">
+          <div className="mt-10">
             <ParchmentButton
               className="w-full"
               type="submit"

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from "react";
 import PhotographFeaturedCard from "../Cards/PhotographFeaturedCard";
+import { Link } from "react-router-dom";
 
 const TestimonialPhotographCard = ({
   name,
@@ -21,10 +22,19 @@ const TestimonialPhotographCard = ({
         <span className="text-[16px] font-bold font-[Philosopher] text-[#23262F] opacity-50">
           {placetaken}
         </span>
+        <div className="mt-5 xl:w-[570px]">
+          <p className="text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal max-h-[200px] overflow-hidden">
+            {phototrabscript}
+          </p>
 
-        <p className="mt-5 lg:mt-10 xl:w-[570px] text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal">
-          {phototrabscript}
-        </p>
+          {/* Read more link */}
+          <Link
+            to={to}
+            className="text-[#6E4A27] hover:underline text-lg font-medium inline-block mt-1"
+          >
+            ... Read more
+          </Link>
+        </div>
       </div>
 
       {/* Right card pulled from latest featured PHOTO */}
