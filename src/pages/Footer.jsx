@@ -17,7 +17,7 @@ export default function Footer() {
 
   const SUBMISSION_LINKS = [
     { label: "Submit a Letter", href: "/submission" },
-    { label: "Submit a Paragraph", href: "/submission" },
+    { label: "Submit a Photograph", href: "/submission" },
     { label: "Featured Letters & Photographs", href: "/featured" },
   ];
 
