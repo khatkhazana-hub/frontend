@@ -86,7 +86,15 @@ const Featurelatter = () => {
     const category = heroLetter?.letterCategory || "Unknown";
     const decade = heroLetter?.decade || "Unknown";
     const lettertrabscript = heroLetter?.letterNarrative || "Unknown";
-    return { overlay, title, rightDescription, name , category , decade  , lettertrabscript};
+    return {
+      overlay,
+      title,
+      rightDescription,
+      name,
+      category,
+      decade,
+      lettertrabscript,
+    };
   }, [heroLetter]);
 
   const heroPhotoCard = useMemo(() => {
@@ -104,7 +112,15 @@ const Featurelatter = () => {
     const name = heroPhoto?.photoCaption || "Unknown";
     const placetaken = heroLetter?.photoPlace || "Unknown";
     const phototrabscript = heroLetter?.photoNarrative || "Unknown";
-    return { overlay, title, rightDescription, name , placetaken , phototrabscript };
+    return {
+      _id: heroPhoto?._id,
+      overlay,
+      title,
+      rightDescription,
+      name,
+      placetaken,
+      phototrabscript,
+    };
   }, [heroPhoto]);
 
   // for letters
@@ -115,6 +131,10 @@ const Featurelatter = () => {
   const prevPhotoRef = useRef(null);
   const nextPhotoRef = useRef(null);
   console.log(rows);
+
+  const lang = encodeURIComponent(
+    (heroLetter?.letterLanguage || "english").toLowerCase()
+  );
 
   return (
     <div className="flex flex-col justify-center items-start gap-14 lg:px-10 xl:px-0 max-w-[1270px] mx-auto px-5 lg:py-20 py-10">
@@ -152,6 +172,7 @@ const Featurelatter = () => {
             overlay={heroLetterCard.overlay}
             title={heroLetterCard.title}
             rightDescription={heroLetterCard.rightDescription}
+            to={`/letters/${lang}/${encodeURIComponent(heroLetter?._id)}`}
           />
         ) : (
           <div className="opacity-70">no featured letters.</div>
@@ -213,6 +234,7 @@ const Featurelatter = () => {
             overlay={heroPhotoCard.overlay}
             title={heroPhotoCard.title}
             rightDescription={heroPhotoCard.rightDescription}
+            to={`/photographs/${encodeURIComponent(heroPhotoCard._id)}`}
           />
         ) : (
           <div className="opacity-70">no featured photographs.</div>

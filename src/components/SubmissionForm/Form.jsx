@@ -8,6 +8,7 @@ import FileInput from "./FileInput";
 import DropdownField from "./DropdownField";
 import api from "@/utils/api";
 import ParchmentButton from "../InnerComponents/ParchmentButton";
+import ReactConfetti from "react-confetti";
 
 export default function Form() {
   // States
@@ -28,6 +29,8 @@ export default function Form() {
   const [decade, setDecade] = useState("");
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
+  const [resetTrigger, setResetTrigger] = useState(false);
 
   const handleUploadTypeChange = (e) => setUploadType(e.target.value);
 
@@ -72,7 +75,9 @@ export default function Form() {
       });
 
       console.log("Saved:", res.data);
-      alert("Form submitted successfully!");
+      setShowThankYou(true);
+      formEl.reset();
+      setUploadType("Both");
 
       // Reset form + controlled state
       formEl.reset();
@@ -85,6 +90,7 @@ export default function Form() {
       setDecade("");
       setHasReadGuidelines(false);
       setAgreedTermsSubmission(false);
+      setResetTrigger((prev) => !prev); // 🔹 is line ko add karo
     } catch (err) {
       console.error("Submit error:", err?.response?.data || err.message);
       alert(
@@ -181,6 +187,7 @@ export default function Form() {
                   subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
                   required
                   previewType="image"
+                  resetTrigger={resetTrigger} // 🔹 add
                 />
               </div>
             </FormSection>
@@ -247,6 +254,7 @@ export default function Form() {
                         previewType="audio"
                         wrapperClassName="w-full mt-4"
                         label="Audio"
+                        resetTrigger={resetTrigger} // 🔹 add
                       />
                     )}
                   </div>
@@ -274,6 +282,7 @@ export default function Form() {
                   subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
                   required
                   previewType="image"
+                  resetTrigger={resetTrigger} // 🔹 add
                 />
               </div>
             </FormSection>
@@ -338,8 +347,9 @@ export default function Form() {
                         name="photoAudioFile"
                         subtext="Accepted formats: MP3, WAV, or AAC."
                         previewType="audio"
-                         wrapperClassName="w-full mt-4"
+                        wrapperClassName="w-full mt-4"
                         label="Audio"
+                        resetTrigger={resetTrigger} // 🔹 add
                       />
                     )}
                   </div>
@@ -363,7 +373,7 @@ export default function Form() {
               onChange={(e) => setBefore2000(e.target.value)}
             />
           </div>
-          <div className="mt-4 space-y-2 text-sm text-black font-medium ">
+          <div className="mt-4 space-y-2 text-sm font-semibold text-black">
             <label className="flex items-center gap-2 text-sm md:text-base">
               <input
                 type="checkbox"
@@ -371,7 +381,7 @@ export default function Form() {
                 onChange={(e) => setHasReadGuidelines(e.target.checked)}
                 className="h-4 w-4"
               />
-              I have read the submission guidelines?
+              I have read the submission guidelines.
             </label>
 
             {/* ✅ Checkbox Terms */}
@@ -382,7 +392,7 @@ export default function Form() {
                 onChange={(e) => setAgreedTermsSubmission(e.target.checked)}
                 className="h-4 w-4"
               />
-              I agree with term of submission?
+              I agree with the terms of submission.
             </label>
           </div>
         </FormSection>
@@ -400,6 +410,35 @@ export default function Form() {
           </ParchmentButton>
         </div>
       </form>
+      {showThankYou && (
+        <>
+          {/* Confetti */}
+          <ReactConfetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            numberOfPieces={1000}
+            recycle={false} // ek hi bar chalega
+          />
+
+          {/* Modal */}
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full text-center">
+              <h2 className="text-2xl font-bold mb-4 text-[#6E4A27]">
+                🎉 Thank You!
+              </h2>
+              <p className="mb-6">
+                Your submission has been received successfully.
+              </p>
+              <button
+                onClick={() => setShowThankYou(false)}
+                className="bg-[#6E4A27] text-white px-6 py-2 rounded-md cursor-pointer transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </section>
   );
 }

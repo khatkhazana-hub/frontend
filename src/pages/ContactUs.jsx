@@ -59,7 +59,10 @@ export default function ContactUs() {
 
       await api.post("/contacts", payload); // <-- backend route
 
-      setStatus({ type: "success", msg: "Message sent. We’ll get back to you ASAP." });
+      setStatus({
+        type: "success",
+        msg: "Message sent. We’ll get back to you ASAP.",
+      });
       // reset only non-requireds so UX doesn’t nuke everything
       setForm({
         name: "",
@@ -87,7 +90,7 @@ export default function ContactUs() {
   return (
     <main
       className="min-h-screen flex flex-col justify-center items-center py-20 px-5"
-      style={{ fontFamily: "Philosopher", textTransform: "capitalize" }}
+      style={{ fontFamily: "Philosopher" }}
     >
       <HeadingDesc
         headingClassName="md:text-[40px] text-center"
@@ -98,7 +101,10 @@ export default function ContactUs() {
 
       <section className="flex flex-col-reverse xl:flex-row w-full max-w-5xl p-5 lg:p-10 overflow-hidden rounded-2xl shadow-2xl border border-[#8B4513]/30">
         {/* RIGHT: Form */}
-        <form onSubmit={handleSubmit} className="flex-1 p-6 xl:p-10 backdrop-blur-md text-left">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 p-6 xl:p-10 backdrop-blur-md text-left"
+        >
           {/* status banner */}
           {status.msg ? (
             <div
@@ -114,7 +120,13 @@ export default function ContactUs() {
 
           {/* Top row */}
           <div className="grid md:grid-cols-2 gap-3">
-            <Field label="Name" name="name" required value={form.name} onChange={handleChange} />
+            <Field
+              label="Name"
+              name="name"
+              required
+              value={form.name}
+              onChange={handleChange}
+            />
             <Field
               label="Email"
               name="email"
@@ -144,10 +156,30 @@ export default function ContactUs() {
 
           {/* Row 3 */}
           <div className="grid md:grid-cols-4 gap-3 mt-3">
-            <Field label="City" name="city" value={form.city} onChange={handleChange} />
-            <Field label="State" name="state" value={form.state} onChange={handleChange} />
-            <Field label="Country" name="country" value={form.country} onChange={handleChange} />
-            <Field label="Zip" name="zip" value={form.zip} onChange={handleChange} />
+            <Field
+              label="City"
+              name="city"
+              value={form.city}
+              onChange={handleChange}
+            />
+            <Field
+              label="State"
+              name="state"
+              value={form.state}
+              onChange={handleChange}
+            />
+            <Field
+              label="Country"
+              name="country"
+              value={form.country}
+              onChange={handleChange}
+            />
+            <Field
+              label="Zip"
+              name="zip"
+              value={form.zip}
+              onChange={handleChange}
+            />
           </div>
 
           {/* Message */}
@@ -163,7 +195,7 @@ export default function ContactUs() {
           </div>
 
           {/* Checkbox */}
-          <label className="mt-3 flex items-start gap-2 text-[12.5px] text-black">
+          {/* <label className="mt-3 flex items-start gap-2 text-[12.5px] text-black">
             <input
               type="checkbox"
               name="subscribe"
@@ -172,15 +204,21 @@ export default function ContactUs() {
               className="mt-1 h-4 w-4 rounded border-black/40 accent-[#5a3c1e]"
             />
             <span>
-              Yes, please put me on your email list
+              Yes, please put me on your email list.
               <br />
-              <em className="text-neutral-700">(We will never share your email address with anyone.)</em>
+              <p className="text-neutral-700">
+                (we will never share your email address with anyone)
+              </p>
             </span>
-          </label>
+          </label> */}
 
           {/* Button */}
-          <div className="mt-4">
-            <ParchmentButton className="w-full" type="submit" disabled={loading}>
+          <div className="mt-10">
+            <ParchmentButton
+              className="w-full"
+              type="submit"
+              disabled={loading}
+            >
               {loading ? "Sending..." : "Send Message"}
             </ParchmentButton>
           </div>

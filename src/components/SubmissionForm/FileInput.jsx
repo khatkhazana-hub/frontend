@@ -1,6 +1,6 @@
 // @ts-nocheck
-import React, { useRef, useState } from "react";
-import { X } from "lucide-react"; // ❌ icon (install lucide-react if not already)
+import React, { useEffect, useRef, useState } from "react";
+import { X } from "lucide-react"; 
 import ParchmentButton from "../InnerComponents/ParchmentButton";
 
 const FileInput = ({
@@ -8,14 +8,24 @@ const FileInput = ({
   subtext,
   name,
   required = false,
-  className = "",
   wrapperClassName = "",
   previewType = "image", // "image" | "audio" | "none"
+    resetTrigger, 
   ...props
 }) => {
   const fileInputRef = useRef(null);
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState("");
+
+
+    // ✅ jab resetTrigger change ho to sab clear
+  useEffect(() => {
+    if (resetTrigger) {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setPreview(null);
+      setFileName("");
+    }
+  }, [resetTrigger]);
 
   // automatic accept based on previewType
   let acceptAttr = props.accept;
@@ -28,28 +38,66 @@ const FileInput = ({
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
+  // const handleFileChange = (e) => {
+  //   if (props.onChange) props.onChange(e);
+  //   const file = e.target.files[0];
+
+  //   if (file) {
+  //     if (
+  //       (previewType === "image" && file.type.startsWith("image/")) ||
+  //       (previewType === "audio" && file.type.startsWith("audio/"))
+  //     ) {
+  //       const url = URL.createObjectURL(file);
+  //       setPreview(url);
+  //       setFileName(file.name);
+  //     } else {
+  //       alert(`Please upload a valid ${previewType} file.`);
+  //       e.target.value = "";
+  //       setPreview(null);
+  //       setFileName("");
+  //     }
+  //   } else {
+  //     setPreview(null);
+  //     setFileName("");
+  //   }
+  // };
+
   const handleFileChange = (e) => {
     if (props.onChange) props.onChange(e);
     const file = e.target.files[0];
 
-    if (file) {
-      if (
-        (previewType === "image" && file.type.startsWith("image/")) ||
-        (previewType === "audio" && file.type.startsWith("audio/"))
-      ) {
-        const url = URL.createObjectURL(file);
-        setPreview(url);
-        setFileName(file.name);
-      } else {
-        alert(`Please upload a valid ${previewType} file.`);
-        e.target.value = "";
-        setPreview(null);
-        setFileName("");
-      }
-    } else {
+    if (!file) {
       setPreview(null);
       setFileName("");
+      return;
     }
+
+    // ✅ File type check (image ya audio)
+    if (
+      (previewType === "image" && !file.type.startsWith("image/")) ||
+      (previewType === "audio" && !file.type.startsWith("audio/"))
+    ) {
+      alert(`Please upload a valid ${previewType} file.`);
+      e.target.value = "";
+      setPreview(null);
+      setFileName("");
+      return;
+    }
+
+    // ✅ File size check (500 KB)
+    const fileSizeKB = file.size / 1024;
+    if (previewType === "image" && fileSizeKB > 500) {
+      alert("Image size must be less than or equal to 500 KB.");
+      e.target.value = "";
+      setPreview(null);
+      setFileName("");
+      return;
+    }
+
+    // ✅ sab OK hai to preview set karo
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    setFileName(file.name);
   };
 
   const handleRemoveFile = () => {
@@ -91,7 +139,7 @@ const FileInput = ({
           Choose File
         </button> */}
         <ParchmentButton
-          className="w-fit !text-[14px] !py-2"  
+          className="w-fit !text-[14px] !py-2"
           type="button"
           onClick={handleButtonClick}
         >

@@ -147,7 +147,7 @@ const LetterDetailPage = () => {
         </p> */}
 
         {/* Owner / Decade helper row */}
-        <div className="text-sm opacity-80 capitalize">
+        <div className="text-base opacity-80 capitalize ps-3 mt-3">
           {fullName ? `By ${fullName}` : ""} {decade ? `· ${decade}` : ""}
         </div>
       </div>
@@ -241,8 +241,8 @@ const LetterDetailPage = () => {
                   <h2 className="text-2xl font-bold mb-2">
                     Letter Transcript{" "}
                   </h2>
-                  <p className="text-xl leading-10 mb-4">
-                    {letterNarrative} <br /> {caption}
+                  <p className="text-xl leading-10 mb-4 ">
+                    {letterNarrative} 
                   </p>
                 </>
               )}

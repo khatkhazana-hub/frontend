@@ -32,6 +32,21 @@ export default function RowActions({
     if (confirm("Delete this submission? This cannot be undone.")) onDelete();
   };
 
+  // decide button ka color aur text dynamically set karo
+  const decideText =
+    status === "approved"
+      ? "Approved"
+      : status === "rejected"
+      ? "Rejected"
+      : "Decide";
+
+  const decideClass =
+    status === "approved"
+      ? "bg-green-500 text-white hover:bg-green-600"
+      : status === "rejected"
+      ? "bg-red-500 text-white hover:bg-red-600"
+      : "";
+
   return (
     <div className="flex items-center justify-end gap-2">
       <Button variant="outline" size="sm" onClick={onView} className="gap-1">
@@ -45,24 +60,7 @@ export default function RowActions({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size="sm" className="gap-1">
-            {status === "approved" ? (
-              <>
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                Approved
-              </>
-            ) : status === "rejected" ? (
-              <>
-                <XCircle className="h-4 w-4 text-red-600" />
-                Rejected
-              </>
-            ) : (
-              <>
-                Decide
-                <ChevronDown className="h-4 w-4" />
-              </>
-            )}
-          </Button>
+          <Button size="sm" className="gap-1">Decide<ChevronDown className="h-4 w-4" /></Button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-44">

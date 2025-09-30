@@ -21,6 +21,7 @@ export default function PhotoGraphDetail() {
   const { id } = useParams();
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
+  const [isOpen, setIsOpen] = useState(false); // fullscreen modal state
   const [loading, setLoading] = useState(true);
 
   // ✅ one global fetch for all submissions
@@ -114,13 +115,13 @@ export default function PhotoGraphDetail() {
         </div>
 
         <p
-          className="w-full text-left text-2xl md:text-[40px] font-bold capitalize mt-4"
+          className="w-full text-left text-2xl md:text-[40px] font-bold capitalize mt-4 "
           style={{ fontFamily: "philosopher" }}
         >
           {caption}
         </p>
         {topRightMeta && (
-          <p className="text-sm opacity-80 capitalize">{topRightMeta}</p>
+          <p className="text-base opacity-80 capitalize mt-2">{topRightMeta}</p>
         )}
       </div>
 
@@ -130,7 +131,7 @@ export default function PhotoGraphDetail() {
       >
         <div className="w-full text-black">
           <div className="flex flex-col lg:flex-row justify-between gap-10 rounded-md">
-            <div className="relative flex justify-center w-full ">
+            {/* <div className="relative flex justify-center w-full ">
               <img
                 src={photoSrc}
                 alt={caption}
@@ -142,10 +143,52 @@ export default function PhotoGraphDetail() {
                 alt="Watermark"
                 className="absolute top-40 left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
               />
+            </div> */}
+
+            <div className="relative flex justify-center lg:w-[70%] xl:w-full">
+              {/* Hero Image */}
+              <img
+                src={photoSrc}
+                alt={caption}
+                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain border-2 border-[#6E4A27]/50 "
+              />
+              {/* Fullscreen Icon */}
+              <button
+                onClick={() => setIsOpen(true)}
+                className="absolute lg:top-2 right-2 bg-white/50 hover:bg-white p-2 rounded-full shadow z-30"
+              >
+                <FiMaximize2 className="text-black w-6 h-6" />
+              </button>
+
+              {/* Watermark */}
+              <img
+                src="/images/logo.png"
+                alt="Watermark"
+                className="absolute top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none z-10"
+              />
             </div>
 
             <ThumbnailPhotoCard photo={data} />
           </div>
+
+          {/* Fullscreen Modal */}
+          {isOpen && (
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999]">
+              {/* Close Button */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute top-5 right-5 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow cursor-pointer"
+              >
+                ✕
+              </button>
+
+              <img
+                src={photoSrc}
+                alt={caption}
+                className="max-h-[70%] max-w-[70%] object-contain rounded-lg"
+              />
+            </div>
+          )}
 
           {data.photoAudioFile?.path && (
             <div className="mt-6">
@@ -163,9 +206,11 @@ export default function PhotoGraphDetail() {
                 {/* Photo Narrative */}
                 {data.photoNarrative && (
                   <>
-                    <h2 className="text-2xl font-bold mb-2">About the Photograph</h2>
+                    <h2 className="text-2xl font-bold mb-2">
+                      About the Photograph
+                    </h2>
                     <p className="text-xl leading-10 mb-4">
-                      {data.photoNarrative} <br/>  {data.photoNarrativeOptional}
+                      {data.photoNarrative} <br /> {data.photoNarrativeOptional}
                     </p>
                   </>
                 )}
