@@ -94,9 +94,9 @@ function Aboutus() {
         {/* ✅ About Page Header Image */}
         <div>
           <img
-            src="/images/About-header.webp"
+            src="/images/About-header.jpg"
             alt="About Khat-Khazana"
-            className="w-full h-fit md:h-fit object-cover rounded-xl shadow-lg"
+            className="w-full h-auto md:h-fit object-cover rounded-xl shadow-lg"
           />
         </div>
 
