@@ -79,7 +79,7 @@ export default function Footer() {
           "
         >
           {/* Quick Links */}
-          <div className="">
+          <div className="text-left">
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Quick Links
             </h3>
@@ -95,7 +95,7 @@ export default function Footer() {
           </div>
 
           {/* Submission */}
-          <div>
+          <div className="text-left">
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Submission
             </h3>
@@ -111,7 +111,7 @@ export default function Footer() {
           </div>
 
           {/* Support */}
-          <div className=" xl:w-[110%]">
+          <div className=" xl:w-[110%] text-left">
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Contact Us
             </h3>
@@ -131,7 +131,7 @@ export default function Footer() {
           </div>
 
           {/* Social Links */}
-          <div className="ml-10">
+          <div className="ml-10 text-left">
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-7">
               Social Links
             </h3>

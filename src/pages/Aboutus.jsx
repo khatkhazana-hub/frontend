@@ -101,13 +101,13 @@ function Aboutus() {
         </div>
 
         {/* ✅ 3 Images Grid */}
-        <div className="flex flex-col md:flex-row flex-wrap justify-center xl:items-start items-center gap-5 mb-10">
+        <div className="grid grid-cols-2  md:grid-cols-3 xl:grid-cols-3 gap-3 mb-10">
           {images.map((img, i) => (
             <img
               key={i}
               src={img}
               alt={`About Khat-Khazana ${i + 1}`}
-              className="xl:w-fit h-[400px] xl:h-[500px] object-cover rounded-xl shadow-lg cursor-pointer"
+              className="w-full object-contain rounded-xl shadow-lg cursor-pointer"
               onClick={() => setSelectedIndex(i)}
             />
           ))}

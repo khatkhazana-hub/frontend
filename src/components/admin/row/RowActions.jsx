@@ -10,10 +10,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Eye, Pencil, CheckCircle2, XCircle, ChevronDown , Trash2  } from "lucide-react";
+import {
+  Eye,
+  Pencil,
+  CheckCircle2,
+  XCircle,
+  ChevronDown,
+  Trash2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function RowActions({ status, onView, onEdit, onApprove, onReject, onDelete }) {
+export default function RowActions({
+  status,
+  onView,
+  onEdit,
+  onApprove,
+  onReject,
+  onDelete,
+}) {
   const handleDelete = () => {
     if (confirm("Delete this submission? This cannot be undone.")) onDelete();
   };
@@ -31,15 +45,39 @@ export default function RowActions({ status, onView, onEdit, onApprove, onReject
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size="sm" className="gap-1">Decide<ChevronDown className="h-4 w-4" /></Button>
+          <Button size="sm" className="gap-1">
+            {status === "approved" ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                Approved
+              </>
+            ) : status === "rejected" ? (
+              <>
+                <XCircle className="h-4 w-4 text-red-600" />
+                Rejected
+              </>
+            ) : (
+              <>
+                Decide
+                <ChevronDown className="h-4 w-4" />
+              </>
+            )}
+          </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuLabel>Moderation</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={onApprove} className={cn(status === "approved" && "text-green-600")}>
+          <DropdownMenuItem
+            onClick={onApprove}
+            className={cn(status === "approved" && "text-green-600")}
+          >
             <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onReject} className={cn(status === "rejected" && "text-red-600")}>
+          <DropdownMenuItem
+            onClick={onReject}
+            className={cn(status === "rejected" && "text-red-600")}
+          >
             <XCircle className="mr-2 h-4 w-4" /> Reject
           </DropdownMenuItem>
           <DropdownMenuSeparator />

@@ -121,7 +121,7 @@ export default function Navbar() {
         <div className="border-b border-gray-500 mx-4 mb-4"></div>
 
         {/* Nav Links */}
-        <div className="flex flex-col gap-2 p-4">
+        <div className="flex flex-col gap-2 p-4 text-left">
           {NAV_LINKS.map((link) => (
             <NavLink
               key={link.to}
