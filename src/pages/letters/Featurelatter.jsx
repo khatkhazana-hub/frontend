@@ -277,9 +277,9 @@ const Featurelatter = () => {
         />
       </div>
 
-      <div className="w-full my-10">
+      {/* <div className="w-full my-10">
         <Subcription />
-      </div>
+      </div> */}
     </div>
   );
 };

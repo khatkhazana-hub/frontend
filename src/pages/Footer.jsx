@@ -11,8 +11,8 @@ import { Link } from "react-router-dom";
 export default function Footer() {
   const QUICK_LINKS = [
     { label: "Home", href: "/" },
-    { label: "About Us", href: "/about" },
-    { label: "Contact Us", href: "/contact" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
   ];
 
   const SUBMISSION_LINKS = [
@@ -48,7 +48,7 @@ export default function Footer() {
         rounded-t-[52px] 
         py-[60px] px-6
         mx-auto flex flex-col items-center
-        overflow-hidden Padding-container
+        overflow-hidden Padding-container 
       "
       style={{
         backgroundImage: "url('/images/updated_bg.webp')",

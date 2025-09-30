@@ -53,7 +53,7 @@ const Letters = () => {
           </div>
         </div>
       </div>
-      <Subcription />
+
     </main>
   );
 };

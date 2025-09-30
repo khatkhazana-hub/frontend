@@ -107,9 +107,9 @@ export default function PhotoGraph() {
         </>
       )}
 
-      <div className="my-20 w-full">
+      {/* <div className="my-20 w-full">
         <Subcription />
-      </div>
+      </div> */}
     </div>
   );
 }

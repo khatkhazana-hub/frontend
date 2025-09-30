@@ -89,34 +89,32 @@ function Aboutus() {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center flex justify-center items-start my-10 lg:my-20 ">
-      <div className="flex flex-col gap-10 lg:gap-20 w-[95%] md:w-[90%] xl:w-[80%] text-center max-w-[1270px] ">
+    <div className=" flex flex-col  items-center  my-10 lg:my-20 max-w-[1920px] mx-auto">
+      <div className="flex flex-col gap-10 lg:gap-20 text-center lg:px-20 px-5 w-full">
         {/* ✅ About Page Header Image */}
         <div>
           <img
-            src="/images/About-header.jpg"
+            src="/images/About-header.webp"
             alt="About Khat-Khazana"
-            className="w-full h-auto md:h-fit object-cover rounded-xl shadow-lg"
+            className="w-full h-auto md:h-fit object-cover lg:rounded-2xl rounded-md shadow-lg"
           />
         </div>
 
         {/* ✅ 3 Images Grid */}
-        <div className="grid grid-cols-2  md:grid-cols-3 xl:grid-cols-3 gap-3 mb-10">
+        <div className="grid grid-cols-2  md:grid-cols-3 xl:grid-cols-3 gap-3 ">
           {images.map((img, i) => (
             <img
               key={i}
               src={img}
               alt={`About Khat-Khazana ${i + 1}`}
-              className="w-full object-contain rounded-xl shadow-lg cursor-pointer"
+              className="w-full h-auto object-contain shadow-lg cursor-pointer"
               onClick={() => setSelectedIndex(i)}
             />
           ))}
         </div>
-
-        <div>
-          <Subcription />
-        </div>
       </div>
+
+      {/* <Subcription /> */}
 
       {/* ✅ Lightbox Modal */}
       {selectedIndex !== null && (
@@ -129,7 +127,7 @@ function Aboutus() {
         >
           {/* Close Button */}
           <button
-            className="absolute top-5 right-5 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow cursor-pointer"
+            className="absolute top-5 right-5 lg:top-6 text-[3vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[6vh] h-[6vh] rounded-full shadow cursor-pointer"
             onClick={handleClose}
           >
             ✕
@@ -138,7 +136,7 @@ function Aboutus() {
           {/* Left Arrow */}
           <button
             disabled={selectedIndex === 0}
-            className={`absolute left-0 md:left-5 text-white text-4xl p-2 rounded-full z-50 cursor-pointer ${
+            className={`absolute left-0 md:left-5 text-[5vh] text-white p-2 rounded-full z-50 cursor-pointer ${
               selectedIndex === 0 ? "opacity-40 cursor-not-allowed" : ""
             }`}
             onClick={handlePrev}
@@ -149,7 +147,7 @@ function Aboutus() {
           {/* Right Arrow */}
           <button
             disabled={selectedIndex === images.length - 1}
-            className={`absolute right-0 md:right-5 text-white text-4xl p-2 rounded-full z-50 cursor-pointer ${
+            className={`absolute right-0 md:right-5 text-white text-[5vh] p-2 rounded-full z-50 cursor-pointer ${
               selectedIndex === images.length - 1
                 ? "opacity-40 cursor-not-allowed"
                 : ""
@@ -160,11 +158,23 @@ function Aboutus() {
           </button>
 
           {/* Zoom Controls */}
-          <div className="absolute right-20 bottom-10 flex gap-6 text-white text-3xl">
-            <button onClick={handleZoomOut}>
+          <div
+            className="fixed right-5 lg:right-10 lg:bottom-10 bottom-5 flex lg:gap-10 gap-5"
+            style={{
+              transform: "scale(calc(1 / var(--browser-zoom, 1)))",
+              transformOrigin: "bottom right",
+            }}
+          >
+            <button
+              onClick={handleZoomOut}
+              className="text-[5vh] text-white cursor-pointer"
+            >
               <FaSearchMinus />
             </button>
-            <button onClick={handleZoomIn}>
+            <button
+              onClick={handleZoomIn}
+              className="text-[5vh] text-white cursor-pointer"
+            >
               <FaSearchPlus />
             </button>
           </div>
@@ -182,7 +192,7 @@ function Aboutus() {
                 transition: isDragging ? "none" : "transform 0.2s ease",
                 cursor: "grab",
               }}
-              className="max-w-[80vw] max-h-[80vh] rounded-lg shadow-lg object-contain select-none"
+              className="w-[50vh] lg:w-[70vh] lg:h-[80vh] shadow-lg object-contain select-none"
               draggable={false}
             />
           </div>

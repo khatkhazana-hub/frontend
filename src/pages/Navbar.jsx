@@ -44,13 +44,13 @@ export default function Navbar() {
           <img
             src="/images/logo.svg"
             alt="Logo"
-            className="h-[60px] w-full object-cover cursor-pointer"
+            className="h-[50px] lg:h-[60px] w-full object-cover cursor-pointer"
           />
         </Link>
 
         {/* CENTER: Desktop nav */}
         <nav
-          className="hidden xl:flex items-center justify-center gap-x-6 flex-1 capitalize"
+          className="hidden xl:flex items-center justify-end gap-x-6 flex-1 capitalize"
           aria-label="Main"
         >
           {NAV_LINKS.map((link) => (
@@ -112,7 +112,7 @@ export default function Navbar() {
             <img
               src="/images/logo.svg"
               alt="Logo"
-              className="h-[60px] w-fit cursor-pointer"
+              className="h-[100px] w-fit cursor-pointer"
             />
           </Link>
         </div>

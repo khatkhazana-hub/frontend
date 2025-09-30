@@ -19,24 +19,26 @@ const Subcription = () => {
   };
 
   return (
-    <div className="flex justify-center items-end w-full relative my-20">
+    <div
+      className="flex justify-center items-center w-full relative bg-cover bg-center h-auto  xl:py-8 py-16"
+      style={{ backgroundImage: "url('/images/about-banner.webp')" }}
+    >
       {/* <img src="/images/InkPot.webp" alt="Logo" className="absolute -left-20 lg:-left-32 w-fit h-fit opacity-50 lg:opacity-100" /> */}
 
-      <div className="flex flex-col justify-center items-center gap-10 ">
-      
-        <div className="max-w-5xl flex">
+      <div className="flex flex-col justify-center items-center gap-5">
+        <div className="lg:w-4xl max-w-5xl flex justify-center items-center">
           <h2
-            className={`text-2xl md:text-3xl font-bold text-black capitalize md:leading-14 z-50`}
+            className={`text-2xl md:text-3xl font-bold text-black capitalize md:leading-14 w-full z-50`}
             style={{ fontFamily: "philosopher" }}
           >
             Subscribe for a Monthly Glimpse Into the Past - One Treasured Letter
             and Photograph, Shared with You Each Month.
           </h2>
-          {/* <img
+          <img
             src="/images/letterBox.webp"
             alt="Logo"
-            className="absolute right-0 -top-5  w-fit h-50 opacity-50 lg:opacity-100"
-          /> */}
+            className="w-24 h-auto lg:-mt-10 lg:-mr-10 hidden lg:block"
+          />
         </div>
 
         <form
@@ -72,7 +74,7 @@ const Subcription = () => {
             alt="Logo"
             width={100}
             height={60}
-            className="w-fit h-40 "
+            className="w-fit h-40 hidden md:block"
           />
         </form>
       </div>
