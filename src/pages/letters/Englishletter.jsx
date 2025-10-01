@@ -130,7 +130,7 @@ function LettersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 ">
+    <div className=" bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 mb-10 lg:mb-20 ">
       {/* Heading */}
       <HeadingDesc
         headingClassName="text-4xl md:text-[50px] text-center"

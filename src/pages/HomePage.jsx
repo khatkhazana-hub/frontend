@@ -6,7 +6,7 @@ const Homepage = () => {
 
   return (
     <>
-<div className="relative flex flex-col items-center justify-center min-h-screen capitalize bg-[#6E4A27] text-white overflow-hidden">
+<div className=" relative flex flex-col items-center justify-center min-h-screen capitalize bg-[#6E4A27] text-white overflow-hidden">
   {/* Glowing background accents */}
   <div className="absolute w-96 h-96 bg-white/10 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
   <div className="absolute w-96 h-96 bg-white/10 rounded-full blur-3xl bottom-10 right-10 animate-pulse"></div>
@@ -61,11 +61,11 @@ const Homepage = () => {
 
 
 
-      <section className="w-full container relative bg-black overflow-hidden hidden">
+      <section className="w-full relative overflow-hidden hidden">
         {/* 🔹 Video Section */}
         <video
           className="
-          w-full   h-[410px] lg:h-[550px]
+          w-full   h-[410px] lg:h-[70vh]
           object-cover
           block
           align-top
@@ -89,7 +89,7 @@ const Homepage = () => {
           block 
           align-top 
           cursor-pointer
-        -mt-10 md:-mt-20
+        -mt-10 md:-mt-32
         
         "
         />

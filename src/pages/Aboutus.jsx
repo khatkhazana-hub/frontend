@@ -127,7 +127,7 @@ function Aboutus() {
         >
           {/* Close Button */}
           <button
-            className="absolute top-5 right-5 lg:top-6 text-[3vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[6vh] h-[6vh] rounded-full shadow cursor-pointer"
+            className="absolute top-5 right-5 lg:top-6 text-[2vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[4vh] h-[4vh] rounded-full shadow cursor-pointer"
             onClick={handleClose}
           >
             ✕
