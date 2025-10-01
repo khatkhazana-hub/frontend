@@ -126,7 +126,7 @@ export default function PhotoGraphDetail() {
       </div>
 
       <div
-        className="w-full max-w-[1270px] rounded-[16px] py-10 px-5 lg:py-16 lg:px-8 flex flex-col gap-10 bg-cover bg-center mx-auto"
+        className="w-full max-w-[1270px] rounded-[16px] py-16  px-5 lg:px-8 flex flex-col gap-10 bg-cover bg-center mx-auto"
         style={{ backgroundImage: "url('/images/Card.webp')" }}
       >
         <div className="w-full text-black">
@@ -150,7 +150,7 @@ export default function PhotoGraphDetail() {
               <img
                 src={photoSrc}
                 alt={caption}
-                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain border-2 border-[#6E4A27]/50 "
+                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-cover lg:object-contain"
               />
               {/* Fullscreen Icon */}
               <button
@@ -164,7 +164,7 @@ export default function PhotoGraphDetail() {
               <img
                 src="/images/logo.png"
                 alt="Watermark"
-                className="absolute top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none z-10"
+                className="absolute top-20 lg:top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none z-10"
               />
             </div>
 
@@ -185,7 +185,7 @@ export default function PhotoGraphDetail() {
               <img
                 src={photoSrc}
                 alt={caption}
-                className="max-h-[70%] max-w-[70%] object-contain rounded-lg"
+                className="max-h-[70%] w-[70%] object-contain rounded-lg"
               />
             </div>
           )}
