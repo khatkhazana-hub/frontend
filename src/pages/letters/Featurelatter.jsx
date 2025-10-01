@@ -110,8 +110,8 @@ const Featurelatter = () => {
       descSrc.length > 80 ? `${descSrc.slice(0, 80)}...` : descSrc;
     const overlay = fileUrl(pickPhotoImagePath(heroPhoto));
     const name = heroPhoto?.photoCaption || "Unknown";
-    const placetaken = heroLetter?.photoPlace || "Unknown";
-    const phototrabscript = heroLetter?.photoNarrative || "Unknown";
+    const placetaken = heroPhoto?.photoPlace || "Unknown";
+    const phototrabscript = heroPhoto?.photoNarrative || "Unknown";
     return {
       _id: heroPhoto?._id,
       overlay,

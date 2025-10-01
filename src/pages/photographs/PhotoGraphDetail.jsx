@@ -131,19 +131,7 @@ export default function PhotoGraphDetail() {
       >
         <div className="w-full text-black">
           <div className="flex flex-col lg:flex-row justify-between gap-10 rounded-md">
-            {/* <div className="relative flex justify-center w-full ">
-              <img
-                src={photoSrc}
-                alt={caption}
-                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-contain border-2 border-[#6E4A27]/50 "
-              />
-
-              <img
-                src="/images/logo.png"
-                alt="Watermark"
-                className="absolute top-40 left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
-              />
-            </div> */}
+            
 
             <div className="relative flex justify-center lg:w-[70%] xl:w-full">
               {/* Hero Image */}
