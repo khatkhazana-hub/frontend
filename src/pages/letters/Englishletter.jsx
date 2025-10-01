@@ -136,7 +136,6 @@ function LettersPage() {
         headingClassName="text-4xl md:text-[50px] text-center"
         heading={`${lang} Letters`}
         containerClassName="mt-6"
-        // description={`Browse only approved submissions in ${lang}.`}
       />
 
       {/* Filters */}
@@ -224,8 +223,8 @@ function LettersPage() {
                 item.decade || "Unknown Decade"
               }`;
 
-            return (
-              <LetterCard
+            return (  
+              <LetterCard 
                 key={item._id || i}
                 to={`/letters/${lang}/${item._id || i}`}
                 overlay={img}
