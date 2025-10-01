@@ -45,7 +45,6 @@ export default function Footer() {
       className="
         relative text-black bg-center 
         w-full min-h-[560px] 
-        rounded-t-[52px] 
         py-[60px] px-6
         mx-auto flex flex-col items-center
         overflow-hidden Padding-container 
