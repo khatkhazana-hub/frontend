@@ -175,9 +175,10 @@ export default function PhotoGraphDetail() {
           {isOpen && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999]">
               {/* Close Button */}
+
               <button
+                className="absolute top-5 right-5 lg:top-6 text-[2vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[4vh] h-[4vh] rounded-full shadow cursor-pointer"
                 onClick={() => setIsOpen(false)}
-                className="absolute top-5 right-5 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow cursor-pointer"
               >
                 ✕
               </button>
@@ -185,7 +186,7 @@ export default function PhotoGraphDetail() {
               <img
                 src={photoSrc}
                 alt={caption}
-                className="max-h-[70%] w-[70%] object-contain rounded-lg"
+                className="w-[50vh] lg:w-[70vh] lg:h-[80vh] object-contain select-none"
               />
             </div>
           )}
