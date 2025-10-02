@@ -13,20 +13,20 @@ const FeaturedCard = ({
   return (
     <Link to={to}>
       <div
-        className={`relative cursor-pointer rounded-[20px] overflow-hidden lg:w-[350px] h-[410px] group mx-auto ${className}`}
+        className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto ${className}`}
       >
         {/* Card Background Image */}
         <img
           src="/images/Card.webp"
           alt="Card Background"
           loading="eager"
-          className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
+          className="absolute inset-0   w-full h-full object-cover rounded-[20px]"
         />
 
         {/* Featured Badge */}
         {isFeatured && (
           <span
-            className="absolute top-12 lg:right-24 bg-white text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md z-20"
+            className="absolute top-12 lg:right-24 bg-white text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md border border-black/10 z-20"
             style={{ fontFamily: "Philosopher" }}
           >
             Featured
@@ -40,7 +40,7 @@ const FeaturedCard = ({
             src={overlay}
             alt="Overlay"
             loading="eager"
-            className="object-contain group-hover:drop-shadow-xl transition-all duration-300 w-[310px] h-[250px]"
+            className="object-fill group-hover:drop-shadow-xl transition-all duration-300 w-[200px] h-[250px] rounded-sm"
           />
 
           {/* ✅ Watermark Image (Full Overlay Area) */}

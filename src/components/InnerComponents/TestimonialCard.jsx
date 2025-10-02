@@ -28,7 +28,7 @@ const TestimonialCard = ({
  
         {/* Letter text truncated */}
         <div className="mt-5 xl:w-[570px]">
-          <p className="text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal max-h-[200px] overflow-hidden">
+          <p className="text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal lowercase h-[200px] overflow-hidden">
             {lettertrabscript}
           </p>
 

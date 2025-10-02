@@ -23,16 +23,17 @@ export default function Footer() {
 
   const SUPPORT_INFO = [
     {
-      label: "Email: info@longlostletter.com",
+      label: "Email:",
+      value: "info@longlostletter.com",
       href: "mailto:info@longlostletter.com",
     },
     {
-      label: "Location: Plano, TX , USA",
+      label: "Location:",
+      value: "Plano, TX , USA",
       href: "https://maps.google.com/?q=Plano,TX,USA",
     },
-    // { label: "Phone: +123 456 7890", href: "tel:+1234567890" },
-    // { label: "Working Hours: Mon–Fri, 9am–6pm" },
   ];
+
   const SOCIAL_LINKS = [
     { icon: <FaLinkedinIn />, href: "#", label: "LinkedIn" },
     { icon: <FaInstagram />, href: "#", label: "Instagram" },
@@ -73,12 +74,12 @@ export default function Footer() {
         <div
           className="
             grid grid-cols-2 lg:grid-cols-4 
-            text-center md:text-left
-            gap-10 py-[30px]
+             text-left
+            xl:gap-10 gap-5 py-[30px]
           "
         >
           {/* Quick Links */}
-          <div className="text-left">
+          <div className=" ">
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Quick Links
             </h3>
@@ -94,7 +95,7 @@ export default function Footer() {
           </div>
 
           {/* Submission */}
-          <div className="text-left">
+          <div className="">
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Submission
             </h3>
@@ -109,20 +110,30 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
-          <div className=" xl:w-[110%] text-left">
+          <div>
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Contact Us
             </h3>
             <ul className="space-y-1 font-['Philosopher'] text-lg md:text-lg font-medium">
               {SUPPORT_INFO.map((info, i) => (
                 <li key={i}>
+                  {info.label}{" "}
                   {info.href ? (
-                    <a href={info.href} className="hover:underline">
-                      {info.label}
+                    <a
+                      href={info.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${
+                        info.href.startsWith("mailto:") ||
+                        info.href.includes("maps")
+                          ? "hover:underline target:_blank"
+                          : ""
+                      }`}
+                    >
+                      {info.value}
                     </a>
                   ) : (
-                    info.label
+                    info.value
                   )}
                 </li>
               ))}
@@ -130,11 +141,11 @@ export default function Footer() {
           </div>
 
           {/* Social Links */}
-          <div className="ml-10 text-left">
+          <div className="">
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-7">
               Social Links
             </h3>
-            <div className="flex justify-center md:justify-start gap-4 text-xl md:text-2xl">
+            <div className="flex justify-start gap-4 text-xl md:text-2xl">
               {SOCIAL_LINKS.map((social) => (
                 <a
                   key={social.label}

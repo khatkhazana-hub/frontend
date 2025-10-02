@@ -28,7 +28,7 @@ const PhotographFeaturedCard = ({
         {/* Featured Badge */}
         {isFeatured && (
           <span
-            className="absolute top-16 right-20 lg:right-28 bg-white text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md z-40"
+            className="absolute top-16 right-20 lg:right-28 bg-white  text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md border border-black/10 z-40"
             style={{ fontFamily: "Philosopher" }}
           >
             Featured
