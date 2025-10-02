@@ -24,8 +24,8 @@ export default function Footer() {
   const SUPPORT_INFO = [
     {
       label: "Email:",
-      value: "info@longlostletter.com",
-      href: "mailto:info@longlostletter.com",
+      value: "info@longlostletters.com",
+      href: "mailto:info@longlostletters.com",
     },
     {
       label: "Location:",

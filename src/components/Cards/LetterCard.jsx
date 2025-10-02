@@ -2,10 +2,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const LetterCard = ({ to, overlay, title, letcategory , className }) => {
+const LetterCard = ({ to, overlay, title, letcategory, className }) => {
   const imgSrc = overlay;
 
-  console.log(imgSrc);
+  // console.log(imgSrc);
 
   return (
     <Link to={to}>

@@ -139,6 +139,8 @@ const RelatedCards = () => {
             const id = encodeURIComponent(r?._id);
             const href = `/letters/${lang}/${id}`;
 
+            // console.log("Letter detail page issue ", href)
+
             return (
               <SwiperSlide
                 key={r._id}

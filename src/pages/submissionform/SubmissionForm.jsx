@@ -60,7 +60,7 @@ const SubmissionForm = () => {
         </div>
       </div>
 
-      <div className="my-20">
+      <div className=" my-10 md:my-20">
         <Form>
           <input type="text" placeholder="Your Name" />
           <textarea placeholder="Your Message"></textarea>

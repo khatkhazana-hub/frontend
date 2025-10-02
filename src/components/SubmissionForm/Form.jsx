@@ -196,7 +196,7 @@ export default function Form() {
             <FormSection>
               <div className="flex flex-col md:flex-row justify-between gap-3">
                 <div className="flex flex-col justify-between w-full">
-                  <div className="flex w-1/2 justify-between">
+                  <div className="flex w-full lg:w-1/2 justify-between">
                     <label className="font-bold text-sm block">
                       Letter Transcript (Optional)
                     </label>
@@ -234,7 +234,7 @@ export default function Form() {
                     </span>
                   </div>
 
-                  <div className="flex flex-col lg:flex-row justify-between gap-10">
+                  <div className="flex flex-col lg:flex-row justify-between lg:gap-10">
                     {(letterNarrativeFormat === "text" ||
                       letterNarrativeFormat === "both") && (
                       <InputField
@@ -291,7 +291,7 @@ export default function Form() {
             <FormSection>
               <div className="flex flex-col md:flex-row justify-between gap-3">
                 <div className="flex flex-col justify-between w-full">
-                  <div className="flex w-1/2 justify-between">
+                  <div className="flex w-full gap-1 lg:w-1/2 justify-between">
                     <label className="font-bold text-sm block">
                       About the Photograph (Optional)
                     </label>
@@ -329,7 +329,7 @@ export default function Form() {
                     </span>
                   </div>
 
-                  <div className="flex flex-col lg:flex-row justify-between gap-10">
+                  <div className="flex flex-col lg:flex-row justify-between lg:gap-10">
                     {(photoNarrativeFormat === "text" ||
                       photoNarrativeFormat === "both") && (
                       <InputField

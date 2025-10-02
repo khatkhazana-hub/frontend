@@ -127,7 +127,7 @@ function Aboutus() {
         >
           {/* Close Button */}
           <button
-            className="absolute top-5 right-5 lg:top-6 text-[2vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[4vh] h-[4vh] rounded-full shadow cursor-pointer"
+            className="absolute top-5 z-50 right-5 lg:top-6 text-[2vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[4vh] h-[4vh] rounded-full shadow cursor-pointer"
             onClick={handleClose}
           >
             ✕
@@ -159,7 +159,7 @@ function Aboutus() {
 
           {/* Zoom Controls */}
           <div
-            className="fixed right-5 lg:right-10 lg:bottom-10 bottom-5 flex lg:gap-10 gap-5"
+            className="fixed right-5 lg:right-10 lg:bottom-10 bottom-5 flex lg:gap-10 gap-5 z-50"
             style={{
               transform: "scale(calc(1 / var(--browser-zoom, 1)))",
               transformOrigin: "bottom right",
