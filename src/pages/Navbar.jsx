@@ -34,7 +34,7 @@ export default function Navbar() {
         backgroundSize: "100% 100%",
       }}
     >
-      <div className="mx-auto w-full px-5 lg:px-10 xl:px-20 py-2 flex items-center justify-between z-50 max-w-[1920px]">
+      <div className="mx-auto w-full px-5 lg:px-10 xl:px-20 py-2 flex items-center justify-between z-50 max-w-[1920px] q  ">
         {/* LEFT: Logo */}
         <Link
           to="/"
@@ -50,7 +50,7 @@ export default function Navbar() {
 
         {/* CENTER: Desktop nav */}
         <nav
-          className="hidden xl:flex items-center justify-end gap-x-6 flex-1 capitalize"
+          className="hidden xl:flex items-center justify-center gap-x-6 flex-1 capitalize"
           aria-label="Main"
         >
           {NAV_LINKS.map((link) => (
@@ -59,6 +59,19 @@ export default function Navbar() {
             </NavLink>
           ))}
         </nav>
+        
+           <Link
+          to="/"
+          className="xl:flex items-center mt-[10px] min-w-0 hidden"
+          aria-label="Home"
+        >
+          <img
+            src="/images/logo.svg"
+            alt="Logo"
+            className="h-[50px] lg:h-[60px] w-full object-cover cursor-pointer"
+          />
+        </Link>
+
 
         {/* RIGHT: Contact Us Button + Hamburger */}
         <div className="flex items-center gap-3">

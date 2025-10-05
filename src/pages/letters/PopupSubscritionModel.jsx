@@ -45,7 +45,7 @@ const PopupSubscritionModel = ({ onSubscribe }) => {
       />
 
       <h2 className="text-xl font-bold text-center text-[#6E4A27]">
-        Subscribe to receive featured letters or photographs delivered to your
+        Subscribe to receive one featured Letter/Photograph delivered to your
         inbox every month.
       </h2>
 

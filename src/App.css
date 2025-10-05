@@ -220,3 +220,19 @@ body.bg-ready #bg {
     @apply bg-background text-foreground;
   }
 }
+
+
+
+/* Swiper Dots Styling */
+.custom-pagination .swiper-pagination-bullet {
+  background: #c6c6c6; /* Tailwind gray-300 */
+  opacity: 1;
+  transition: all 0.3s ease;
+   width: 6px;
+  height: 6px;
+}
+
+.custom-pagination .swiper-pagination-bullet-active {
+  background: #6E4A27; /* Tailwind blue-600 */
+  transform: scale(1.2);
+}

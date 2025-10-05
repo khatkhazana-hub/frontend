@@ -114,12 +114,11 @@ function Aboutus() {
         </div>
       </div>
 
-      {/* <Subcription /> */}
 
       {/* ✅ Lightbox Modal */}
       {selectedIndex !== null && (
         <div
-          className="fixed inset-0 backdrop-blur-sm bg-black/80 flex justify-center items-center z-[999]"
+          className="fixed inset-0 backdrop-blur-sm bg-black/80 flex justify-center items-center z-[9999]"
           ref={containerRef}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -127,7 +126,7 @@ function Aboutus() {
         >
           {/* Close Button */}
           <button
-            className="absolute top-5 z-50 right-5 lg:top-6 text-[2vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[4vh] h-[4vh] rounded-full shadow cursor-pointer"
+            className="absolute top-5 z-50 right-5 lg:top-6 text-[2.5vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[5vh] h-[5vh] rounded-full shadow cursor-pointer"
             onClick={handleClose}
           >
             ✕
@@ -136,7 +135,7 @@ function Aboutus() {
           {/* Left Arrow */}
           <button
             disabled={selectedIndex === 0}
-            className={`absolute left-0 md:left-5 text-[5vh] text-white p-2 rounded-full z-50 cursor-pointer ${
+            className={`absolute left-0 md:left-5 text-[4vh] text-white p-2 rounded-full z-50 cursor-pointer ${
               selectedIndex === 0 ? "opacity-40 cursor-not-allowed" : ""
             }`}
             onClick={handlePrev}
@@ -147,7 +146,7 @@ function Aboutus() {
           {/* Right Arrow */}
           <button
             disabled={selectedIndex === images.length - 1}
-            className={`absolute right-0 md:right-5 text-white text-[5vh] p-2 rounded-full z-50 cursor-pointer ${
+            className={`absolute right-0 md:right-5 text-white text-[4vh] p-2 rounded-full z-50 cursor-pointer ${
               selectedIndex === images.length - 1
                 ? "opacity-40 cursor-not-allowed"
                 : ""
@@ -156,28 +155,6 @@ function Aboutus() {
           >
             <FaChevronRight />
           </button>
-
-          {/* Zoom Controls */}
-          <div
-            className="fixed right-5 lg:right-10 lg:bottom-10 bottom-5 flex lg:gap-10 gap-5 z-50"
-            style={{
-              transform: "scale(calc(1 / var(--browser-zoom, 1)))",
-              transformOrigin: "bottom right",
-            }}
-          >
-            <button
-              onClick={handleZoomOut}
-              className="text-[5vh] text-white cursor-pointer"
-            >
-              <FaSearchMinus />
-            </button>
-            <button
-              onClick={handleZoomIn}
-              className="text-[5vh] text-white cursor-pointer"
-            >
-              <FaSearchPlus />
-            </button>
-          </div>
 
           {/* Image */}
           <div
@@ -192,9 +169,19 @@ function Aboutus() {
                 transition: isDragging ? "none" : "transform 0.2s ease",
                 cursor: "grab",
               }}
-              className="w-[50vh] lg:w-[70vh] lg:h-[80vh] shadow-lg object-contain select-none"
+              className="w-[40vh] lg:w-fit lg:h-[80vh] object-contain select-none "
               draggable={false}
             />
+          </div>
+
+          {/* Zoom Controls */}
+          <div className="absolute bottom-6 text-white w-[14vh]  h-[7vh] flex items-center justify-center gap-4 bg-white/20 backdrop-blur-2xl px-4 py-2 rounded-lg">
+            <button onClick={handleZoomOut} className="cursor-pointer">
+              <FaSearchMinus className="text-[4vh]" />
+            </button>
+            <button onClick={handleZoomIn} className="cursor-pointer  ">
+              <FaSearchPlus className="text-[4vh]" />
+            </button>
           </div>
         </div>
       )}

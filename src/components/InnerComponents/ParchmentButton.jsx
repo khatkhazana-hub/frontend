@@ -26,7 +26,6 @@ function ParchmentButton({
         "transition-transform duration-200 ease-out",
         "hover:scale-[1.02]",
         "active:scale-[0.98]",
-        "focus:outline-none focus:ring-2 focus:ring-amber-600/50",
         "disabled:opacity-60 disabled:cursor-not-allowed",
         "font-philosopher",
         "cursor-pointer",

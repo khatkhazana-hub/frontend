@@ -6,6 +6,7 @@ import ThumbnailCards from "../../components/InnerComponents/ThumbnailCards";
 import { IoCalendarOutline } from "react-icons/io5";
 import api from "../../utils/api";
 import { FiMaximize2 } from "react-icons/fi"; // fullscreen icon
+import MainImageWithSlider from "./MainImageWithSlider";
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL;
 
@@ -16,7 +17,7 @@ const LetterDetailPage = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
-  const [isOpen, setIsOpen] = useState(false); // fullscreen modal state
+  // const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -64,6 +65,14 @@ const LetterDetailPage = () => {
     return `${BASE_URL}/${cleaned}`;
   };
 
+  // Demo Array
+  const demoImages = useMemo(() => {
+    return Array.from(
+      { length: 20 },
+      (_, i) => `https://picsum.photos/seed/${i + 1}/600/800`
+    );
+  }, []);
+
   const prettyDate = useMemo(() => {
     if (!data?.createdAt) return "";
     try {
@@ -103,7 +112,7 @@ const LetterDetailPage = () => {
     letterCategory,
     decade,
     letterNarrative,
-    letterNarrativeOptional,
+    // letterNarrativeOptional,
     letterImage,
     letterAudioFile,
     photoCaption,
@@ -113,13 +122,9 @@ const LetterDetailPage = () => {
   } = data;
 
   const heroImage =
-    (letterImage && fileUrl(letterImage.path)) || "/images/About-1.webp";
+    (letterImage && fileUrl(letterImage.path)) || "Image Not found";
 
   const audioSrc = (letterAudioFile && fileUrl(letterAudioFile.path)) || "";
-
-  const caption =
-    letterNarrativeOptional ||
-    [letterCategory, decade].filter(Boolean).join(" · ");
 
   return (
     <div className="min-h-[300px] px-5 lg:px-10 xl:px-0 bg-cover bg-center">
@@ -138,14 +143,6 @@ const LetterDetailPage = () => {
           </div>
         </div>
 
-        {/* Title */}
-        {/* <p
-          className="w-full text-left text-2xl md:text-[40px] font-bold capitalize mt-4"
-          style={{ fontFamily: "philosopher" }}
-        >
-          {title || "Untitled Letter"}
-        </p> */}
-
         {/* Owner / Decade helper row */}
         <div className="text-base opacity-80 capitalize ps-3 mt-3">
           {fullName ? `By ${fullName}` : ""} {decade ? `· ${decade}` : ""}
@@ -158,39 +155,12 @@ const LetterDetailPage = () => {
         style={{ backgroundImage: "url('/images/Card.webp')" }}
       >
         <div className="w-full text-black">
-          {/* Letter Image + Thumbnails */}
-
           <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6  w-full">
-            <div className="relative flex justify-center lg:w-[70%] xl:w-full">
-              {/* Hero Image */}
-              <img
-                src={heroImage}
-                alt={title || "Letter Image"}
-                className="rounded-md mx-auto w-[230px] lg:w-[330px] h-[350px] lg:h-[500px] max-h-[500px] object-cover"
-              />
-              {/* Fullscreen Icon */}
-              <button
-                onClick={() => setIsOpen(true)}
-                className="absolute lg:top-2 right-2 bg-white/50 hover:bg-white p-2 rounded-full shadow z-30"
-              >
-                <FiMaximize2 className="text-black w-6 h-6" />
-              </button>
-
-              {/* Watermark */}
-              <img
-                src="/images/logo.png"
-                alt="Watermark"
-                className="absolute top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none z-10"
-              />
-
-              {/* Frame – sabse top par */}
-              <img
-                src="/images/DetailPageBorder.webp" // yahan apka frame image path
-                alt="Frame"
-                className="absolute top-0 left-0 w-full h-full object-contain pointer-events-none select-none z-20"
-              />
-            </div>
-
+            <MainImageWithSlider
+              heroImage={heroImage}
+              title={title}
+              images={demoImages}
+            />
             <ThumbnailCards
               photo={{
                 overlay: photoImage ? fileUrl(photoImage.path) : null,
@@ -199,27 +169,6 @@ const LetterDetailPage = () => {
               }}
             />
           </div>
-
-          {/* Fullscreen Modal */}
-          {isOpen && (
-            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999]">
-              {/* Close Button */}
-
-              <button
-                className="absolute top-5 right-5 lg:top-6 text-[2vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[4vh] h-[4vh] rounded-full shadow cursor-pointer"
-                onClick={() => setIsOpen(false)}
-              >
-                ✕
-              </button>
-
-              <img
-                src={heroImage}
-                alt={title || "Letter Image"}
-                // className="max-h-[70%] max-w-[70%] object-contain rounded-lg"
-                className="w-[50vh] lg:w-[70vh] lg:h-[80vh] object-contain select-none"
-              />
-            </div>
-          )}
 
           {/* Letter Audio */}
           {audioSrc && (
@@ -246,14 +195,6 @@ const LetterDetailPage = () => {
                   <p className="text-xl leading-10 mb-4 ">{letterNarrative}</p>
                 </>
               )}
-
-              {/* Caption text */}
-              {/* {caption && (
-                <>
-                  <h2 className="text-2xl font-bold mb-2">Narrative</h2>
-                  <p className="text-xl leading-10">{caption}</p>
-                </>
-              )} */}
             </div>
           </div>
         </div>

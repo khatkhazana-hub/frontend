@@ -14,6 +14,11 @@ export default function Form() {
   // States
   const [uploadType, setUploadType] = useState("Both");
   const [before2000, setBefore2000] = useState("No");
+  // const [images, setImages] = useState([1]);
+  const [letterFiles, setLetterFiles] = useState([]);
+  const [photoFiles, setPhotoFiles] = useState([]);
+  const [letterAudioFiles, setLetterAudioFiles] = useState([]);
+  const [photoAudioFiles, setPhotoAudioFiles] = useState([]);
 
   // narrative formats
   const [letterNarrativeFormat, setLetterNarrativeFormat] = useState("both");
@@ -48,8 +53,18 @@ export default function Form() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // if (images.length < 1) {
+    //   alert("Please upload at least 1 image.");
+    //   return;
+    // }
+
     if (!hasReadGuidelines || !agreedTermsSubmission) {
       alert("Please check both boxes before submitting.");
+      return;
+    }
+
+    if (letterFiles.length < 1 && photoFiles.length < 1) {
+      alert("Please upload at least 1 image.");
       return;
     }
 
@@ -69,12 +84,57 @@ export default function Form() {
       formData.set("letterLanguage", letterLanguage || "");
       formData.set("letterCategory", letterCategory || "");
       formData.set("decade", decade || "");
+      // 🟢 Add uploaded files to FormData
+      letterFiles.forEach((file) => formData.append("letterImage", file));
+      photoFiles.forEach((file) => formData.append("photoImage", file));
+      letterAudioFiles.forEach((file) =>
+        formData.append("letterAudioFile", file)
+      );
+      photoAudioFiles.forEach((file) =>
+        formData.append("photoAudioFile", file)
+      );
+
+      // 🟢 LOG CLEAN DATA BEFORE SUBMISSION
+      console.group("📦 FORM SUBMISSION DATA");
+      console.log("Upload Type:", uploadType);
+      console.log("Before 2000:", before2000);
+      console.log("Letter Category:", letterCategory);
+      console.log("Letter Language:", letterLanguage);
+      console.log("Decade:", decade);
+      console.log("Letter Narrative Format:", letterNarrativeFormat);
+      console.log("Photo Narrative Format:", photoNarrativeFormat);
+      console.log("Guidelines Read:", hasReadGuidelines);
+      console.log("Agreed Terms:", agreedTermsSubmission);
+
+      // 🔹 Print all form text fields
+      const entries = {};
+      formData.forEach((v, k) => {
+        if (v instanceof File) return;
+        entries[k] = v;
+      });
+      console.log("Text Fields:", entries);
+
+      // 🔹 Print file arrays with name + size
+      const formatFileInfo = (files) =>
+        files.map((f) => ({
+          name: f.name,
+          sizeMB: (f.size / (1024 * 1024)).toFixed(2) + " MB",
+          type: f.type,
+        }));
+
+      console.log("Letter Images:", formatFileInfo(letterFiles));
+      console.log("Photo Images:", formatFileInfo(photoFiles));
+      console.log("Letter Audio:", formatFileInfo(letterAudioFiles));
+      console.log("Photo Audio:", formatFileInfo(photoAudioFiles));
+      console.groupEnd();
+
+      // <----------API Calling ----------->
 
       const res = await api.post("/submissions", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("Saved:", res.data);
+      console.log("✅ Saved to server:", res.data);
       setShowThankYou(true);
       formEl.reset();
       setUploadType("Both");
@@ -152,7 +212,7 @@ export default function Form() {
         {renderLetterInfo && (
           <>
             <FormSection title="Letter Information">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 xl:gap-x-8 gap-y-6">
                 <DropdownField
                   label="Category"
                   name="letterCategory"
@@ -184,10 +244,12 @@ export default function Form() {
                 <FileInput
                   label="Upload"
                   name="letterImage"
-                  subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
+                  subtext="Accepted formats: PNG/JPG"
                   required
                   previewType="image"
                   resetTrigger={resetTrigger} // 🔹 add
+                  fileCategory="letter" // 👈 only checks file type + size
+                  onFilesChange={setLetterFiles}
                 />
               </div>
             </FormSection>
@@ -255,6 +317,7 @@ export default function Form() {
                         wrapperClassName="w-full mt-4"
                         label="Audio"
                         resetTrigger={resetTrigger} // 🔹 add
+                        onFilesChange={setLetterAudioFiles}
                       />
                     )}
                   </div>
@@ -279,10 +342,12 @@ export default function Form() {
                 <FileInput
                   label="Upload"
                   name="photoImage"
-                  subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI)."
+                  subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI). Accepted formats: PNG/JPG"
                   required
                   previewType="image"
                   resetTrigger={resetTrigger} // 🔹 add
+                  fileCategory="photograph" // 👈 adds resolution + type + size validation
+                  onFilesChange={setPhotoFiles}
                 />
               </div>
             </FormSection>
@@ -350,6 +415,7 @@ export default function Form() {
                         wrapperClassName="w-full mt-4"
                         label="Audio"
                         resetTrigger={resetTrigger} // 🔹 add
+                        onFilesChange={setPhotoAudioFiles}
                       />
                     )}
                   </div>
@@ -363,7 +429,7 @@ export default function Form() {
         <FormSection title="Verification">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
             <RadioGroup
-              label="Is the image from before 2000?"
+              label="Is the Photograph/Letter from before 2000?"
               name="before2000"
               options={[
                 { value: "Yes", label: "Yes" },
@@ -373,8 +439,8 @@ export default function Form() {
               onChange={(e) => setBefore2000(e.target.value)}
             />
           </div>
-          <div className="mt-4 space-y-2 text-sm font-semibold text-black">
-            <label className="flex items-center gap-2 text-sm md:text-base">
+          <div className="mt-8 space-y-2 text-sm font-semibold text-black ">
+            <label className="flex items-center gap-2 ">
               <input
                 type="checkbox"
                 checked={hasReadGuidelines}
@@ -385,7 +451,7 @@ export default function Form() {
             </label>
 
             {/* ✅ Checkbox Terms */}
-            <label className="flex items-center gap-2 text-sm md:text-base">
+            <label className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={agreedTermsSubmission}

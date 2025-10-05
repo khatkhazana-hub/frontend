@@ -7,6 +7,7 @@ import api from "@/utils/api";
 import useSubmissions from "@/hooks/useSubmissions"; // ✅ fetch once here
 import RelatedPhotographs from "@/components/Cards/RelatedPhotographs";
 import ThumbnailPhotoCard from "@/components/InnerComponents/ThumbnailPhotoCard";
+import MainImageWithSlider from "../letters/MainImageWithSlider";
 
 const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
 
@@ -59,6 +60,14 @@ export default function PhotoGraphDetail() {
       return "";
     }
   }, [data]);
+
+  // Demo Array
+  const demoImages = useMemo(() => {
+    return Array.from(
+      { length: 20 },
+      (_, i) => `https://picsum.photos/seed/${i + 1}/600/800`
+    );
+  }, []);
 
   // ✅ related photographs = featuredPhoto + approved, exclude current id
   const relatedPhotos = useMemo(() => {
@@ -130,17 +139,15 @@ export default function PhotoGraphDetail() {
         style={{ backgroundImage: "url('/images/Card.webp')" }}
       >
         <div className="w-full text-black">
-          <div className="flex flex-col lg:flex-row justify-between gap-10 rounded-md">
-            
-
-            <div className="relative flex justify-center lg:w-[70%] xl:w-full">
-              {/* Hero Image */}
+          <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6  w-full">
+            {/* <div className="relative flex justify-center lg:w-[70%] xl:w-full">
+       
               <img
                 src={photoSrc}
                 alt={caption}
                 className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-cover lg:object-contain"
               />
-              {/* Fullscreen Icon */}
+
               <button
                 onClick={() => setIsOpen(true)}
                 className="absolute lg:top-2 right-2 bg-white/50 hover:bg-white p-2 rounded-full shadow z-30"
@@ -148,13 +155,15 @@ export default function PhotoGraphDetail() {
                 <FiMaximize2 className="text-black w-6 h-6" />
               </button>
 
-              {/* Watermark */}
+  
               <img
                 src="/images/logo.png"
                 alt="Watermark"
                 className="absolute top-20 lg:top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none z-10"
               />
-            </div>
+            </div> */}
+
+            <MainImageWithSlider heroImage={photoSrc} images={demoImages} />
 
             <ThumbnailPhotoCard photo={data} />
           </div>

@@ -1,7 +1,11 @@
 // @ts-nocheck
-import React, { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react"; 
+import React, { useEffect, useId, useRef, useState } from "react";
+import { X, Plus } from "lucide-react";
 import ParchmentButton from "../InnerComponents/ParchmentButton";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation, Pagination } from "swiper/modules";
 
 const FileInput = ({
   label,
@@ -9,186 +13,277 @@ const FileInput = ({
   name,
   required = false,
   wrapperClassName = "",
-  previewType = "image", // "image" | "audio" | "none"
-    resetTrigger, 
+  previewType = "image",
+  fileCategory = "photograph", // 👈 new prop
+  resetTrigger,
+  onFilesChange,
   ...props
 }) => {
   const fileInputRef = useRef(null);
-  const [preview, setPreview] = useState(null);
-  const [fileName, setFileName] = useState("");
+  const [previews, setPreviews] = useState([]);
+  const [filesData, setFilesData] = useState([]); // ✅ actual files for form submission
+  const [fileNames, setFileNames] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(""); // ✅ For showing error under subtext
 
+  const MAX_FILES = 20;
+  const MIN_FILES = 1;
 
-    // ✅ jab resetTrigger change ho to sab clear
+  // ✅ Generate unique ID for each instance (for pagination)
+  const uniqueId = useId();
+  const paginationClass = `custom-pagination-${uniqueId}`;
+
   useEffect(() => {
     if (resetTrigger) {
       if (fileInputRef.current) fileInputRef.current.value = "";
-      setPreview(null);
-      setFileName("");
+      setPreviews([]);
+      setFilesData([]);
+      setFileNames([]);
+      if (onFilesChange) onFilesChange([]);
     }
   }, [resetTrigger]);
 
-  // automatic accept based on previewType
   let acceptAttr = props.accept;
   if (!acceptAttr) {
     if (previewType === "image") acceptAttr = "image/*";
-    if (previewType === "audio") acceptAttr = "audio/*";
+    if (previewType === "audio") acceptAttr = "audio/mpeg,audio/wav,audio/aac"; // ✅ Only MP3, WAV, AAC
   }
 
   const handleButtonClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
-  // const handleFileChange = (e) => {
-  //   if (props.onChange) props.onChange(e);
-  //   const file = e.target.files[0];
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
 
-  //   if (file) {
-  //     if (
-  //       (previewType === "image" && file.type.startsWith("image/")) ||
-  //       (previewType === "audio" && file.type.startsWith("audio/"))
-  //     ) {
-  //       const url = URL.createObjectURL(file);
-  //       setPreview(url);
-  //       setFileName(file.name);
-  //     } else {
-  //       alert(`Please upload a valid ${previewType} file.`);
-  //       e.target.value = "";
-  //       setPreview(null);
-  //       setFileName("");
-  //     }
-  //   } else {
-  //     setPreview(null);
-  //     setFileName("");
-  //   }
-  // };
+    let newPreviews = [...previews];
+    let newNames = [...fileNames];
+    let newFiles = [...filesData];
+    let invalidFiles = [];
 
-  const handleFileChange = (e) => {
-    if (props.onChange) props.onChange(e);
-    const file = e.target.files[0];
+    setErrorMessage(""); // clear previous error
 
-    if (!file) {
-      setPreview(null);
-      setFileName("");
-      return;
+    for (let file of files) {
+      if (newPreviews.length >= MAX_FILES) {
+        invalidFiles.push(
+          `${file.name} → You can only upload up to ${MAX_FILES} files.`
+        );
+        break;
+      }
+
+      // ✅ Image Upload Validation
+      if (previewType === "image") {
+        const allowedTypes = ["image/jpeg", "image/png"];
+        if (!allowedTypes.includes(file.type)) {
+          invalidFiles.push(
+            `${file.name} → Invalid file type (Only JPG, PNG allowed)`
+          );
+          continue;
+        }
+
+        const fileSizeMB = file.size / (1024 * 1024);
+        if (fileSizeMB > 20) {
+          invalidFiles.push(`${file.name} → File size exceeds 20 MB`);
+          continue;
+        }
+
+        // ✅ Only check resolution for "photograph"
+        if (fileCategory === "photograph") {
+          const img = await new Promise((resolve, reject) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = reject;
+            image.src = URL.createObjectURL(file);
+          });
+
+          if (img.width < 1200 || img.height < 1800) {
+            invalidFiles.push(
+              `${file.name} → Resolution too low (${img.width}x${img.height})`
+            );
+            continue;
+          }
+        }
+
+        // ✅ Passed all checks
+        const url = URL.createObjectURL(file);
+        newPreviews.push(url);
+        newNames.push(file.name);
+        newFiles.push(file);
+      }
+
+      // ✅ Audio Upload Validation
+      else if (previewType === "audio") {
+        const allowedTypes = ["audio/mpeg", "audio/wav", "audio/aac"];
+        if (!allowedTypes.includes(file.type)) {
+          invalidFiles.push(
+            `${file.name} → Invalid audio format (Only MP3, WAV, AAC allowed)`
+          );
+          continue;
+        }
+
+        const fileSizeMB = file.size / (1024 * 1024);
+        if (fileSizeMB > 20) {
+          invalidFiles.push(`${file.name} → File size exceeds 20 MB`);
+          continue;
+        }
+
+        // ✅ Passed all checks
+        const url = URL.createObjectURL(file);
+        newPreviews.push(url);
+        newNames.push(file.name);
+        newFiles.push(file);
+      }
     }
 
-    // ✅ File type check (image ya audio)
-    if (
-      (previewType === "image" && !file.type.startsWith("image/")) ||
-      (previewType === "audio" && !file.type.startsWith("audio/"))
-    ) {
-      alert(`Please upload a valid ${previewType} file.`);
-      e.target.value = "";
-      setPreview(null);
-      setFileName("");
-      return;
-    }
+    // ✅ Update state
+    setPreviews(newPreviews);
+    setFileNames(newNames);
+    setFilesData(newFiles);
+    if (onFilesChange) onFilesChange(newFiles);
 
-    // ✅ File size check (500 KB)
-    const fileSizeKB = file.size / 1024;
-    if (previewType === "image" && fileSizeKB > 500) {
-      alert("Image size must be less than or equal to 500 KB.");
-      e.target.value = "";
-      setPreview(null);
-      setFileName("");
-      return;
+    // ✅ Show formatted error summary
+    if (invalidFiles.length > 0) {
+      const message =
+        `${invalidFiles.length} file(s) have errors:\n\n` +
+        invalidFiles.map((msg, i) => `${i + 1}. ${msg}`).join("\n");
+      setErrorMessage(message);
     }
-
-    // ✅ sab OK hai to preview set karo
-    const url = URL.createObjectURL(file);
-    setPreview(url);
-    setFileName(file.name);
   };
 
-  const handleRemoveFile = () => {
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    setPreview(null);
-    setFileName("");
+  const handleRemoveFile = (index) => {
+    const updatedPreviews = [...previews];
+    const updatedNames = [...fileNames];
+    const updatedFiles = [...filesData];
+
+    updatedPreviews.splice(index, 1);
+    updatedNames.splice(index, 1);
+    updatedFiles.splice(index, 1);
+
+    setPreviews(updatedPreviews);
+    setFileNames(updatedNames);
+    setFilesData(updatedFiles);
+
+    if (onFilesChange) onFilesChange(updatedFiles);
+
+    if (updatedPreviews.length === 0 && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
-    <div
-      className={`flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-3 ${wrapperClassName}`}
-    >
-      <div className="flex flex-col">
-        {label && (
-          <label htmlFor={name} className="font-bold text-sm mb-2 block">
-            {label} {required && <span className="text-red-600">*</span>}
-          </label>
-        )}
+    <div className={`flex flex-col w-full gap-3 ${wrapperClassName}`}>
+      {label && (
+        <label htmlFor={name} className="font-bold text-sm">
+          {label}{" "}
+          {required && (
+            <span className="text-red-600 font-normal text-xs">*</span>
+          )}
+        </label>
+      )}
 
-        {/* Hidden file input */}
-        <input
-          type="file"
-          id={name}
-          name={name}
-          required={required && !preview}
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleFileChange}
-          accept={acceptAttr}
-          {...props}
-        />
+      <input
+        type="file"
+        id={name}
+        name={name}
+        required={required && previews.length < MIN_FILES}
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileChange}
+        accept={acceptAttr}
+        multiple
+        {...props}
+      />
 
-        {/* Upload Button */}
-        {/* <button
-          type="button"
-          onClick={handleButtonClick}
-          className={`bg-[#8B5E3C] whitespace-nowrap text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-[#A17A5D] transition-colors w-max ${className}`}
-        >
-          Choose File
-        </button> */}
+      {/* Agar abhi tak koi file nahi hai to choose file button */}
+      {previews.length === 0 && (
         <ParchmentButton
           className="w-fit !text-[14px] !py-2"
           type="button"
           onClick={handleButtonClick}
         >
-          Choose File
+          Choose Files
         </ParchmentButton>
+      )}
 
-        {/* File Name */}
-        {fileName && (
-          <p className="text-xs text-gray-600 mt-1 truncate max-w-[200px]">
-            {fileName}
+      {/* ✅ Image Previews with Swiper */}
+      {previewType === "image" && previews.length > 0 && (
+        <div className="w-full  relative cursor-pointer">
+          <p className="text-[10px] text-gray-500 absolute -top-7 right-0 text-center">
+            {previews.length} / {MAX_FILES} Images
           </p>
-        )}
-
-        {subtext && <p className="text-xs text-red-500 mt-2">{subtext}</p>}
-      </div>
-
-      {/* Preview with cross button */}
-      {preview && previewType === "image" && (
-        <div className="relative w-24 h-24">
-          <img
-            src={preview}
-            alt="Preview"
-            className="w-22 h-22 border object-cover rounded-md"
-          />
-          <button
-            type="button"
-            onClick={handleRemoveFile}
-            className="absolute top-0 right-0 bg-black/60 hover:bg-black text-white rounded-full p-1"
+          <Swiper
+            modules={[Navigation, Pagination]}
+            // navigation
+            pagination={{
+              clickable: true,
+              el: `.${paginationClass}`, // 👈 unique per instance
+            }}
+            spaceBetween={2}
+            slidesPerView={5}
+            className="mySwiper"
           >
-            <X size={14} />
-          </button>
+            {previews.map((p, i) => (
+              <SwiperSlide key={i} className="!w-auto">
+                <div className="relative w-14 h-14">
+                  <img
+                    src={p}
+                    alt={`Preview ${i}`}
+                    className="w-full h-full border object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFile(i)}
+                    className="absolute -top-1 -right-1 bg-black/60 hover:bg-black text-white rounded-full p-1"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              </SwiperSlide>
+            ))}
+
+            {/* ✅ Plus Button — visible only if less than MAX_FILES */}
+            {previews.length < MAX_FILES && (
+              <SwiperSlide className="!w-auto">
+                <button
+                  type="button"
+                  onClick={handleButtonClick}
+                  className="w-10 h-10 ml-1 mt-2 flex items-center justify-center border-2 border-dashed border-gray-400 rounded-md cursor-pointer"
+                >
+                  <Plus size={16} className="text-gray-600" />
+                </button>
+              </SwiperSlide>
+            )}
+          </Swiper>
+          {/* ✅ Unique Pagination Container */}
+          <div
+            className={`${paginationClass} custom-pagination mt-1 space-x-1 flex justify-center`}
+          ></div>
         </div>
       )}
 
-      {preview && previewType === "audio" && (
-        <div className="relative inline-block">
-          <audio controls className="mt-2 w-[200px]">
-            <source src={preview} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
-          <button
-            type="button"
-            onClick={handleRemoveFile}
-            className="absolute -top-2 -right-2 bg-black/60 hover:bg-black text-white rounded-full p-1"
-          >
-            <X size={14} />
-          </button>
+      {/* ✅ Audio Previews */}
+      {previewType === "audio" && previews.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {previews.map((p, i) => (
+            <div key={i} className="relative flex items-center gap-2">
+              <audio controls src={p} className="w-full"></audio>
+              <button
+                type="button"
+                onClick={() => handleRemoveFile(i)}
+                className="absolute -top-1 -right-1 bg-black/60 hover:bg-black text-white rounded-full p-1"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ))}
         </div>
       )}
+
+      {subtext || errorMessage ? (
+        <div className="text-xs text-red-500 whitespace-pre-line">
+          {errorMessage || subtext}
+        </div>
+      ) : null}
     </div>
   );
 };

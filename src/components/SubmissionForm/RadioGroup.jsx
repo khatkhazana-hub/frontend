@@ -17,7 +17,7 @@ const RadioGroup = ({
     <div className={`flex flex-col ${wrapperClassName}`}>
       {/* 🔹 Main Label */}
       {label && (
-        <label className="font-bold text-sm mb-1 capitalize">
+        <label className="font-bold text-sm mb-1 ">
           {label} {required && <span className="text-red-600">*</span>}
         </label>
       )}

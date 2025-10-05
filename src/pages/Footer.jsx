@@ -37,7 +37,7 @@ export default function Footer() {
   const SOCIAL_LINKS = [
     { icon: <FaLinkedinIn />, href: "#", label: "LinkedIn" },
     { icon: <FaInstagram />, href: "#", label: "Instagram" },
-    { icon: <FaTwitter />, href: "#", label: "Twitter" },
+    // { icon: <FaTwitter />, href: "#", label: "Twitter" },
     { icon: <FaFacebookF />, href: "#", label: "Facebook" },
   ];
 
