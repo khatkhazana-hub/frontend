@@ -2,28 +2,17 @@
 import React from "react";
 import Thumbnails from "./Thumbnails";
 
-const ThumbnailCards = ({ photo }) => {
-  // if photo is passed, use it, otherwise fallback demo
-  const cards = photo
+const ThumbnailCards = ({ photos }) => {
+  console.log(photos , 'photo')
+  const cards = photos
     ? [
         {
           id: 1,
-          img: photo?.overlay, // API photo URL
-          title: photo.title,
+          img: photos, // API photo URL
+          title: photos.title,
         },
       ]
-    : [
-        {
-          id: 1,
-          img: "/images/About-1.webp",
-          title: "Lorem Ipsum #1",
-        },
-        {
-          id: 2,
-          img: "/images/About-2.webp",
-          title: "Lorem Ipsum #2",
-        },
-      ];
+    : null
 
   return (
     <div className="lg:w-[25%] w-full flex flex-col lg:flex-row lg:justify-start justify-center relative items-center lg:items-start gap-5 lg:gap-5 xl:gap-10">

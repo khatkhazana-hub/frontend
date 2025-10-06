@@ -14,7 +14,6 @@ export default function Form() {
   // States
   const [uploadType, setUploadType] = useState("Both");
   const [before2000, setBefore2000] = useState("No");
-  // const [images, setImages] = useState([1]);
   const [letterFiles, setLetterFiles] = useState([]);
   const [photoFiles, setPhotoFiles] = useState([]);
   const [letterAudioFiles, setLetterAudioFiles] = useState([]);
@@ -39,24 +38,19 @@ export default function Form() {
 
   const handleUploadTypeChange = (e) => setUploadType(e.target.value);
 
-  // Pehle apni decade list banayen
+  // decade options
   const decadeOptions = [
-    { value: "unknown", label: "Unknown" }, // akhri option
-    { value: "before-1900", label: "Before 1900" }, // pehla option
-
+    { value: "unknown", label: "Unknown" },
+    { value: "before-1900", label: "Before 1900" },
     ...Array.from({ length: 10 }, (_, i) => {
       const start = 1900 + i * 10;
       const end = start + 10;
       return { value: `${start}-${end}`, label: `${start} - ${end}` };
     }),
   ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // if (images.length < 1) {
-    //   alert("Please upload at least 1 image.");
-    //   return;
-    // }
 
     if (!hasReadGuidelines || !agreedTermsSubmission) {
       alert("Please check both boxes before submitting.");
@@ -72,9 +66,12 @@ export default function Form() {
       setIsSubmitting(true);
 
       const formEl = e.target;
+
+      // IMPORTANT: Build FormData from the form ONLY.
+      // This already includes files from <input type="file" name="...">.
       const formData = new FormData(formEl);
 
-      // normalize controlled state -> formData
+      // Normalize controlled state -> formData (text/booleans only)
       formData.set("uploadType", uploadType);
       formData.set("before2000", before2000);
       formData.set("letterNarrativeFormat", letterNarrativeFormat);
@@ -84,17 +81,11 @@ export default function Form() {
       formData.set("letterLanguage", letterLanguage || "");
       formData.set("letterCategory", letterCategory || "");
       formData.set("decade", decade || "");
-      // 🟢 Add uploaded files to FormData
-      letterFiles.forEach((file) => formData.append("letterImage", file));
-      photoFiles.forEach((file) => formData.append("photoImage", file));
-      letterAudioFiles.forEach((file) =>
-        formData.append("letterAudioFile", file)
-      );
-      photoAudioFiles.forEach((file) =>
-        formData.append("photoAudioFile", file)
-      );
 
-      // 🟢 LOG CLEAN DATA BEFORE SUBMISSION
+      // ✅ DO NOT append files manually here.
+      // The <FileInput> fields already put files into the form.
+
+      // ---------- debug logs ----------
       console.group("📦 FORM SUBMISSION DATA");
       console.log("Upload Type:", uploadType);
       console.log("Before 2000:", before2000);
@@ -106,7 +97,6 @@ export default function Form() {
       console.log("Guidelines Read:", hasReadGuidelines);
       console.log("Agreed Terms:", agreedTermsSubmission);
 
-      // 🔹 Print all form text fields
       const entries = {};
       formData.forEach((v, k) => {
         if (v instanceof File) return;
@@ -114,7 +104,6 @@ export default function Form() {
       });
       console.log("Text Fields:", entries);
 
-      // 🔹 Print file arrays with name + size
       const formatFileInfo = (files) =>
         files.map((f) => ({
           name: f.name,
@@ -122,13 +111,13 @@ export default function Form() {
           type: f.type,
         }));
 
-      console.log("Letter Images:", formatFileInfo(letterFiles));
-      console.log("Photo Images:", formatFileInfo(photoFiles));
-      console.log("Letter Audio:", formatFileInfo(letterAudioFiles));
-      console.log("Photo Audio:", formatFileInfo(photoAudioFiles));
+      console.log("Letter Images (state):", formatFileInfo(letterFiles));
+      console.log("Photo Images (state):", formatFileInfo(photoFiles));
+      console.log("Letter Audio (state):", formatFileInfo(letterAudioFiles));
+      console.log("Photo Audio (state):", formatFileInfo(photoAudioFiles));
       console.groupEnd();
 
-      // <----------API Calling ----------->
+      // <---------- API ----------->
 
       const res = await api.post("/submissions", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -136,8 +125,6 @@ export default function Form() {
 
       console.log("✅ Saved to server:", res.data);
       setShowThankYou(true);
-      formEl.reset();
-      setUploadType("Both");
 
       // Reset form + controlled state
       formEl.reset();
@@ -150,7 +137,11 @@ export default function Form() {
       setDecade("");
       setHasReadGuidelines(false);
       setAgreedTermsSubmission(false);
-      setResetTrigger((prev) => !prev); // 🔹 is line ko add karo
+      setLetterFiles([]);
+      setPhotoFiles([]);
+      setLetterAudioFiles([]);
+      setPhotoAudioFiles([]);
+      setResetTrigger((prev) => !prev);
     } catch (err) {
       console.error("Submit error:", err?.response?.data || err.message);
       alert(
@@ -247,8 +238,10 @@ export default function Form() {
                   subtext="Accepted formats: PNG/JPG"
                   required
                   previewType="image"
-                  resetTrigger={resetTrigger} // 🔹 add
-                  fileCategory="letter" // 👈 only checks file type + size
+                  resetTrigger={resetTrigger}
+                  fileCategory="letter"
+                  // allow multiple images
+                  multiple={true}
                   onFilesChange={setLetterFiles}
                 />
               </div>
@@ -316,8 +309,12 @@ export default function Form() {
                         previewType="audio"
                         wrapperClassName="w-full mt-4"
                         label="Audio"
-                        resetTrigger={resetTrigger} // 🔹 add
-                        onFilesChange={setLetterAudioFiles}
+                        resetTrigger={resetTrigger}
+                        // enforce single audio
+                        multiple={false}
+                        onFilesChange={(files) =>
+                          setLetterAudioFiles(files.slice(0, 1))
+                        }
                       />
                     )}
                   </div>
@@ -345,8 +342,10 @@ export default function Form() {
                   subtext="Resolution must be at least 1200 x 1800 pixels (300 DPI). Accepted formats: PNG/JPG"
                   required
                   previewType="image"
-                  resetTrigger={resetTrigger} // 🔹 add
-                  fileCategory="photograph" // 👈 adds resolution + type + size validation
+                  resetTrigger={resetTrigger}
+                  fileCategory="photograph"
+                  // allow multiple images
+                  multiple={true}
                   onFilesChange={setPhotoFiles}
                 />
               </div>
@@ -414,8 +413,12 @@ export default function Form() {
                         previewType="audio"
                         wrapperClassName="w-full mt-4"
                         label="Audio"
-                        resetTrigger={resetTrigger} // 🔹 add
-                        onFilesChange={setPhotoAudioFiles}
+                        resetTrigger={resetTrigger}
+                        // enforce single audio
+                        multiple={false}
+                        onFilesChange={(files) =>
+                          setPhotoAudioFiles(files.slice(0, 1))
+                        }
                       />
                     )}
                   </div>
@@ -429,7 +432,7 @@ export default function Form() {
         <FormSection title="Verification">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
             <RadioGroup
-              label="Is the Photograph/Letter from before 2000?"
+              label="Is the Photograph/Letter from before 2000?"
               name="before2000"
               options={[
                 { value: "Yes", label: "Yes" },
@@ -450,7 +453,6 @@ export default function Form() {
               I have read the submission guidelines.
             </label>
 
-            {/* ✅ Checkbox Terms */}
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -476,17 +478,16 @@ export default function Form() {
           </ParchmentButton>
         </div>
       </form>
+
       {showThankYou && (
         <>
-          {/* Confetti */}
           <ReactConfetti
             width={window.innerWidth}
             height={window.innerHeight}
             numberOfPieces={1000}
-            recycle={false} // ek hi bar chalega
+            recycle={false}
           />
 
-          {/* Modal */}
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full text-center">
               <h2 className="text-2xl font-bold mb-4 text-[#6E4A27]">

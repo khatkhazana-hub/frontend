@@ -114,6 +114,8 @@ function LettersPage() {
 
   const visible = filtered.slice(0, visibleCount);
 
+
+
   const handleLoadMore = () => {
     setLoadMoreBusy(true);
     setTimeout(() => {
@@ -128,6 +130,23 @@ function LettersPage() {
     const cleaned = pathLike.replace(/^\/?/, "");
     return `${BASE_URL}/${cleaned}`;
   };
+
+
+  const getFirstImageUrl = (item) => {
+  // normalize: might be array (new) or single object (old docs)
+  const pick0 = (v) => (Array.isArray(v) ? v[0] : v);
+
+  const firstLetter = pick0(item.letterImage);
+  const firstPhoto  = pick0(item.photoImage);
+
+  const meta = firstLetter || firstPhoto; // prefer letter, fallback photo
+  if (!meta) return "";
+
+  // we stored S3 object key in `path`; multer-s3 also has `location` sometimes
+  const raw = meta.path || meta.location || meta.url;
+  return raw ? fileUrl(raw) : "";
+};
+
 
   return (
     <div className=" bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 mb-10 lg:mb-20 ">
@@ -211,9 +230,7 @@ function LettersPage() {
       {!loading && !error && filtered.length > 0 && (
         <div className="mt-8 w-full max-w-[1270px] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
           {visible.map((item, i) => {
-            const img =
-              (item.letterImage && fileUrl(item.letterImage.path)) ||
-              "/images/About-1.webp";
+             const img = getFirstImageUrl(item);
             const title = item.fullName || "Untitled Letter";
             const category = item.letterCategory || "Untitled Letter";
             const desc =
@@ -222,7 +239,6 @@ function LettersPage() {
               `${item.letterCategory || "Unknown Category"} · ${
                 item.decade || "Unknown Decade"
               }`;
-
             return (  
               <LetterCard 
                 key={item._id || i}

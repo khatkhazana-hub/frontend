@@ -7,15 +7,24 @@ import Subcription from "../../components/InnerComponents/Subcription";
 import useSubmissions from "@/hooks/useSubmissions";
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
+
 const fileUrl = (pathLike) => {
   if (!pathLike) return "";
   if (/^https?:\/\//i.test(pathLike)) return pathLike;
-  const cleaned = String(pathLike).replace(/^\/+/, ""); // keep "public/..."
+  const cleaned = String(pathLike).replace(/^\/+/, "");
   return `${BASE_URL}/${cleaned}`;
 };
 
+// grab first meta whether it's array or single object
+const firstMeta = (v) => (Array.isArray(v) ? v[0] : v) || null;
+
+const getPhotoUrl = (row) => {
+  const meta = firstMeta(row?.photoImage);
+  const raw = meta?.path || meta?.location || meta?.url;
+  return raw ? fileUrl(raw) : "";
+};
+
 export default function PhotoGraph() {
-  // pull everything; we'll filter client-side to avoid array-deps loops
   const { rows, loading: loadingRows, err } = useSubmissions({
     serverFilter: false,
   });
@@ -26,11 +35,15 @@ export default function PhotoGraph() {
       .filter((r) => {
         const type = String(r?.uploadType || "").toLowerCase();
         const isAllowedType = okTypes.has(type);
-        const hasImage = !!r?.photoImage?.path;            // always use photo image for the card
-        const isApproved = String(r?.status || "").toLowerCase() === "approved";
-        return isAllowedType && hasImage && isApproved;
+        const isApproved =
+          String(r?.status || "").toLowerCase() === "approved";
+
+        const meta = firstMeta(r?.photoImage);
+        const hasImage = !!(meta && (meta.path || meta.location || meta.url));
+
+        return isAllowedType && isApproved && hasImage;
       })
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // newest first
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [rows]);
 
   const PAGE = 12;
@@ -56,7 +69,7 @@ export default function PhotoGraph() {
 
       {err && <div className="mt-10 text-red-600 text-sm">{err}</div>}
 
-      {(loadingRows && !photos.length) ? (
+      {loadingRows && !photos.length ? (
         <div className="mt-16 w-full max-w-[1270px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {Array.from({ length: 9 }).map((_, i) => (
             <div key={i} className="h-64 rounded-xl bg-gray-200/60 animate-pulse" />
@@ -69,7 +82,7 @@ export default function PhotoGraph() {
               <PhotographCard
                 key={r._id}
                 to={`/photographs/${r._id}`}
-                overlayImg={fileUrl(r.photoImage.path)}   // always the photo image
+                overlayImg={getPhotoUrl(r)}  // ✅ first photo image
                 title={r.photoCaption || r.fullName || "Untitled"}
                 description={
                   r.photoNarrative ||

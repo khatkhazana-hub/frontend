@@ -5,10 +5,27 @@ import RelatedCards from "../../components/Cards/Cards";
 import ThumbnailCards from "../../components/InnerComponents/ThumbnailCards";
 import { IoCalendarOutline } from "react-icons/io5";
 import api from "../../utils/api";
-import { FiMaximize2 } from "react-icons/fi"; // fullscreen icon
 import MainImageWithSlider from "./MainImageWithSlider";
 
-const BASE_URL = import.meta.env.VITE_FILE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
+
+// turn stored path/location/url into a full URL
+const fileUrl = (p) => {
+  if (!p) return "";
+  if (/^https?:\/\//i.test(p)) return p;
+  const cleaned = String(p).replace(/^\/+/, ""); // keep "public/..."
+  return `${BASE_URL}/${cleaned}`;
+};
+
+// single meta -> url
+const metaToUrl = (m) => fileUrl(m?.path || m?.location || m?.url || "");
+
+// array-or-object -> array of urls
+const fieldToUrls = (v) => {
+  if (!v) return [];
+  const arr = Array.isArray(v) ? v : [v];
+  return arr.map(metaToUrl).filter(Boolean);
+};
 
 const LetterDetailPage = () => {
   const { id } = useParams();
@@ -17,7 +34,6 @@ const LetterDetailPage = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
-  // const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -25,19 +41,15 @@ const LetterDetailPage = () => {
     setErr("");
 
     api
-      .get(`/submissions/${id}`) // baseURL already set in api.js
+      .get(`/submissions/${id}`)
       .then((res) => {
         if (!alive) return;
         const doc = res.data;
 
         if (doc?.status?.toLowerCase() !== "approved") {
-          // redirect back to the correct language list
-          navigate(
-            `/letters/${doc?.letterLanguage?.toLowerCase() || "english"}`,
-            {
-              replace: true,
-            }
-          );
+          navigate(`/letters/${doc?.letterLanguage?.toLowerCase() || "english"}`, {
+            replace: true,
+          });
           return;
         }
 
@@ -57,21 +69,6 @@ const LetterDetailPage = () => {
       alive = false;
     };
   }, [id, navigate]);
-
-  const fileUrl = (p) => {
-    if (!p) return "";
-    if (/^https?:\/\//i.test(p)) return p;
-    const cleaned = p.replace(/^\/?/, "");
-    return `${BASE_URL}/${cleaned}`;
-  };
-
-  // Demo Array
-  const demoImages = useMemo(() => {
-    return Array.from(
-      { length: 20 },
-      (_, i) => `https://picsum.photos/seed/${i + 1}/600/800`
-    );
-  }, []);
 
   const prettyDate = useMemo(() => {
     if (!data?.createdAt) return "";
@@ -112,19 +109,26 @@ const LetterDetailPage = () => {
     letterCategory,
     decade,
     letterNarrative,
-    // letterNarrativeOptional,
-    letterImage,
-    letterAudioFile,
+    letterImage,        // array or single (legacy)
+    letterAudioFile,    // single
     photoCaption,
-    photoImage,
+    photoImage,         // array or single (legacy)
     photoNarrative,
     fullName,
   } = data;
 
-  const heroImage =
-    (letterImage && fileUrl(letterImage.path)) || "Image Not found";
+  // build image sources from arrays
+  const letterImages = fieldToUrls(letterImage);
+  const photoImages  = fieldToUrls(photoImage);
 
-  const audioSrc = (letterAudioFile && fileUrl(letterAudioFile.path)) || "";
+  // hero = first letter image; fallback to first photo image
+  const heroImage    =  photoImages[0] || "";
+
+
+  // slider prefers letter images; if none, uses photos
+  const sliderImages = letterImages.length ? letterImages : photoImages;
+
+  const audioSrc = metaToUrl(letterAudioFile);
 
   return (
     <div className="min-h-[300px] px-5 lg:px-10 xl:px-0 bg-cover bg-center">
@@ -143,7 +147,7 @@ const LetterDetailPage = () => {
           </div>
         </div>
 
-        {/* Owner / Decade helper row */}
+        {/* Owner / Decade */}
         <div className="text-base opacity-80 capitalize ps-3 mt-3">
           {fullName ? `By ${fullName}` : ""} {decade ? `· ${decade}` : ""}
         </div>
@@ -155,19 +159,15 @@ const LetterDetailPage = () => {
         style={{ backgroundImage: "url('/images/Card.webp')" }}
       >
         <div className="w-full text-black">
-          <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6  w-full">
+          <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6 w-full">
             <MainImageWithSlider
               heroImage={heroImage}
               title={title}
-              images={demoImages}
+              images={sliderImages}
             />
-            <ThumbnailCards
-              photo={{
-                overlay: photoImage ? fileUrl(photoImage.path) : null,
-                title: photoCaption || "Related Photograph",
-                description: photoNarrative || "No description available",
-              }}
-            />
+
+            {/* right-side thumbnails -> all uploaded photo images */}
+            <ThumbnailCards photos={heroImage} heading="Related Photographs" />
           </div>
 
           {/* Letter Audio */}
@@ -184,19 +184,14 @@ const LetterDetailPage = () => {
           )}
 
           {/* Letter Narrative */}
-          <div className="mt-10 flex flex-col lg:flex-row justify-between gap-10">
-            <div className="text-black text-left leading-10">
-              {/* Narrative text */}
-              {letterNarrative && (
-                <>
-                  <h2 className="text-2xl font-bold mb-2">
-                    Letter Transcript{" "}
-                  </h2>
-                  <p className="text-xl leading-10 mb-4 ">{letterNarrative}</p>
-                </>
-              )}
+          {!!letterNarrative && (
+            <div className="mt-10 flex flex-col lg:flex-row justify-between gap-10">
+              <div className="text-black text-left leading-10">
+                <h2 className="text-2xl font-bold mb-2">Letter Transcript</h2>
+                <p className="text-xl leading-10 mb-4">{letterNarrative}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

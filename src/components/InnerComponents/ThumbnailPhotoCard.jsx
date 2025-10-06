@@ -11,16 +11,27 @@ const buildFileUrl = (p) => {
   return `${FILE_BASE}/${rel}`;
 };
 
-const ThumbnailPhotoCard = ({ photo }) => {
-  console.log(photo, "photo");
+// normalize meta -> url (supports {path}|{location}|{url}|string)
+const metaToUrl = (m) => {
+  if (!m) return "";
+  if (typeof m === "string") return buildFileUrl(m);
+  return buildFileUrl(m.path || m.location || m.url || "");
+};
 
-  // Cards sirf tab banenge jab letterImage ho
-  const cards = photo?.letterImage?.path
+const ThumbnailPhotoCard = ({ photo }) => {
+  // letterImage can be an array or a single object; we want the FIRST one
+  const firstLetterMeta = Array.isArray(photo?.letterImage)
+    ? photo.letterImage[0]
+    : photo?.letterImage;
+
+  const firstLetterImgUrl = metaToUrl(firstLetterMeta);
+
+  const cards = firstLetterImgUrl
     ? [
         {
-          id: photo._id,
-          img: buildFileUrl(photo.letterImage.path),
-          title: photo.title || "Untitled Letter",
+          id: photo?._id || "letter-1",
+          img: firstLetterImgUrl,
+          title: photo?.title || "Untitled Letter",
         },
       ]
     : [];
@@ -29,8 +40,7 @@ const ThumbnailPhotoCard = ({ photo }) => {
     <div className="lg:w-[25%] w-full flex flex-col lg:flex-row lg:justify-start justify-center relative items-center lg:items-start gap-10">
       <div className="self-center w-full h-px border-t border-black lg:w-px lg:h-[400px] lg:border-t-0 lg:border-l"></div>
 
-      <div className="">
-        {/* Heading hamesha show ho */}
+      <div>
         <h2
           className="text-lg sm:text-xl font-bold mb-4 text-center"
           style={{ fontFamily: "philosopher" }}
@@ -38,14 +48,13 @@ const ThumbnailPhotoCard = ({ photo }) => {
           Related Letters
         </h2>
 
-        {/* Cards sirf tab render ho jab data ho */}
-        {cards?.length > 0 && (
+        {cards.length > 0 && (
           <div className="w-full flex flex-col md:flex-row lg:flex-col justify-center gap-4 items-center lg:items-start">
             {cards.map((item) => (
               <ThumbnailForPhotograph
-                RelatedImage={item.img}
                 key={item.id}
-                RelatedThumbnailName={"Related Letters"}
+                RelatedImage={item.img}
+                RelatedThumbnailName={item.title}
               />
             ))}
           </div>

@@ -78,7 +78,7 @@ const MainImageWithSlider = ({ images = [], title }) => {
           <img
             src={heroImage}
             alt={title || "Letter Image"}
-            className="rounded-md mx-auto w-[240px] lg:w-[330px] h-[350px] lg:h-[500px] object-fill"
+            className="rounded-md mx-auto w-[240px] lg:w-[330px] h-[350px] lg:h-[500px] object-contain"
           />
 
           {/* Watermark */}

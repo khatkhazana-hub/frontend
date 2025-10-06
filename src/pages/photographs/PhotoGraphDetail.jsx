@@ -2,9 +2,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { IoCalendarOutline } from "react-icons/io5";
-import { FiMaximize2 } from "react-icons/fi"; // fullscreen icon
 import api from "@/utils/api";
-import useSubmissions from "@/hooks/useSubmissions"; // ✅ fetch once here
+import useSubmissions from "@/hooks/useSubmissions";
 import RelatedPhotographs from "@/components/Cards/RelatedPhotographs";
 import ThumbnailPhotoCard from "@/components/InnerComponents/ThumbnailPhotoCard";
 import MainImageWithSlider from "../letters/MainImageWithSlider";
@@ -14,18 +13,32 @@ const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
 const buildFileUrl = (p) => {
   if (!p) return "";
   if (/^https?:\/\//i.test(p)) return p;
-  const rel = String(p).replace(/^\/+/, "");
+  const rel = String(p).replace(/^\/+/, ""); // keep "public/..."
   return `${FILE_BASE}/${rel}`;
+};
+
+// meta -> url (supports {path}|{location}|{url}|string)
+const metaToUrl = (m) => {
+  if (!m) return "";
+  if (typeof m === "string") return buildFileUrl(m);
+  return buildFileUrl(m.path || m.location || m.url || "");
+};
+
+// array-or-single -> array of urls
+const fieldToUrls = (v) => {
+  if (!v) return [];
+  const arr = Array.isArray(v) ? v : [v];
+  return arr.map(metaToUrl).filter(Boolean);
 };
 
 export default function PhotoGraphDetail() {
   const { id } = useParams();
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
-  const [isOpen, setIsOpen] = useState(false); // fullscreen modal state
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ one global fetch for all submissions
+  // global submissions (used for related)
   const { rows: allRows } = useSubmissions();
 
   useEffect(() => {
@@ -61,15 +74,15 @@ export default function PhotoGraphDetail() {
     }
   }, [data]);
 
-  // Demo Array
-  const demoImages = useMemo(() => {
-    return Array.from(
-      { length: 20 },
-      (_, i) => `https://picsum.photos/seed/${i + 1}/600/800`
-    );
-  }, []);
+  // build arrays from uploaded meta
+  const photoImages = useMemo(() => fieldToUrls(data?.photoImage), [data]);
+  const letterImages = useMemo(() => fieldToUrls(data?.letterImage), [data]);
 
-  // ✅ related photographs = featuredPhoto + approved, exclude current id
+  // hero & slider
+  const heroImage = photoImages[0] || letterImages[0] || "";
+  const sliderImages = photoImages.length ? photoImages : letterImages;
+
+  // related photographs (featured + approved, not current)
   const relatedPhotos = useMemo(() => {
     return (allRows || []).filter(
       (r) =>
@@ -100,14 +113,16 @@ export default function PhotoGraphDetail() {
     );
   }
 
-  const photoSrc = data.photoImage?.path
-    ? buildFileUrl(data.photoImage.path)
-    : null;
   const caption = data.photoCaption || data.title || "Untitled Photo";
   const category = data.letterCategory || "—";
   const place = data.photoPlace || "";
   const decade = data.decade || "";
   const topRightMeta = [place, decade].filter(Boolean).join(" • ");
+
+  // normalize for ThumbnailPhotoCard (if it expects photo.photoImage.path)
+  const firstPhotoForChild = heroImage
+    ? { ...data, photoImage: { path: heroImage } }
+    : data;
 
   return (
     <div className="min-h-[300px] px-5 lg:px-0 bg-cover bg-center">
@@ -124,7 +139,7 @@ export default function PhotoGraphDetail() {
         </div>
 
         <p
-          className="w-full text-left text-2xl md:text-[40px] font-bold capitalize mt-4 "
+          className="w-full text-left text-2xl md:text-[40px] font-bold capitalize mt-4"
           style={{ fontFamily: "philosopher" }}
         >
           {caption}
@@ -135,53 +150,29 @@ export default function PhotoGraphDetail() {
       </div>
 
       <div
-        className="w-full max-w-[1270px] rounded-[16px] py-16  px-5 lg:px-8 flex flex-col gap-10 bg-cover bg-center mx-auto"
+        className="w-full max-w-[1270px] rounded-[16px] py-16 px-5 lg:px-8 flex flex-col gap-10 bg-cover bg-center mx-auto"
         style={{ backgroundImage: "url('/images/Card.webp')" }}
       >
         <div className="w-full text-black">
-          <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6  w-full">
-            {/* <div className="relative flex justify-center lg:w-[70%] xl:w-full">
-       
-              <img
-                src={photoSrc}
-                alt={caption}
-                className="rounded-md mx-auto w-fit h-[300px] lg:h-[500px] max-h-[500px] object-cover lg:object-contain"
-              />
+          <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6 w-full">
+            {/* main image + slider fed from uploaded arrays */}
+            <MainImageWithSlider heroImage={heroImage} images={sliderImages} />
 
-              <button
-                onClick={() => setIsOpen(true)}
-                className="absolute lg:top-2 right-2 bg-white/50 hover:bg-white p-2 rounded-full shadow z-30"
-              >
-                <FiMaximize2 className="text-black w-6 h-6" />
-              </button>
-
-  
-              <img
-                src="/images/logo.png"
-                alt="Watermark"
-                className="absolute top-20 lg:top-40 xl:left-[400px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none z-10"
-              />
-            </div> */}
-
-            <MainImageWithSlider heroImage={photoSrc} images={demoImages} />
-
-            <ThumbnailPhotoCard photo={data} />
+            {/* right-side info/thumb card; pass first image normalized */}
+            <ThumbnailPhotoCard photo={firstPhotoForChild} />
           </div>
 
-          {/* Fullscreen Modal */}
-          {isOpen && (
+          {/* fullscreen modal (optional) */}
+          {isOpen && heroImage && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999]">
-              {/* Close Button */}
-
               <button
                 className="absolute top-5 right-5 lg:top-6 text-[2vh] font-bold lg:right-6 bg-white/80 hover:bg-white w-[4vh] h-[4vh] rounded-full shadow cursor-pointer"
                 onClick={() => setIsOpen(false)}
               >
                 ✕
               </button>
-
               <img
-                src={photoSrc}
+                src={heroImage}
                 alt={caption}
                 className="w-[50vh] lg:w-[70vh] lg:h-[80vh] object-contain select-none"
               />
@@ -201,34 +192,25 @@ export default function PhotoGraphDetail() {
           {(data.photoNarrative || data.photoNarrativeOptional) && (
             <div className="mt-10 flex flex-col lg:flex-row justify-between gap-10">
               <div className="text-black text-left leading-10">
-                {/* Photo Narrative */}
-                {data.photoNarrative && (
+                {(data.photoNarrative || data.photoNarrativeOptional) && (
                   <>
                     <h2 className="text-2xl font-bold mb-2">
                       About the Photograph
                     </h2>
                     <p className="text-xl leading-10 mb-4">
-                      {data.photoNarrative} <br /> {data.photoNarrativeOptional}
-                    </p>
-                  </>
-                )}
-
-                {/* Photo Narrative Optional */}
-                {/* {data.photoNarrativeOptional && (
-                  <>
-                    <h3 className="text-2xl font-bold mb-2">Narrative</h3>
-                    <p className="text-xl leading-10">
+                      {data.photoNarrative}
+                      {data.photoNarrative && data.photoNarrativeOptional && <br />}
                       {data.photoNarrativeOptional}
                     </p>
                   </>
-                )} */}
+                )}
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* ✅ pass related photos down as props (no extra fetches) */}
+      {/* related photographs */}
       <div className="w-full lg:py-20 py-10">
         <RelatedPhotographs items={relatedPhotos} />
       </div>
