@@ -7,6 +7,8 @@ import useSubmissions from "@/hooks/useSubmissions";
 import RelatedPhotographs from "@/components/Cards/RelatedPhotographs";
 import ThumbnailPhotoCard from "@/components/InnerComponents/ThumbnailPhotoCard";
 import MainImageWithSlider from "../letters/MainImageWithSlider";
+import FeaturedPhotographCards from "@/components/photographs/FeaturedPhotographCards";
+import RelatedPhotoCards from "@/components/photographs/RelatedPhotoCards";
 
 const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
 
@@ -119,11 +121,6 @@ export default function PhotoGraphDetail() {
   const decade = data.decade || "";
   const topRightMeta = [place, decade].filter(Boolean).join(" • ");
 
-  // normalize for ThumbnailPhotoCard (if it expects photo.photoImage.path)
-  const firstPhotoForChild = heroImage
-    ? { ...data, photoImage: { path: heroImage } }
-    : data;
-
   return (
     <div className="min-h-[300px] px-5 lg:px-0 bg-cover bg-center">
       <div className="py-5 max-w-[1270px] w-full mx-auto text-black text-left">
@@ -159,7 +156,7 @@ export default function PhotoGraphDetail() {
             <MainImageWithSlider heroImage={heroImage} images={sliderImages} />
 
             {/* right-side info/thumb card; pass first image normalized */}
-            <ThumbnailPhotoCard photo={firstPhotoForChild} />
+            <RelatedPhotoCards photos={letterImages} />
           </div>
 
           {/* fullscreen modal (optional) */}
@@ -212,7 +209,7 @@ export default function PhotoGraphDetail() {
 
       {/* related photographs */}
       <div className="w-full lg:py-20 py-10">
-        <RelatedPhotographs items={relatedPhotos} />
+        <FeaturedPhotographCards/>
       </div>
     </div>
   );

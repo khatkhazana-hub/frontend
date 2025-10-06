@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from "react";
-import Thumbnails from "./Thumbnails";
+import Thumbnails from "../InnerComponents/Thumbnails";
 
 const ThumbnailCards = ({ photos }) => {
   console.log(photos , 'photo')

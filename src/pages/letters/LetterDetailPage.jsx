@@ -1,11 +1,12 @@
 // @ts-nocheck
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import RelatedCards from "../../components/Cards/Cards";
 import ThumbnailCards from "../../components/InnerComponents/ThumbnailCards";
 import { IoCalendarOutline } from "react-icons/io5";
-import api from "../../utils/api";
 import MainImageWithSlider from "./MainImageWithSlider";
+import useSubmission from "../../hooks/useSubmission";
+import FeaturedLetterCards from "@/components/Letter/FeaturedLetterCards";
+import RelatedLetterCards from "@/components/Letter/RelatedLetterCards";
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
 
@@ -31,44 +32,20 @@ const LetterDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState("");
+  // use the hook
+  const { data, loading, error: err } = useSubmission(id);
 
-  useEffect(() => {
-    let alive = true;
-    setLoading(true);
-    setErr("");
 
-    api
-      .get(`/submissions/${id}`)
-      .then((res) => {
-        if (!alive) return;
-        const doc = res.data;
-
-        if (doc?.status?.toLowerCase() !== "approved") {
-          navigate(`/letters/${doc?.letterLanguage?.toLowerCase() || "english"}`, {
-            replace: true,
-          });
-          return;
-        }
-
-        setData(doc);
-      })
-      .catch((e) => {
-        if (!alive) return;
-        console.error(e);
-        setErr("Failed to load letter. Check the ID or server.");
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
+  // redirect out if not approved (once we have data)
+  React.useEffect(() => {
+    if (!data) return;
+    const status = data?.status?.toLowerCase?.() || "";
+    if (status !== "approved") {
+      navigate(`/letters/${data?.letterLanguage?.toLowerCase() || "english"}`, {
+        replace: true,
       });
-
-    return () => {
-      alive = false;
-    };
-  }, [id, navigate]);
+    }
+  }, [data, navigate]);
 
   const prettyDate = useMemo(() => {
     if (!data?.createdAt) return "";
@@ -119,11 +96,11 @@ const LetterDetailPage = () => {
 
   // build image sources from arrays
   const letterImages = fieldToUrls(letterImage);
-  const photoImages  = fieldToUrls(photoImage);
+  const photoImages = fieldToUrls(photoImage);
 
   // hero = first letter image; fallback to first photo image
-  const heroImage    =  photoImages[0] || "";
-
+  const heroImage = photoImages[0] || "";
+  const RelatedImages = photoImages
 
   // slider prefers letter images; if none, uses photos
   const sliderImages = letterImages.length ? letterImages : photoImages;
@@ -167,7 +144,7 @@ const LetterDetailPage = () => {
             />
 
             {/* right-side thumbnails -> all uploaded photo images */}
-            <ThumbnailCards photos={heroImage} heading="Related Photographs" />
+            <RelatedLetterCards photos={RelatedImages}  />
           </div>
 
           {/* Letter Audio */}
@@ -197,7 +174,7 @@ const LetterDetailPage = () => {
 
       {/* Related Letters Section */}
       <div className="w-full lg:py-20 py-10">
-        <RelatedCards />
+        <FeaturedLetterCards />
       </div>
     </div>
   );

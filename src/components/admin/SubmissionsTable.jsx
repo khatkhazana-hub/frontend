@@ -23,6 +23,8 @@ export default function SubmissionsTable({
   const showLetterCol = scope === "both" || scope === "letter";
   const showPhotoCol  = scope === "both" || scope === "photo";
 
+  console.log(showPhotoCol , 'photocol')
+
   return (
     <div className="overflow-x-auto rounded-xl border bg-white/50">
       <table className="min-w-full">

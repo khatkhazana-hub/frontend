@@ -8,7 +8,7 @@ const norm = (v) => String(v || "").toLowerCase();
 export default function SubmissionRow({
   row,
   columns,
-  showLetterCol = true,
+  showLetterCol = false,
   showPhotoCol = true,
   onView,
   onEdit,
@@ -20,7 +20,7 @@ export default function SubmissionRow({
   const rowType = norm(row.uploadType); // 'letter' | 'photo' | 'both' (or variants)
 
   const supportsLetter = rowType === "letter" || rowType === "both";
-  const supportsPhoto  = rowType === "photo"  || rowType === "both";
+  const supportsPhoto  = rowType === "photographs"  || rowType === "both";
 
   return (
     <tr className="border-t">
