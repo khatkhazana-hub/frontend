@@ -235,7 +235,7 @@ export default function ImageModalViewer({
               zIndex: 20,
             }}
           >
-            <div className="flex items-center gap-[1vw] rounded-full bg-black/60 backdrop-blur-md px-[1vw] py-[0.5vw] text-white shadow-lg">
+            <div className="flex items-center gap-[1vw] rounded-full bg-white/20 backdrop-blur-md px-[1vw] py-[0.5vw] text-white shadow-lg">
               <button
                 onClick={zoomOut}
                 className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition"
