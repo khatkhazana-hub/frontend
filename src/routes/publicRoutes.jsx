@@ -18,6 +18,7 @@ import ShopPage from "@/pages/shop/ShopPage";
 import ForgotPassword from "@/pages/admin/ForgotPassword";
 import ResetPassword from "@/pages/admin/ResetPassword";
 import AdminLogin from "@/pages/admin/AdminLogin";
+import Featuredletterandphotographs from "@/pages/Featuredletterandphotographs/Featuredletterandphotographs";
 
 // Optional legacy aliases (keep old URLs working)
 const legacyAliases = [
@@ -32,7 +33,7 @@ const publicRoutes = [
   { path: paths.LETTER_DETAIL, element: <LetterDetailPage /> },
   { path: paths.PHOTOS, element: <PhotoGraph title="Photographs" /> },
   { path: paths.PHOTO_DETAIL, element: <PhotoGraphDetail /> },
-  { path: paths.FEATURED, element: <Featurelatter title="Featured letters & Photographs" /> },
+  { path: paths.FEATURED, element: <Featuredletterandphotographs/> },
   { path: paths.CONTACT, element: <ContactUs /> },
   { path: paths.SUBMISSION, element: <SubmissionForm title="Submission" /> },
   { path: paths.SHOP, element: <ShopPage title="Shop" /> },

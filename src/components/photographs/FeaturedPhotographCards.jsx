@@ -68,7 +68,7 @@ export default function FeaturedPhotographCards() {
 
             const lang = encodeURIComponent((r?.letterLanguage || "english").toLowerCase());
             const id = encodeURIComponent(r?._id);
-            const href = `/letters/${lang}/${id}`;
+            const href = `/photographs/${id}`;
 
             return (
               <SwiperSlide key={r._id} className="flex justify-start !w-[350px]">
