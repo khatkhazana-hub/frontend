@@ -24,7 +24,7 @@ const LetterCard = ({ to, overlay, title, letcategory, className }) => {
             src={imgSrc}
             alt="Overlay"
             loading="eager"
-            className="object-fill group-hover:shadow-2xl shadow-black/50 transition-all duration-300 w-[200px] rounded-sm h-[250px]"
+            className="object-contain transition-all duration-300 w-[200px]  h-[250px]"
           />
           <img
             src="/images/logo.png"

@@ -180,7 +180,7 @@ export default function ImageModalViewer({
             style={{
               bottom: "-5%",
               left: "50%",
-              transform: `translate(-50%, 50%) scale(${antiScale})`,
+              transform: `translate(-50%, 50%)`,
               transformOrigin: "center center",
               zIndex: 20,
             }}
