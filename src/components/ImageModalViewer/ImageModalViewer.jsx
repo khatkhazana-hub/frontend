@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useRef, useState } from "react";
 import { ZoomIn, ZoomOut, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -51,8 +50,29 @@ export default function ImageModalViewer({
   onNext,
 }) {
   const [zoom, setZoom] = useState(1);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [start, setStart] = useState({ x: 0, y: 0 });
   const imgRef = useRef(null);
   const antiScale = useAntiZoomScale(isOpen);
+
+  // Start drag
+  const handleMouseDown = (e) => {
+    if (zoom <= 1) return; // only allow drag when zoomed in
+    setIsDragging(true);
+    setStart({ x: e.clientX - pos.x, y: e.clientY - pos.y });
+  };
+
+  // Move image
+  const handleMouseMove = (e) => {
+    if (!isDragging || zoom <= 1) return;
+    const x = e.clientX - start.x;
+    const y = e.clientY - start.y;
+    setPos({ x, y });
+  };
+
+  // Stop drag
+  const handleMouseUp = () => setIsDragging(false);
 
   const zoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
   const zoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
@@ -87,6 +107,11 @@ export default function ImageModalViewer({
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+  if (zoom === 1) setPos({ x: 0, y: 0 });
+}, [zoom]);
+
 
   if (!isOpen) return null;
 
@@ -164,12 +189,21 @@ export default function ImageModalViewer({
           <div
             ref={imgRef}
             className="max-w-[90vw] max-h-[80vh] p-3 overflow-hidden flex justify-center items-center"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            style={{
+              cursor: zoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
+            }}
           >
             <img
               src={images[activeIndex]}
               alt="Zoomed"
               className="max-w-[90vw] max-h-[80vh] object-contain select-none rounded-md shadow-2xl transition-transform duration-200"
-              style={{ transform: `scale(${zoom})` }}
+              style={{
+                transform: `translate(${pos.x}px, ${pos.y}px) scale(${zoom})`,
+              }}
               draggable={false}
             />
           </div>
