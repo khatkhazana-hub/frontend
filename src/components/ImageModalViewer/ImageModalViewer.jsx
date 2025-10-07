@@ -56,23 +56,38 @@ export default function ImageModalViewer({
   const imgRef = useRef(null);
   const antiScale = useAntiZoomScale(isOpen);
 
+  const moveRaf = useRef(null);
+  const pendingPos = useRef(null);
+
   // Start drag
+  // Start drag (only when zoomed in)
   const handleMouseDown = (e) => {
-    if (zoom <= 1) return; // only allow drag when zoomed in
+    if (zoom <= 1) return;
     setIsDragging(true);
     setStart({ x: e.clientX - pos.x, y: e.clientY - pos.y });
   };
 
-  // Move image
   const handleMouseMove = (e) => {
     if (!isDragging || zoom <= 1) return;
-    const x = e.clientX - start.x;
-    const y = e.clientY - start.y;
-    setPos({ x, y });
+    const nx = e.clientX - start.x;
+    const ny = e.clientY - start.y;
+
+    // throttle via rAF
+    pendingPos.current = { x: nx, y: ny };
+    if (moveRaf.current) return;
+    moveRaf.current = requestAnimationFrame(() => {
+      moveRaf.current = null;
+      if (pendingPos.current) setPos(pendingPos.current);
+    });
   };
 
-  // Stop drag
-  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (moveRaf.current) {
+      cancelAnimationFrame(moveRaf.current);
+      moveRaf.current = null;
+    }
+  };
 
   const zoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
   const zoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
@@ -109,9 +124,8 @@ export default function ImageModalViewer({
   }, [isOpen]);
 
   useEffect(() => {
-  if (zoom === 1) setPos({ x: 0, y: 0 });
-}, [zoom]);
-
+    if (zoom === 1) setPos({ x: 0, y: 0 });
+  }, [zoom]);
 
   if (!isOpen) return null;
 
@@ -200,9 +214,11 @@ export default function ImageModalViewer({
             <img
               src={images[activeIndex]}
               alt="Zoomed"
-              className="max-w-[90vw] max-h-[80vh] object-contain select-none rounded-md shadow-2xl transition-transform duration-200"
+              className="max-w-[90vw] max-h-[80vh] object-contain select-none rounded-md shadow-2xl"
               style={{
-                transform: `translate(${pos.x}px, ${pos.y}px) scale(${zoom})`,
+                transform: `translate3d(${pos.x}px, ${pos.y}px, 0) scale(${zoom})`,
+                transition: isDragging ? "transform 0s" : "transform 0.2s ease",
+                willChange: isDragging ? "transform" : "auto",
               }}
               draggable={false}
             />
