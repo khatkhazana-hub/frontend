@@ -134,7 +134,7 @@ export default function ImageModalViewer({
               transformOrigin: "center left",
             }}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={20} />
           </button>
         )}
 
@@ -149,7 +149,7 @@ export default function ImageModalViewer({
               transformOrigin: "center right",
             }}
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={20} />
           </button>
         )}
 
@@ -178,7 +178,7 @@ export default function ImageModalViewer({
           <div
             className="absolute"
             style={{
-              bottom: "12%",
+              bottom: "-5%",
               left: "50%",
               transform: `translate(-50%, 50%) scale(${antiScale})`,
               transformOrigin: "center center",
