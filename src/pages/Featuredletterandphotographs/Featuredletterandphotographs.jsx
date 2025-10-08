@@ -1,13 +1,19 @@
-// @ts-nocheck
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect , useState } from "react";
 import useFeaturedLetters from "@/hooks/useFeaturedLetters";
 import useFeaturedPhotos from "@/hooks/useFeaturedPhotos";
 import { fileUrl } from "@/utils/files";
 import FeaturedLetterCards from "@/components/Letter/FeaturedLetterCards";
-import FeaturedPhotographCard from "@/components/Cards/FeaturedPhotographCard";
 import FeaturedPhotographCards from "@/components/photographs/FeaturedPhotographCards";
+import PopupSubscritionModel from "../letters/PopupSubscritionModel";
 
 const Featuredletterandphotographs = () => {
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    const subscribed = localStorage.getItem("isSubscribed");
+    if (!subscribed) setShowPopup(true);
+  }, []);
+
   const {
     data: letters = [],
     loading: lettersLoading,
@@ -72,6 +78,19 @@ const Featuredletterandphotographs = () => {
 
   return (
     <div className="flex flex-col justify-center max-w-[1270px] items-start gap-14 lg:px-10 xl:px-0 mx-auto px-5 lg:py-20 py-10">
+      {showPopup && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm z-[999] ">
+          <div className="bg-[#FFE1B8] rounded-lg shadow-lg p-10 max-w-md w-full relative mx-4">
+            <button
+              onClick={() => setShowPopup(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-black cursor-pointer"
+            >
+              ✖
+            </button>
+            <PopupSubscritionModel onSubscribe={() => setShowPopup(false)} />
+          </div>
+        </div>
+      )}
       {/* ===== Featured Letter ===== */}
       <section className="flex flex-col items-start justify-center gap-10 w-full">
         <h1
@@ -264,7 +283,7 @@ const Featuredletterandphotographs = () => {
         )}
       </section>
 
-       <div className="w-full">
+      <div className="w-full">
         <FeaturedPhotographCards />
       </div>
     </div>
