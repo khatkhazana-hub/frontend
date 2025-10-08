@@ -126,7 +126,7 @@ const Featuredletterandphotographs = () => {
                     src={heroLetterVM.overlay}
                     alt={heroLetterVM.title}
                     loading="eager"
-                    className="object-fill group-hover:drop-shadow-xl transition-all duration-300 w-[200px] h-[250px] rounded-sm"
+                    className="object-contain  w-[200px] h-[250px] rounded-sm"
                   />
                   <img
                     src="/images/logo.png"
@@ -224,7 +224,7 @@ const Featuredletterandphotographs = () => {
                     src={heroPhotoVM.overlay}
                     alt={heroPhotoVM.title}
                     loading="eager"
-                    className="object-fill group-hover:drop-shadow-xl transition-all duration-300 w-[200px] h-[250px] rounded-sm"
+                    className="object-contain  w-[200px] h-[250px] rounded-sm"
                   />
                   <img
                     src="/images/logo.png"

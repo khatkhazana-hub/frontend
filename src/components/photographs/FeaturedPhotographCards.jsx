@@ -76,7 +76,7 @@ export default function FeaturedPhotographCards() {
                   <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto">
                     <img src="/images/Card.webp" alt="" className="absolute inset-0 w-full h-full object-cover rounded-[20px]" />
                     <div className="relative flex justify-center z-10 pt-[30px]">
-                      <img src={overlayUrl} alt="" className="object-fill group-hover:shadow-2xl shadow-black/50 transition-all duration-300 w-[200px] rounded-sm h-[250px]" />
+                      <img src={overlayUrl} alt="" className="object-contain  transition-all duration-300 w-[200px] rounded-sm h-[250px]" />
                       <img src="/images/logo.png" alt="" className="absolute top-20 left-[100px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none" />
                     </div>
                     <div className="absolute left-[25px] top-[300px] w-[300px] text-left">

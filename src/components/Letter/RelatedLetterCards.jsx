@@ -32,7 +32,7 @@ const RelatedLetterCards = ({ photos }) => {
         </h2>
 
         {cards.length === 0 ? (
-          <div className="w-full h-[200px] flex justify-center items-center text-gray-400 italic">No related photographs available.</div>
+          <div className="w-full h-[200px] flex justify-center items-center text-black italic">No Related Photographs Available.</div>
         ) : (
           <div className="w-full flex flex-col md:flex-row lg:flex-col justify-center gap-10 items-center lg:items-start">
             {cards.map((c, idx) => (

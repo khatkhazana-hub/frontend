@@ -13,9 +13,8 @@ const useAntiZoomScale = (enabled) => {
 
     const compute = () => {
       const currDpr = window.devicePixelRatio || 1;
-      const vvScale =
-        (window.visualViewport && window.visualViewport.scale) || 1;
-      const anti = (baseDprRef.current / currDpr) * (1 / vvScale || 1);
+      const vvScale = (window.visualViewport && window.visualViewport.scale) || 1;
+      const anti = (baseDprRef.current / currDpr) * (1 / (vvScale || 1));
       setK(anti || 1);
     };
     compute();
@@ -40,7 +39,6 @@ const useAntiZoomScale = (enabled) => {
   return k;
 };
 
-/** 🔥 Reusable image modal viewer with zoom controls */
 export default function ImageModalViewer({
   isOpen,
   images = [],
@@ -50,62 +48,38 @@ export default function ImageModalViewer({
   onNext,
 }) {
   const [zoom, setZoom] = useState(1);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [start, setStart] = useState({ x: 0, y: 0 });
-  const imgRef = useRef(null);
   const antiScale = useAntiZoomScale(isOpen);
 
-  const moveRaf = useRef(null);
-  const pendingPos = useRef(null);
+  // drag state
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const draggingRef = useRef(false);
+  const startRef = useRef({ sx: 0, sy: 0, px: 0, py: 0 }); // pointer start + pos start
+  const imgRef = useRef(null);
+  const rafRef = useRef(null);
 
-  // Start drag
-  // Start drag (only when zoomed in)
-  const handleMouseDown = (e) => {
-    if (zoom <= 1) return;
-    setIsDragging(true);
-    setStart({ x: e.clientX - pos.x, y: e.clientY - pos.y });
-  };
+  const zoomIn = () => setZoom((z) => Math.min(z + 0.25, 4));
+  const zoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.25));
+  const resetZoom = () => setZoom(1);
 
-  const handleMouseMove = (e) => {
-    if (!isDragging || zoom <= 1) return;
-    const nx = e.clientX - start.x;
-    const ny = e.clientY - start.y;
-
-    // throttle via rAF
-    pendingPos.current = { x: nx, y: ny };
-    if (moveRaf.current) return;
-    moveRaf.current = requestAnimationFrame(() => {
-      moveRaf.current = null;
-      if (pendingPos.current) setPos(pendingPos.current);
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    if (moveRaf.current) {
-      cancelAnimationFrame(moveRaf.current);
-      moveRaf.current = null;
-    }
-  };
-
-  const zoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
-  const zoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
-
-  // Mouse wheel zoom
+  // reset on image change / zoom back to 1
+  useEffect(() => setZoom(1), [activeIndex]);
   useEffect(() => {
-    if (!isOpen || !imgRef.current) return;
-    const el = imgRef.current;
-    const handleWheel = (e) => {
+    if (zoom <= 1) setPos({ x: 0, y: 0 });
+  }, [zoom]);
+
+  // wheel zoom on fullscreen (no inner frame)
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e) => {
       e.preventDefault();
       if (e.deltaY < 0) zoomIn();
       else zoomOut();
     };
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
+    window.addEventListener("wheel", handler, { passive: false });
+    return () => window.removeEventListener("wheel", handler);
   }, [isOpen]);
 
-  // ESC, arrows, +, -
+  // keyboard
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e) => {
@@ -114,6 +88,7 @@ export default function ImageModalViewer({
       if (e.key === "ArrowRight") onNext?.();
       if (e.key === "+") zoomIn();
       if (e.key === "-") zoomOut();
+      if (e.key === "0") resetZoom();
     };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -123,9 +98,66 @@ export default function ImageModalViewer({
     };
   }, [isOpen]);
 
-  useEffect(() => {
-    if (zoom === 1) setPos({ x: 0, y: 0 });
-  }, [zoom]);
+  // clamp helper: keep image edges from leaving screen too far
+  const clampPos = (nx, ny) => {
+    const el = imgRef.current;
+    if (!el) return { x: nx, y: ny };
+
+    const rect = el.getBoundingClientRect(); // includes current scale
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // how much content extends beyond viewport on each axis
+    const overX = Math.max(0, (rect.width - vw) / 2);
+    const overY = Math.max(0, (rect.height - vh) / 2);
+
+    // allow free move only if image is bigger than viewport on that axis
+    const minX = -overX;
+    const maxX = overX;
+    const minY = -overY;
+    const maxY = overY;
+
+    return {
+      x: Math.min(maxX, Math.max(minX, nx)),
+      y: Math.min(maxY, Math.max(minY, ny)),
+    };
+  };
+
+  // pointer events for drag (mouse + touch unified)
+  const onPointerDown = (e) => {
+    if (zoom <= 1) return; // no drag at 100% or below
+    draggingRef.current = true;
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    startRef.current = { sx: e.clientX, sy: e.clientY, px: pos.x, py: pos.y };
+  };
+
+  const onPointerMove = (e) => {
+    if (!draggingRef.current || zoom <= 1) return;
+    const { sx, sy, px, py } = startRef.current;
+    const nx = px + (e.clientX - sx);
+    const ny = py + (e.clientY - sy);
+
+    // throttle with rAF
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      setPos((prev) => {
+        const clamped = clampPos(nx, ny);
+        // avoid state churn
+        if (clamped.x === prev.x && clamped.y === prev.y) return prev;
+        return clamped;
+      });
+    });
+  };
+
+  const onPointerUp = (e) => {
+    draggingRef.current = false;
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -134,18 +166,20 @@ export default function ImageModalViewer({
       <motion.div
         role="dialog"
         aria-modal="true"
-        className="fixed inset-0 z-[9999] flex items-center justify-center"
+        className="fixed inset-0 z-[9999] flex"
+        style={{ width: "100vw", height: "100vh", overflow: "hidden" }} // no inner scroll; pure drag
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         {/* Backdrop */}
         <motion.button
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/85"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
+          aria-label="Close backdrop"
         />
 
         {/* Close */}
@@ -154,150 +188,101 @@ export default function ImageModalViewer({
           onClick={onClose}
           aria-label="Close"
           className="absolute top-5 right-5 w-[42px] h-[42px] rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition z-20"
-          style={{
-            transform: `scale(${antiScale})`,
-            transformOrigin: "top right",
-          }}
+          style={{ transform: `scale(${antiScale})`, transformOrigin: "top right" }}
         >
           <X size={22} />
         </button>
 
-        {/* Prev */}
+        {/* Prev / Next */}
         {activeIndex > 0 && (
           <button
             onClick={onPrev}
             aria-label="Prev"
             className="absolute left-5 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
-            style={{
-              transform: `scale(${antiScale})`,
-              transformOrigin: "center left",
-            }}
+            style={{ transform: `scale(${antiScale})`, transformOrigin: "center left" }}
           >
             <ChevronLeft size={20} />
           </button>
         )}
-
-        {/* Next */}
         {activeIndex < images.length - 1 && (
           <button
             onClick={onNext}
             aria-label="Next"
             className="absolute right-5 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
-            style={{
-              transform: `scale(${antiScale})`,
-              transformOrigin: "center right",
-            }}
+            style={{ transform: `scale(${antiScale})`, transformOrigin: "center right" }}
           >
             <ChevronRight size={20} />
           </button>
         )}
 
-        {/* Image */}
-        <motion.div
-          className="relative z-10 max-w-[90vw] max-h-[90vh] flex items-center justify-center"
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.96 }}
-          transition={{ type: "spring", stiffness: 300, damping: 24 }}
+        {/* Fullscreen stage */}
+        <div
+          className="relative z-10 w-screen h-screen flex items-center justify-center"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onPointerLeave={onPointerUp}
+          style={{
+            touchAction: zoom > 1 ? "none" : "auto", // prevent page panning on touch while dragging
+            cursor: zoom > 1 ? (draggingRef.current ? "grabbing" : "grab") : "default",
+          }}
         >
-          <div
+          <img
             ref={imgRef}
-            className="max-w-[90vw] max-h-[80vh] p-3 overflow-hidden flex justify-center items-center"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+            src={images[activeIndex]}
+            alt="Zoomed"
+            className="select-none"
             style={{
-              cursor: zoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
-            }}
-          >
-            <img
-              src={images[activeIndex]}
-              alt="Zoomed"
-              className="max-w-[90vw] max-h-[80vh] object-contain select-none rounded-md shadow-2xl"
-              style={{
-                transform: `translate3d(${pos.x}px, ${pos.y}px, 0) scale(${zoom})`,
-                transition: isDragging ? "transform 0s" : "transform 0.2s ease",
-                willChange: isDragging ? "transform" : "auto",
-              }}
-              draggable={false}
-            />
-          </div>
-
-          {/* Zoom controls overlayed */}
-          <div
-            className="absolute"
-            style={{
-              bottom: "-5%",
-              left: "50%",
-              transform: `translate(-50%, 50%)`,
+              // fits at 100%, grows past viewport when zoomed
+              maxWidth: "100vw",
+              maxHeight: "100vh",
+              width: "auto",
+              height: "auto",
+              transform: `translate3d(${pos.x}px, ${pos.y}px, 0) scale(${zoom})`,
               transformOrigin: "center center",
-              zIndex: 20,
+              transition: draggingRef.current ? "transform 0s" : "transform 0.2s ease",
+              willChange: "transform",
             }}
-          >
-            <div className="flex items-center gap-[1vw] rounded-full bg-white/20 backdrop-blur-md px-[1vw] py-[0.5vw] text-white shadow-lg">
-              <button
-                onClick={zoomOut}
-                className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition"
-                style={{
-                  width: "2.8vw",
-                  height: "2.8vw",
-                  minWidth: "32px",
-                  minHeight: "32px",
-                }}
-              >
-                <ZoomOut
-                  style={{
-                    width: "1.3vw",
-                    height: "1.3vw",
-                    minWidth: "18px",
-                    minHeight: "18px",
-                  }}
-                />
-              </button>
+            draggable={false}
+          />
+        </div>
 
-              <span
-                className="font-semibold text-center flex items-center justify-center flex-none"
-                style={{ width: "3.5vw", minWidth: "48px", fontSize: "1vw" }}
-              >
-                {Math.round(zoom * 100)}%
-              </span>
-
-              <button
-                onClick={zoomIn}
-                className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition"
-                style={{
-                  width: "2.8vw",
-                  height: "2.8vw",
-                  minWidth: "32px",
-                  minHeight: "32px",
-                }}
-              >
-                <ZoomIn
-                  style={{
-                    width: "1.3vw",
-                    height: "1.3vw",
-                    minWidth: "18px",
-                    minHeight: "18px",
-                  }}
-                />
-              </button>
-            </div>
+        {/* Zoom controls */}
+        <div
+          className="absolute"
+          style={{ bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 20 }}
+        >
+          <div className="flex items-center gap-3 rounded-full bg-white/20 backdrop-blur-md px-3 py-2 text-white shadow-lg">
+            <button
+              onClick={zoomOut}
+              className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition w-10 h-10"
+            >
+              <ZoomOut size={18} />
+            </button>
+            <span className="font-semibold w-16 text-center">{Math.round(zoom * 100)}%</span>
+            <button
+              onClick={zoomIn}
+              className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition w-10 h-10"
+            >
+              <ZoomIn size={18} />
+            </button>
           </div>
+        </div>
 
-          {/* Counter */}
-          <div
-            className="absolute text-white/90 text-sm px-3 py-1 rounded-full bg-black/40"
-            style={{
-              bottom: "2%",
-              left: "50%",
-              transform: `translateX(-50%) scale(${antiScale})`,
-              transformOrigin: "bottom center",
-            }}
-          >
-            {activeIndex + 1} / {images.length}
-          </div>
-        </motion.div>
+        {/* Counter */}
+        <div
+          className="absolute text-white/90 text-sm px-3 py-1 rounded-full bg-black/40"
+          style={{
+            bottom: 80,
+            left: "50%",
+            transform: `translateX(-50%) scale(${antiScale})`,
+            transformOrigin: "bottom center",
+            zIndex: 20,
+          }}
+        >
+          {activeIndex + 1} / {images.length}
+        </div>
       </motion.div>
     </AnimatePresence>
   );

@@ -168,7 +168,7 @@ export default function MainImageWithSlider({ images = [], title }) {
                     <img
                       src={img}
                       alt={`Thumbnail ${i + 1}`}
-                      className="lg:w-28 h-20 object-cover rounded-md"
+                      className="lg:w-28 h-20 object-contain rounded-md"
                       draggable={false}
                     />
                   </div>
