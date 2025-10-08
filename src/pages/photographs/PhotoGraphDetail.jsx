@@ -63,6 +63,11 @@ export default function PhotoGraphDetail() {
     })();
   }, [id]);
 
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [id]);
+  
+
   const created = useMemo(() => {
     if (!data?.createdAt) return "";
     try {

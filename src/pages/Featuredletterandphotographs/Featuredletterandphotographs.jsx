@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect , useState } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import useFeaturedLetters from "@/hooks/useFeaturedLetters";
 import useFeaturedPhotos from "@/hooks/useFeaturedPhotos";
 import { fileUrl } from "@/utils/files";
@@ -10,7 +10,7 @@ const Featuredletterandphotographs = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    const subscribed = localStorage.getItem("isSubscribed");
+    const subscribed = typeof window !== "undefined" && localStorage.getItem("isSubscribed");
     if (!subscribed) setShowPopup(true);
   }, []);
 
@@ -19,13 +19,13 @@ const Featuredletterandphotographs = () => {
     loading: lettersLoading,
     error: lettersError,
   } = useFeaturedLetters();
+
   const {
     data: photos = [],
     loading: photosLoading,
     error: photosError,
   } = useFeaturedPhotos();
 
-  // helper to get latest record
   const getLatest = (arr) => {
     if (!arr?.length) return null;
     const getDate = (r) =>
@@ -37,23 +37,19 @@ const Featuredletterandphotographs = () => {
   const heroLetter = useMemo(() => getLatest(letters), [letters]);
   const heroLetterVM = useMemo(() => {
     if (!heroLetter) return null;
-    const imgs = Array.isArray(heroLetter?.letterImage)
-      ? heroLetter.letterImage
-      : [];
+    const imgs = Array.isArray(heroLetter?.letterImage) ? heroLetter.letterImage : [];
     const first = imgs.find((x) => x?.path) || null;
 
     return {
       name: heroLetter?.fullName || "Unknown",
       decade: heroLetter?.decade || "Unknown",
       category: heroLetter?.letterCategory || "—",
-      excerpt:
-        heroLetter?.letterNarrativeOptional ||
-        heroLetter?.letterNarrative ||
-        "—",
+      excerpt: heroLetter?.letterNarrativeOptional || heroLetter?.letterNarrative || "—",
       overlay: first ? fileUrl(first.path) : "/images/sample-letter.jpg",
       to: `/letters/${encodeURIComponent(
         heroLetter?.letterLanguage?.toLowerCase() || "english"
       )}/${encodeURIComponent(heroLetter?._id)}`,
+      title: heroLetter?.title || heroLetter?.fullName || "Featured Letter",
     };
   }, [heroLetter]);
 
@@ -61,15 +57,13 @@ const Featuredletterandphotographs = () => {
   const heroPhoto = useMemo(() => getLatest(photos), [photos]);
   const heroPhotoVM = useMemo(() => {
     if (!heroPhoto) return null;
-    const imgs = Array.isArray(heroPhoto?.photoImage)
-      ? heroPhoto.photoImage
-      : [];
+    const imgs = Array.isArray(heroPhoto?.photoImage) ? heroPhoto.photoImage : [];
     const first = imgs.find((x) => x?.path) || null;
 
     return {
       name: heroPhoto?.photoCaption || "Unknown",
       place: heroPhoto?.photoPlace || "Unknown",
-      excerpt: heroPhoto?.photoNarrative,
+      excerpt: heroPhoto?.photoNarrative || "—",
       overlay: first ? fileUrl(first.path) : "/images/sample-photo.jpg",
       to: `/photographs/${encodeURIComponent(heroPhoto?._id)}`,
       title: heroPhoto?.title || "Untitled Photo",
@@ -77,13 +71,14 @@ const Featuredletterandphotographs = () => {
   }, [heroPhoto]);
 
   return (
-    <div className="flex flex-col justify-center max-w-[1270px] items-start gap-14 lg:px-10 xl:px-0 mx-auto px-5 lg:py-20 py-10">
+    <div className="flex flex-col justify-center items-start gap-14 mx-auto px-4 sm:px-6 lg:px-10 xl:px-0 max-w-[1270px] lg:py-20 py-10">
       {showPopup && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm z-[999] ">
-          <div className="bg-[#FFE1B8] rounded-lg shadow-lg p-10 max-w-md w-full relative mx-4">
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="relative mx-4 w-full max-w-md rounded-lg bg-[#FFE1B8] p-6 sm:p-10 shadow-lg">
             <button
               onClick={() => setShowPopup(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-black cursor-pointer"
+              className="absolute right-4 top-4 cursor-pointer text-gray-500 hover:text-black"
+              aria-label="Close"
             >
               ✖
             </button>
@@ -91,12 +86,10 @@ const Featuredletterandphotographs = () => {
           </div>
         </div>
       )}
+
       {/* ===== Featured Letter ===== */}
-      <section className="flex flex-col items-start justify-center gap-10 w-full">
-        <h1
-          className="font-bold text-4xl lg:text-[40px] capitalize"
-          style={{ fontFamily: "Philosopher" }}
-        >
+      <section className="flex w-full flex-col items-start justify-center gap-6 sm:gap-8">
+        <h1 className="font-bold text-2xl sm:text-3xl lg:text-[40px] capitalize" style={{ fontFamily: "Philosopher" }}>
           Featured Letter
         </h1>
 
@@ -105,71 +98,72 @@ const Featuredletterandphotographs = () => {
         ) : lettersError ? (
           <div className="opacity-70">{lettersError}</div>
         ) : heroLetterVM ? (
-          <div className="relative flex flex-col lg:flex-row justify-between items-center gap-10 xl:h-[460px] w-full h-full mx-auto rounded-[20px] border-2 border-[#6E4A27] px-5 xl:px-[80px] py-[20px]">
-            <div className="flex flex-col justify-center items-start gap-2 w-fit text-left">
-              <span className="text-[20px] font-bold font-[Philosopher] text-[#23262F]">
+          <div className="relative mx-auto flex w-full flex-col items-center justify-between gap-8 rounded-[20px] border-2 border-[#6E4A27] p-4 sm:p-6 xl:px-[80px] xl:py-[20px] lg:flex-row">
+            <div className="flex w-full max-w-[700px] flex-col items-start justify-center gap-2 text-left">
+              <span className="text-lg sm:text-xl font-bold text-[#23262F]" style={{ fontFamily: "Philosopher" }}>
                 {heroLetterVM.name}
               </span>
-              <span className="text-[16px] font-bold font-[Philosopher] text-[#23262F] opacity-50">
+              <span className="text-sm sm:text-base font-bold text-[#23262F] opacity-50" style={{ fontFamily: "Philosopher" }}>
                 {heroLetterVM.decade}
               </span>
-              <div className="mt-5 xl:w-[570px]">
-                <p className="text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal lowercase h-[200px] overflow-hidden">
+
+              <div className="mt-4 w-full">
+                <p className="text-[18px] sm:text-[22px] lg:text-[28px] leading-[1.4] text-[#23262F] font-[Ephesis] font-normal lowercase line-clamp-5 lg:line-clamp-4">
                   {heroLetterVM.excerpt}
                 </p>
-                <a
-                  href={heroLetterVM.to}
-                  className="text-[#6E4A27] hover:underline text-lg font-medium inline-block mt-1"
-                >
+                <a href={heroLetterVM.to} className="mt-2 inline-block text-lg font-medium text-[#6E4A27] hover:underline">
                   ... Read more
                 </a>
               </div>
             </div>
 
-            <a href={heroLetterVM.to} className="relative group">
-              <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] mx-auto">
+            <a href={heroLetterVM.to} className="group relative w-full max-w-[380px]">
+              <div className="relative mx-auto w-full overflow-hidden rounded-[20px] border border-black/10 shadow-sm">
                 <img
                   src="/images/Card.webp"
                   alt=""
                   loading="eager"
-                  className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
+                  className="absolute inset-0 h-full w-full rounded-[20px] object-cover"
                 />
+
+                {/* badge */}
                 <span
-                  className="absolute top-12 lg:right-24 bg-white text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md border border-black/10 z-20"
+                  className="absolute right-2 top-2 sm:right-4 sm:top-4 z-20 rounded-full border border-black/10 bg-white px-3 py-1 text-xs sm:text-sm font-semibold text-black shadow-md"
                   style={{ fontFamily: "Philosopher" }}
                 >
                   Featured
                 </span>
-                <div className="relative flex justify-center z-10 pt-[30px]">
+
+                {/* media block – consistent aspect ratio */}
+                <div className="relative z-10 flex aspect-[7/8] w-full items-center justify-center p-6 sm:p-8">
                   <img
                     src={heroLetterVM.overlay}
                     alt={heroLetterVM.title}
                     loading="eager"
-                    className="object-contain  w-[200px] h-[250px] rounded-sm"
+                    className="h-52 w-40 sm:h-60 sm:w-48 object-contain rounded-sm"
                   />
                   <img
                     src="/images/logo.png"
                     alt=""
-                    className="absolute top-20 left-[100px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
+                    className="pointer-events-none absolute inset-0 m-auto h-24 w-24 opacity-20 select-none object-contain"
                   />
                 </div>
-                <div
-                  className="absolute text-left"
-                  style={{ width: "310px", top: "300px", left: "23px" }}
-                >
+
+                {/* text overlay */}
+                <div className="absolute inset-x-4 bottom-4 text-left">
                   <h2
-                    className="text-[24px] lg:text-xl font-semibold text-black mb-1 truncate w-full"
+                    className="w-full truncate text-lg sm:text-xl font-semibold text-black"
                     style={{ fontFamily: "Philosopher" }}
                   >
                     {heroLetterVM.name}
                   </h2>
                   <p
-                    className="font-ephesis line-clamp-2"
+                    className="line-clamp-2"
                     style={{
                       fontFamily: "Ephesis",
                       fontWeight: 400,
-                      fontSize: "20px",
-                      lineHeight: "100%",
+                      fontSize: "18px",
+                      lineHeight: "1.1",
                       color: "#000000",
                       margin: 0,
                     }}
@@ -190,11 +184,8 @@ const Featuredletterandphotographs = () => {
       </div>
 
       {/* ===== Featured Photograph ===== */}
-      <section className="flex flex-col items-start justify-center gap-10 w-full">
-        <h2
-          className="font-bold text-4xl lg:text-[40px] capitalize"
-          style={{ fontFamily: "Philosopher" }}
-        >
+      <section className="flex w-full flex-col items-start justify-center gap-6 sm:gap-8">
+        <h2 className="font-bold text-2xl sm:text-3xl lg:text-[40px] capitalize" style={{ fontFamily: "Philosopher" }}>
           Featured Photograph
         </h2>
 
@@ -203,71 +194,69 @@ const Featuredletterandphotographs = () => {
         ) : photosError ? (
           <div className="opacity-70">{photosError}</div>
         ) : heroPhotoVM ? (
-          <div className="relative flex flex-col lg:flex-row justify-between items-center gap-10 xl:h-[460px] w-full h-full mx-auto rounded-[20px] border-2 border-[#6E4A27] px-5 xl:px-[80px] py-[20px]">
-            <div className="flex flex-col justify-center items-start gap-2 w-fit text-left">
-              <span className="text-[20px] font-bold font-[Philosopher] text-[#23262F]">
+          <div className="relative mx-auto flex w-full flex-col items-center justify-between gap-8 rounded-[20px] border-2 border-[#6E4A27] p-4 sm:p-6 xl:px-[80px] xl:py-[20px] lg:flex-row">
+            <div className="flex w-full max-w-[700px] flex-col items-start justify-center gap-2 text-left">
+              <span className="text-lg sm:text-xl font-bold text-[#23262F]" style={{ fontFamily: "Philosopher" }}>
                 {heroPhotoVM.name}
               </span>
-              <span className="text-[16px] font-bold font-[Philosopher] text-[#23262F] opacity-50">
+              <span className="text-sm sm:text-base font-bold text-[#23262F] opacity-50" style={{ fontFamily: "Philosopher" }}>
                 {heroPhotoVM.place}
               </span>
-              <div className="mt-5 xl:w-[570px]">
-                <p className="text-[28px] leading-[140%] text-[#23262F] font-[Ephesis] font-normal lowercase h-[200px] overflow-hidden">
+
+              <div className="mt-4 w-full">
+                <p className="text-[18px] sm:text-[22px] lg:text-[28px] leading-[1.4] text-[#23262F] font-[Ephesis] font-normal lowercase line-clamp-5 lg:line-clamp-4">
                   {heroPhotoVM.excerpt}
                 </p>
-                <a
-                  href={heroPhotoVM.to}
-                  className="text-[#6E4A27] hover:underline text-lg font-medium inline-block mt-1"
-                >
+                <a href={heroPhotoVM.to} className="mt-2 inline-block text-lg font-medium text-[#6E4A27] hover:underline">
                   ... Read more
                 </a>
               </div>
             </div>
 
-            <a href={heroPhotoVM.to} className="relative group">
-              <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] mx-auto">
+            <a href={heroPhotoVM.to} className="group relative w-full max-w-[380px]">
+              <div className="relative mx-auto w-full overflow-hidden rounded-[20px] border border-black/10 shadow-sm">
                 <img
                   src="/images/Card.webp"
                   alt=""
                   loading="eager"
-                  className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
+                  className="absolute inset-0 h-full w-full rounded-[20px] object-cover"
                 />
+
                 <span
-                  className="absolute top-12 lg:right-24 bg-white text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md border border-black/10 z-20"
+                  className="absolute right-2 top-2 sm:right-4 sm:top-4 z-20 rounded-full border border-black/10 bg-white px-3 py-1 text-xs sm:text-sm font-semibold text-black shadow-md"
                   style={{ fontFamily: "Philosopher" }}
                 >
                   Featured
                 </span>
-                <div className="relative flex justify-center z-10 pt-[30px]">
+
+                <div className="relative z-10 flex aspect-[7/8] w-full items-center justify-center p-6 sm:p-8">
                   <img
                     src={heroPhotoVM.overlay}
                     alt={heroPhotoVM.title}
                     loading="eager"
-                    className="object-contain  w-[200px] h-[250px] rounded-sm"
+                    className="h-52 w-40 sm:h-60 sm:w-48 object-contain rounded-sm"
                   />
                   <img
                     src="/images/logo.png"
                     alt=""
-                    className="absolute top-20 left-[100px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
+                    className="pointer-events-none absolute inset-0 m-auto h-24 w-24 opacity-20 select-none object-contain"
                   />
                 </div>
-                <div
-                  className="absolute text-left"
-                  style={{ width: "310px", top: "300px", left: "23px" }}
-                >
+
+                <div className="absolute inset-x-4 bottom-4 text-left">
                   <h3
-                    className="text-[24px] lg:text-xl font-semibold text-black mb-1 truncate w-full"
+                    className="w-full truncate text-lg sm:text-xl font-semibold text-black"
                     style={{ fontFamily: "Philosopher" }}
                   >
                     {heroPhotoVM.name}
                   </h3>
                   <p
-                    className="font-ephesis line-clamp-2"
+                    className="line-clamp-2"
                     style={{
                       fontFamily: "Ephesis",
                       fontWeight: 400,
-                      fontSize: "20px",
-                      lineHeight: "100%",
+                      fontSize: "18px",
+                      lineHeight: "1.1",
                       color: "#000000",
                       margin: 0,
                     }}

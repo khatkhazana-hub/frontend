@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ThumbnailCards from "../../components/InnerComponents/ThumbnailCards";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -7,6 +7,7 @@ import MainImageWithSlider from "./MainImageWithSlider";
 import useSubmission from "../../hooks/useSubmission";
 import FeaturedLetterCards from "@/components/Letter/FeaturedLetterCards";
 import RelatedLetterCards from "@/components/Letter/RelatedLetterCards";
+
 
 const BASE_URL = import.meta.env.VITE_FILE_BASE_URL || window.location.origin;
 
@@ -35,7 +36,6 @@ const LetterDetailPage = () => {
   // use the hook
   const { data, loading, error: err } = useSubmission(id);
 
-
   // redirect out if not approved (once we have data)
   React.useEffect(() => {
     if (!data) return;
@@ -46,6 +46,11 @@ const LetterDetailPage = () => {
       });
     }
   }, [data, navigate]);
+
+  // scroll to top when page loads or id changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   const prettyDate = useMemo(() => {
     if (!data?.createdAt) return "";
@@ -86,10 +91,10 @@ const LetterDetailPage = () => {
     letterCategory,
     decade,
     letterNarrative,
-    letterImage,        // array or single (legacy)
-    letterAudioFile,    // single
+    letterImage, // array or single (legacy)
+    letterAudioFile, // single
     photoCaption,
-    photoImage,         // array or single (legacy)
+    photoImage, // array or single (legacy)
     photoNarrative,
     fullName,
   } = data;
@@ -100,7 +105,7 @@ const LetterDetailPage = () => {
 
   // hero = first letter image; fallback to first photo image
   const heroImage = photoImages[0] || "";
-  const RelatedImages = photoImages
+  const RelatedImages = photoImages;
 
   // slider prefers letter images; if none, uses photos
   const sliderImages = letterImages.length ? letterImages : photoImages;
@@ -144,7 +149,7 @@ const LetterDetailPage = () => {
             />
 
             {/* right-side thumbnails -> all uploaded photo images */}
-            <RelatedLetterCards photos={RelatedImages}  />
+            <RelatedLetterCards photos={RelatedImages} />
           </div>
 
           {/* Letter Audio */}
