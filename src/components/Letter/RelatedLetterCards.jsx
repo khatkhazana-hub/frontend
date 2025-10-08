@@ -30,7 +30,7 @@ const RelatedLetterCards = ({ photos }) => {
         <h2 className="text-lg sm:text-xl font-bold mb-4 text-center" style={{ fontFamily: "philosopher" }}>
           Related Photographs
         </h2>
-
+            
         {cards.length === 0 ? (
           <div className="w-full h-[200px] flex justify-center items-center text-black italic">No Related Photographs Available.</div>
         ) : (

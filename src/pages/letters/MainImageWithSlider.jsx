@@ -159,12 +159,7 @@ export default function MainImageWithSlider({ images = [], title }) {
                 <SwiperSlide key={i}>
                   <div
                     onClick={() => openModalAt(i)}
-                    className={`cursor-pointer rounded-md overflow-hidden border-2 transition-all duration-150 ${
-                      i === selectedIndex
-                        ? "border-[#704214]"
-                        : "border-transparent hover:border-[#704214]"
-                    }`}
-                  >
+                    className={`cursor-pointer border-none rounded-md overflow-hidden border-2 transition-all duration-150`}>
                     <img
                       src={img}
                       alt={`Thumbnail ${i + 1}`}
