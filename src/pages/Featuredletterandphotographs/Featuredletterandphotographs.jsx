@@ -118,7 +118,7 @@ const Featuredletterandphotographs = () => {
             </div>
 
             <a href={heroLetterVM.to} className="group relative w-full max-w-[380px]">
-              <div className="relative mx-auto w-full overflow-hidden rounded-[20px] border border-black/10 shadow-sm">
+              <div className="relative mx-auto w-full overflow-hidden rounded-[20px]">
                 <img
                   src="/images/Card.webp"
                   alt=""
@@ -214,7 +214,7 @@ const Featuredletterandphotographs = () => {
             </div>
 
             <a href={heroPhotoVM.to} className="group relative w-full max-w-[380px]">
-              <div className="relative mx-auto w-full overflow-hidden rounded-[20px] border border-black/10 shadow-sm">
+              <div className="relative mx-auto w-full overflow-hidden rounded-[20px]">
                 <img
                   src="/images/Card.webp"
                   alt=""
