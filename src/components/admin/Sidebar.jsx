@@ -46,13 +46,25 @@ export default function Sidebar() {
         {/* Brand + collapse button */}
         <div className="flex items-center justify-between px-3 py-3">
           <div className="flex items-center gap-2 overflow-hidden">
+            {/* ✅ Logo added here */}
+            <img
+              src="/images/logo.png" // <-- put your logo in public/logo.png or use any URL
+              alt="Logo"
+              className="h-12 w-12 object-contain"
+            />
+
+            {/* Lock icon stays */}
             <Lock className="h-5 w-5 text-primary" />
+
+            {/* Brand name */}
             {!collapsed && (
               <span className="truncate font-semibold tracking-wide">
                 Long Lost Letters
               </span>
             )}
           </div>
+
+          {/* Collapse button */}
           <Button
             size="icon"
             variant="ghost"

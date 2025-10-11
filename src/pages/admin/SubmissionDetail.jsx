@@ -6,14 +6,24 @@ import api from "@/utils/api";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-  const FILE_BASE =
-    import.meta.env.VITE_FILE_BASE_URL || "http://localhost:8000";
-  export const buildFileUrl = (p) => {
-    if (!p) return "";
-    if (/^https?:\/\//i.test(p)) return p;
-    const key = p.replace(/^\/+/, "");
-    return `${FILE_BASE}/${key}`;
-  };
+const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || "http://localhost:8000";
+
+export const buildFileUrl = (p) => {
+  if (!p) return "";
+  if (typeof p === "string" && /^https?:\/\//i.test(p)) return p;
+  const key = String(p || "").replace(/^\/+/, "");
+  return `${FILE_BASE}/${key}`;
+};
+
+// normalize value to an array of file objects with a `path`
+const toFiles = (v) => {
+  if (!v) return [];
+  if (Array.isArray(v)) return v.filter(x => x && x.path);
+  if (typeof v === "object" && v.path) return [v];
+  // if backend ever returns raw string path
+  if (typeof v === "string") return [{ path: v }];
+  return [];
+};
 
 function InfoRow({ label, children }) {
   return (
@@ -71,6 +81,10 @@ export default function SubmissionDetail() {
 
   const s = data;
 
+  // new: arrays for images
+  const letterFiles = toFiles(s.letterImage);
+  const photoFiles  = toFiles(s.photoImage);
+
   return (
     <div className="space-y-6 p-6">
       <Button variant="outline" onClick={() => navigate(-1)} className="gap-2">
@@ -95,39 +109,50 @@ export default function SubmissionDetail() {
 
         {/* Media */}
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          {s.letterImage?.path && (
+          {/* Letter Images (array-safe) */}
+          {letterFiles.length > 0 && (
             <Section
-              title="Letter Image"
+              title="Letter Image(s)"
               right={s.letterNarrativeFormat && <Badge>{s.letterNarrativeFormat}</Badge>}
             >
-              <img
-                src={buildFileUrl(s.letterImage.path)}
-                alt="Letter"
-                className="w-full rounded-lg border object-contain"
-              />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {letterFiles.map((f, i) => (
+                  <img
+                    key={f.filename || f.path || i}
+                    src={buildFileUrl(f.path)}
+                    alt={`Letter ${i + 1}`}
+                    className="w-full max-h-[420px] rounded-lg border object-contain bg-muted"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
             </Section>
           )}
 
-          {s.photoImage?.path && (
+          {/* Photo Images (array-safe) */}
+          {photoFiles.length > 0 && (
             <Section
-              title="Photo Image"
+              title="Photo Image(s)"
               right={s.photoNarrativeFormat && <Badge>{s.photoNarrativeFormat}</Badge>}
             >
-              <img
-                src={buildFileUrl(s.photoImage.path)}
-                alt="Photo"
-                className="w-full rounded-lg border object-contain"
-              />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {photoFiles.map((f, i) => (
+                  <img
+                    key={f.filename || f.path || i}
+                    src={buildFileUrl(f.path)}
+                    alt={`Photo ${i + 1}`}
+                    className="w-full max-h-[420px] rounded-lg border object-contain bg-muted"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
             </Section>
           )}
 
+          {/* Audio (single) */}
           {s.letterAudioFile?.path && (
             <Section title="Letter Audio">
-              <audio
-                controls
-                src={buildFileUrl(s.letterAudioFile.path)}
-                className="w-full"
-              >
+              <audio controls src={buildFileUrl(s.letterAudioFile.path)} className="w-full">
                 Your browser does not support the audio element.
               </audio>
             </Section>
@@ -135,11 +160,7 @@ export default function SubmissionDetail() {
 
           {s.photoAudioFile?.path && (
             <Section title="Photo Audio">
-              <audio
-                controls
-                src={buildFileUrl(s.photoAudioFile.path)}
-                className="w-full"
-              >
+              <audio controls src={buildFileUrl(s.photoAudioFile.path)} className="w-full">
                 Your browser does not support the audio element.
               </audio>
             </Section>
@@ -155,7 +176,7 @@ export default function SubmissionDetail() {
           </Section>
         )}
 
-        {/* Narratives — THIS is what was missing */}
+        {/* Narratives — (unchanged) */}
         {(s.letterNarrative ||
           s.letterNarrativeOptional ||
           s.photoNarrative ||
@@ -165,16 +186,12 @@ export default function SubmissionDetail() {
               <div className="rounded-lg border p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <p className="text-sm font-medium">Letter Narrative</p>
-                  {s.letterNarrativeFormat && (
-                    <Badge>{s.letterNarrativeFormat}</Badge>
-                  )}
+                  {s.letterNarrativeFormat && <Badge>{s.letterNarrativeFormat}</Badge>}
                 </div>
 
                 {s.letterNarrative && (
                   <div className="mb-4">
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">
-                      Main
-                    </p>
+                    <p className="mb-1 text-xs font-medium text-muted-foreground">Main</p>
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                       {s.letterNarrative}
                     </p>
@@ -183,9 +200,7 @@ export default function SubmissionDetail() {
 
                 {s.letterNarrativeOptional && (
                   <div>
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">
-                      Optional
-                    </p>
+                    <p className="mb-1 text-xs font-medium text-muted-foreground">Optional</p>
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                       {s.letterNarrativeOptional}
                     </p>
@@ -198,16 +213,12 @@ export default function SubmissionDetail() {
               <div className="rounded-lg border p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <p className="text-sm font-medium">Photo Narrative</p>
-                  {s.photoNarrativeFormat && (
-                    <Badge>{s.photoNarrativeFormat}</Badge>
-                  )}
+                  {s.photoNarrativeFormat && <Badge>{s.photoNarrativeFormat}</Badge>}
                 </div>
 
                 {s.photoNarrative && (
                   <div className="mb-4">
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">
-                      Main
-                    </p>
+                    <p className="mb-1 text-xs font-medium text-muted-foreground">Main</p>
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                       {s.photoNarrative}
                     </p>
@@ -216,9 +227,7 @@ export default function SubmissionDetail() {
 
                 {s.photoNarrativeOptional && (
                   <div>
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">
-                      Optional
-                    </p>
+                    <p className="mb-1 text-xs font-medium text-muted-foreground">Optional</p>
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                       {s.photoNarrativeOptional}
                     </p>
@@ -229,34 +238,10 @@ export default function SubmissionDetail() {
           </div>
         )}
 
-        {/* Photo meta (caption/place) */}
         {(s.photoCaption || s.photoPlace) && (
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {s.photoCaption && (
-              <InfoRow label="Photo Caption">{s.photoCaption}</InfoRow>
-            )}
-            {s.photoPlace && (
-              <InfoRow label="Photo Place">{s.photoPlace}</InfoRow>
-            )}
-          </div>
-        )}
-
-        {/* Narratives */}
-        {s.letterNarrative && (
-          <div className="mt-6">
-            <p className="mb-2 text-sm font-medium">Letter Narrative</p>
-            <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-              {s.letterNarrative}
-            </p>
-          </div>
-        )}
-
-        {s.photoNarrative && (
-          <div className="mt-6">
-            <p className="mb-2 text-sm font-medium">Photo Narrative</p>
-            <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-              {s.photoNarrative}
-            </p>
+            {s.photoCaption && <InfoRow label="Photo Caption">{s.photoCaption}</InfoRow>}
+            {s.photoPlace && <InfoRow label="Photo Place">{s.photoPlace}</InfoRow>}
           </div>
         )}
       </div>

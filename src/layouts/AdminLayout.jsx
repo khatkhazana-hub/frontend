@@ -8,15 +8,13 @@ import { SidebarProvider } from "@/context/SidebarContext";
 export default function AdminLayout() {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen bg-muted/30">
-        {/* fixed sidebar column */}
+      {/* lock the outer shell to viewport height so the column can be the scroller */}
+      <div className="flex h-screen overflow-hidden">
         <Sidebar />
 
-        {/* right column */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          {/* topbar starts where sidebar ends */}
+        {/* make this the scrolling container and always reserve the gutter */}
+        <div className="flex min-w-0 flex-1 flex-col overflow-y-scroll [scrollbar-gutter:stable]">
           <Topbar />
-          {/* page content */}
           <main className="flex-1 p-6">
             <Outlet />
           </main>
@@ -25,3 +23,4 @@ export default function AdminLayout() {
     </SidebarProvider>
   );
 }
+
