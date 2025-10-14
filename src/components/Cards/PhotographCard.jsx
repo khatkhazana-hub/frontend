@@ -26,7 +26,7 @@
     const frameSrc = isLandscape ? "/images/Horizantal-Frame.webp" : "/images/Vertical-Frame.webp";
 
     // frame box (whole frame image size)
-    const frameBoxClass = isLandscape ? "w-[300px] h-[205px]" : "w-[280px] h-[280px]";
+    const frameBoxClass = isLandscape ? "w-[285px] h-[205px]" : "w-[280px] h-[280px]";
 
     // window (mat opening) — adjust if your PNGs differ
     const windowClass = isLandscape

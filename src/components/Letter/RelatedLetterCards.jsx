@@ -10,7 +10,7 @@ function FramedThumb({ src, idx, onLoad, onError, isLandscape }) {
     : "/images/Vertical-Frame.webp";
 
   // same frame box sizes (whole frame image)
-  const frameBoxClass = isLandscape ? "w-[300px] h-[205px]" : "w-[280px] h-[280px]";
+  const frameBoxClass = isLandscape ? "w-[276px] h-[207px]" : "w-[280px] h-[280px]";
 
   // same window (mat opening) inside the frame
   const windowClass = isLandscape

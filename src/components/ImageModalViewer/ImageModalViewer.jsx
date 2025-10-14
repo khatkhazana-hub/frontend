@@ -187,7 +187,7 @@ export default function ImageModalViewer({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-5 right-5 w-[42px] h-[42px] rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition z-20"
+          className="absolute top-5 right-20 w-[42px] h-[42px] rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition z-20"
           style={{ transform: `scale(${antiScale})`, transformOrigin: "top right" }}
         >
           <X size={22} />
@@ -198,7 +198,7 @@ export default function ImageModalViewer({
           <button
             onClick={onPrev}
             aria-label="Prev"
-            className="absolute left-5 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
+            className="absolute left-20 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
             style={{ transform: `scale(${antiScale})`, transformOrigin: "center left" }}
           >
             <ChevronLeft size={20} />
@@ -208,7 +208,7 @@ export default function ImageModalViewer({
           <button
             onClick={onNext}
             aria-label="Next"
-            className="absolute right-5 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
+            className="absolute right-20 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
             style={{ transform: `scale(${antiScale})`, transformOrigin: "center right" }}
           >
             <ChevronRight size={20} />
