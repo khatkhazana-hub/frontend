@@ -6,16 +6,29 @@ import { motion, AnimatePresence } from "framer-motion";
 const useAntiZoomScale = (enabled) => {
   const [k, setK] = useState(1);
   const baseDprRef = useRef(null);
+  const baseVvScaleRef = useRef(null);
 
   useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
     if (!baseDprRef.current) baseDprRef.current = window.devicePixelRatio || 1;
+    if (!baseVvScaleRef.current && window.visualViewport) {
+      baseVvScaleRef.current = window.visualViewport.scale || 1;
+    }
 
     const compute = () => {
       const currDpr = window.devicePixelRatio || 1;
-      const vvScale = (window.visualViewport && window.visualViewport.scale) || 1;
-      const anti = (baseDprRef.current / currDpr) * (1 / (vvScale || 1));
-      setK(anti || 1);
+      const currVvScale = (window.visualViewport && window.visualViewport.scale) || 1;
+      const baseDpr = baseDprRef.current || 1;
+      const baseVvScale =
+        baseVvScaleRef.current ??
+        (window.visualViewport ? window.visualViewport.scale || 1 : 1);
+
+      const dprFactor = currDpr ? baseDpr / currDpr : 1;
+      const vvFactor = currVvScale ? baseVvScale / currVvScale : 1;
+      const dprChanged = Math.abs(currDpr - baseDpr) > 0.001;
+      const anti = dprChanged ? dprFactor : dprFactor * vvFactor;
+
+      setK(Number.isFinite(anti) && anti > 0 ? anti : 1);
     };
     compute();
 
@@ -30,10 +43,6 @@ const useAntiZoomScale = (enabled) => {
       vv?.removeEventListener("resize", onResize);
       vv?.removeEventListener("scroll", onScroll);
     };
-  }, [enabled]);
-
-  useEffect(() => {
-    if (!enabled) baseDprRef.current = null;
   }, [enabled]);
 
   return k;
@@ -187,7 +196,7 @@ export default function ImageModalViewer({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-5 right-20 w-[42px] h-[42px] rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition z-20"
+          className="absolute top-5 right-30 w-[42px] h-[42px] rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition z-20"
           style={{ transform: `scale(${antiScale})`, transformOrigin: "top right" }}
         >
           <X size={22} />
@@ -198,7 +207,7 @@ export default function ImageModalViewer({
           <button
             onClick={onPrev}
             aria-label="Prev"
-            className="absolute left-20 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
+            className="absolute left-30 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
             style={{ transform: `scale(${antiScale})`, transformOrigin: "center left" }}
           >
             <ChevronLeft size={20} />
@@ -208,7 +217,7 @@ export default function ImageModalViewer({
           <button
             onClick={onNext}
             aria-label="Next"
-            className="absolute right-20 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
+            className="absolute right-30 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
             style={{ transform: `scale(${antiScale})`, transformOrigin: "center right" }}
           >
             <ChevronRight size={20} />
@@ -251,7 +260,13 @@ export default function ImageModalViewer({
         {/* Zoom controls */}
         <div
           className="absolute"
-          style={{ bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 20 }}
+          style={{
+            bottom: 24,
+            left: "50%",
+            transform: `translateX(-50%) scale(${antiScale})`,
+            transformOrigin: "bottom center",
+            zIndex: 20,
+          }}
         >
           <div className="flex items-center gap-3 rounded-full bg-white/20 backdrop-blur-md px-3 py-2 text-white shadow-lg">
             <button
