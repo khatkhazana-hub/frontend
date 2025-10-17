@@ -2,9 +2,9 @@
 
 
 /* globals.css */
-html {
+/* html {
   scrollbar-gutter: stable both-edges;
-}
+} */
 
 
 body { overflow: hidden; padding-right: 15px; } /* or a class like .react-remove-scroll-body */

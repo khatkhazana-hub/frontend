@@ -27,7 +27,7 @@ export default function Navbar() {
 
   return (
     <header
-      className="sticky top-0 z-[999] bg-no-repeat bg-top "
+      className="sticky top-0 z-[999] bg-no-repeat bg-top"
       style={{
         fontFamily: "Philosopher, sans-serif",
         backgroundImage: "url('/images/navbar-bg.webp')",
