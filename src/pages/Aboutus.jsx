@@ -4,9 +4,9 @@ import React, { useState } from "react";
 
 function Aboutus() {
   const images = [
-    "/images/About-1.webp",
-    "/images/About-2.webp",
-    "/images/About-3.webp",
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/1.webp`,
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/2.webp`,
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/3.webp`,
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -24,7 +24,7 @@ function Aboutus() {
         {/* header */}
         <div>
           <img
-            src="/images/About-header.webp"
+            src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/About-header.webp`}
             alt="About Khat-Khazana"
             className="w-full h-auto object-cover lg:rounded-2xl rounded-md shadow-lg"
           />

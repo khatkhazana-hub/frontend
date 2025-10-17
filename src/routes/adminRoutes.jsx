@@ -1,10 +1,8 @@
 // src/routes/adminRoutes.jsx
 // @ts-nocheck
 import React from "react";
-import { Navigate } from "react-router-dom";
 import { paths } from "./constants/paths";
 import AdminLayout from "../layouts/AdminLayout";
-import AdminLogin from "../pages/admin/AdminLogin";
 import Dashboard from "../pages/admin/AdminDashboard";
 import ProtectedRoute from "../components/protected/ProtectedRoutes";
 import SubmissionDetail from "@/pages/admin/SubmissionDetail";
@@ -17,11 +15,14 @@ import ContactData from "@/pages/admin/ContactData";
 const adminRoutes = [
   {
     path: paths.ADMIN, // "/admin"
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
-      { path: "dashboard", element: <h1>DASHBOARD</h1> },
       {
-        path: "both",
+        path: "dashboard",
         element: (
           <ProtectedRoute>
             <Dashboard title="Admin-Dashboard" />
@@ -44,10 +45,38 @@ const adminRoutes = [
           </ProtectedRoute>
         ),
       },
-      { path: "submissions/:id", element: <SubmissionDetail /> },
-      { path: "submissions/:id/edit", element: <SubmissionEdit /> }, 
-      { path: "categories", element: <CreateCategories /> }, 
-      { path: "contact-data", element: <ContactData/> }, 
+      {
+        path: "submissions/:id",
+        element: (
+          <ProtectedRoute>
+            <SubmissionDetail />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "submissions/:id/edit",
+        element: (
+          <ProtectedRoute>
+            <SubmissionEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "categories",
+        element: (
+          <ProtectedRoute>
+            <CreateCategories />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "contact-data",
+        element: (
+          <ProtectedRoute>
+            <ContactData />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ];
