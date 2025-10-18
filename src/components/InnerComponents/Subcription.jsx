@@ -21,7 +21,9 @@ const Subcription = () => {
   return (
     <div
       className="flex justify-center items-center w-full relative bg-cover bg-center h-auto  xl:py-8 py-16"
-      style={{ backgroundImage: "url('/images/about-banner.webp')" }}
+      style={{
+        backgroundImage: `url(${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/about-banner.webp)`,
+      }}
     >
       {/* <img src="/images/InkPot.webp" alt="Logo" className="absolute -left-20 lg:-left-32 w-fit h-fit opacity-50 lg:opacity-100" /> */}
 
@@ -63,7 +65,9 @@ const Subcription = () => {
               bg-cover bg-center border-[#6E4A27] border-2
               font-philosopher
             "
-              style={{ backgroundImage: "url('/images/Email bg.webp')" }}
+              style={{
+                backgroundImage: `url("${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Email.webp")`,
+              }}
             />
 
             <ParchmentButton type="submit">Submit</ParchmentButton>

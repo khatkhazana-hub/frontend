@@ -17,7 +17,7 @@ const FeaturedCard = ({
       >
         {/* Card Background Image */}
         <img
-          src="/images/Card.webp"
+          src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
           alt="Card Background"
           loading="eager"
           className="absolute inset-0   w-full h-full object-cover rounded-[20px]"

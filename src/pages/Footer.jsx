@@ -51,7 +51,7 @@ export default function Footer() {
         overflow-hidden Padding-container 
       "
       style={{
-        backgroundImage: "url('/images/updated_bg.webp')",
+        backgroundImage: `url(${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/updated_bg.webp)`,
         backgroundRepeat: "repeat",
         backgroundSize: "cover",
         backgroundPosition: "bottom", // neeche align

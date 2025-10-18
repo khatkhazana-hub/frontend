@@ -32,7 +32,7 @@ function ParchmentButton({
         className,
       ].join(" ")}
       style={{
-        backgroundImage: "url('/images/Card.webp')",
+        backgroundImage: `url(${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp)`,
       }}
     >
       {children}

@@ -1,8 +1,9 @@
 // @ts-nocheck
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import buttonBgUrl from "/images/Card.webp";
 import Subcription from "@/components/InnerComponents/Subcription";
+
+const buttonBgUrl = `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`;
 
 const Letters = () => {
   const navigate = useNavigate();

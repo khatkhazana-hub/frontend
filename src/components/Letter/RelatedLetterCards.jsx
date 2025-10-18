@@ -6,8 +6,8 @@ import ImageModalViewer from "../ImageModalViewer/ImageModalViewer";
 function FramedThumb({ src, idx, onLoad, onError, isLandscape }) {
   // same frame assets
   const frameSrc = isLandscape
-    ? "/images/Horizantal-Frame.webp"
-    : "/images/Vertical-Frame.webp";
+    ? `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Horizantal-Frame.webp`
+    : `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`;
 
   // same frame box sizes (whole frame image)
   const frameBoxClass = isLandscape ? "w-[276px] h-[207px]" : "w-[280px] h-[280px]";

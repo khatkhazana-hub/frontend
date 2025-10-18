@@ -23,7 +23,9 @@
     };
 
     // frame asset
-    const frameSrc = isLandscape ? "/images/Horizantal-Frame.webp" : "/images/Vertical-Frame.webp";
+    const frameSrc = isLandscape
+      ? `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Horizantal-Frame.webp`
+      : `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`;
 
     // frame box (whole frame image size)
     const frameBoxClass = isLandscape ? "w-[285px] h-[205px]" : "w-[280px] h-[280px]";
@@ -50,7 +52,7 @@
         <div className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[420px] group mx-auto ${className}`}>
           {/* parchment */}
           <img
-            src="/images/Card.webp"
+            src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
             alt="Card Background"
             loading="eager"
             className="absolute inset-0 w-full h-full object-cover rounded-[20px]"

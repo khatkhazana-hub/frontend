@@ -74,7 +74,11 @@ export default function FeaturedLetterCards() {
               <SwiperSlide key={r._id} className="flex justify-start !w-[350px]">
                 <Link to={href}>
                   <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto">
-                    <img src="/images/Card.webp" alt="" className="absolute inset-0 w-full h-full object-cover rounded-[20px]" />
+                    <img
+                      src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
+                    />
                     <div className="relative flex justify-center z-10 pt-[30px]">
                       <img src={overlayUrl} alt="" className="object-contain  transition-all duration-300 w-[200px] rounded-sm h-[250px]" />
                       <img src="/images/logo.png" alt="" className="absolute top-20 left-[100px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none" />

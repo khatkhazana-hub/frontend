@@ -37,11 +37,11 @@ body {
 
 /* When page is fully loaded, swap to the full-res image */
 body.bg-ready #bg {
-  background-image: url("/images/updated_bg.webp");
+  background-image: var(--updated-bg);
 }
 
 /* If you don't have a tiny placeholder, comment the two rules above and use just this:
-#bg { background: url("/images/updated_bg.webp") center / cover no-repeat; }
+#bg { background: var(--updated-bg) center / cover no-repeat; }
 */
 
 /* Optional: responsive tune for very small screens */

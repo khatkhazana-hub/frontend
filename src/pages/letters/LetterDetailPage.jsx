@@ -138,7 +138,9 @@ const LetterDetailPage = () => {
       {/* Main Content */}
       <div
         className="w-full max-w-[1270px] rounded-[16px] py-10 px-5 lg:py-16 lg:px-8 flex flex-col gap-10 bg-cover bg-center mx-auto"
-        style={{ backgroundImage: "url('/images/Card.webp')" }}
+        style={{
+          backgroundImage: `url(${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp)`,
+        }}
       >
         <div className="w-full text-black">
           <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6 w-full">

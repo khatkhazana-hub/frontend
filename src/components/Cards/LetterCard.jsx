@@ -13,7 +13,7 @@ const LetterCard = ({ to, overlay, title, letcategory, className }) => {
         className={`relative cursor-pointer grop rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto ${className}`}
       >
         <img
-          src="/images/Card.webp"
+          src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
           alt="Card Background"
           loading="eager"
           className="absolute inset-0 w-full h-full object-cover rounded-[20px]"

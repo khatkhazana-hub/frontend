@@ -28,7 +28,7 @@ const Thumbnails = ({ RelatedImage }) => {
             {/* Frame */}
             <div className="absolute left-1/2 -translate-x-1/2 w-[300px] h-[230px] z-30">
               <img
-                src="/images/Vertical-Frame.webp"
+                src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`}
                 alt="Frame"
                 className="w-full h-full object-contain"
               />

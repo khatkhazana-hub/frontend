@@ -19,7 +19,7 @@ const PhotographFeaturedCard = ({
         className="relative cursor-pointer rounded-[20px] overflow-hidden lg:w-[350px] h-[410px] group mx-auto"
       >
         <img
-          src="/images/Card.webp"
+          src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
           alt="Card Background"
           loading="eager"
           className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
@@ -54,7 +54,7 @@ const PhotographFeaturedCard = ({
 
             {/* Frame Image sabse upar */}
             <img
-              src="/images/Vertical-Frame.webp"
+              src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`}
               alt="Frame"
               className="absolute top-0 left-0 w-full h-full object-contain z-30"
             />

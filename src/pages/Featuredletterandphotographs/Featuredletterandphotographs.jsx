@@ -120,7 +120,7 @@ const Featuredletterandphotographs = () => {
             <a href={heroLetterVM.to} className="group relative w-full max-w-[380px]">
               <div className="relative mx-auto w-full overflow-hidden rounded-[20px]">
                 <img
-                  src="/images/Card.webp"
+                  src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
                   alt=""
                   loading="eager"
                   className="absolute inset-0 h-full w-full rounded-[20px] object-cover"
@@ -216,7 +216,7 @@ const Featuredletterandphotographs = () => {
             <a href={heroPhotoVM.to} className="group relative w-full max-w-[380px]">
               <div className="relative mx-auto w-full overflow-hidden rounded-[20px]">
                 <img
-                  src="/images/Card.webp"
+                  src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
                   alt=""
                   loading="eager"
                   className="absolute inset-0 h-full w-full rounded-[20px] object-cover"

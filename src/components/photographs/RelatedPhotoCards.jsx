@@ -53,7 +53,7 @@ const RelatedPhotoCards = ({ photos }) => {
                 <div className="relative flex justify-center items-center group cursor-pointer mt-3">
                   {/* <div className="absolute left-1/2 -translate-x-1/2 w-[300px] h-[230px] z-30 pointer-events-none">
                     <img
-                      src="/images/Vertical-Frame.webp"
+                      src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`}
                       alt="Frame"
                       className="w-full h-full object-contain"
                     />
