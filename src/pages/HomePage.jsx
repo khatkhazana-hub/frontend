@@ -79,7 +79,7 @@ const Homepage = () => {
 
         {/* 🔹 Poster Section */}
         <img
-          src="/images/poster.webp"
+          src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/poster.webp`}
           alt="Poster"
           onClick={() => navigate("/About")}
           className="
