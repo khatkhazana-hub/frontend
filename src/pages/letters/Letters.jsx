@@ -3,7 +3,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Subcription from "@/components/InnerComponents/Subcription";
 
-const buttonBgUrl = `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`;
+const buttonBgUrl = `${
+  import.meta.env.VITE_FILE_BASE_URL
+}/public/StaticImages/Card.webp`;
 
 const Letters = () => {
   const navigate = useNavigate();
@@ -23,7 +25,11 @@ const Letters = () => {
     <main>
       <div
         className="flex items-center justify-center h-screen lg:-mt-5 bg-repeat bg-cover no-repeat bg-center"
-        style={{ backgroundImage: "url('/images/bg-letter.webp')" }}
+        style={{
+          backgroundImage: `url(${
+            import.meta.env.VITE_FILE_BASE_URL
+          }/public/StaticImages/bg-letter.webp)`,
+        }}
       >
         <div className="flex flex-col items-center justify-center gap-8">
           <h2 className="text-5xl text-black mb-8 font-['Philosopher'] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
@@ -54,7 +60,6 @@ const Letters = () => {
           </div>
         </div>
       </div>
-
     </main>
   );
 };
