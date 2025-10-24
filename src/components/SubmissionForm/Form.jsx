@@ -1,6 +1,6 @@
 // components/Form.jsx
 // @ts-nocheck
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FormSection from "./FormSection";
 import InputField from "./InputField";
 import RadioGroup from "./RadioGroup";
@@ -36,6 +36,11 @@ export default function Form() {
   const [showThankYou, setShowThankYou] = useState(false);
   const [resetTrigger, setResetTrigger] = useState(false);
 
+  // Turnstile
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+  const [captchaToken, setCaptchaToken] = useState("");
+  const widgetIdRef = useRef(null);
+
   const handleUploadTypeChange = (e) => setUploadType(e.target.value);
 
   // decade options
@@ -49,6 +54,46 @@ export default function Form() {
     }),
   ];
 
+  // ---- Turnstile: explicit render ----
+  useEffect(() => {
+    // guard: wait for global script
+    const ready = () =>
+      typeof window !== "undefined" && window.turnstile && siteKey;
+
+    const mount = () => {
+      if (!ready()) return;
+      // destroy any previous widget (React fast-refresh / rerenders)
+      try {
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.remove(widgetIdRef.current);
+          widgetIdRef.current = null;
+        }
+      } catch {}
+
+      widgetIdRef.current = window.turnstile.render("#turnstile-widget", {
+        sitekey: siteKey,
+        theme: "light",
+        callback: (token) => {
+          setCaptchaToken(token || "");
+        },
+        "expired-callback": () => setCaptchaToken(""),
+        "error-callback": () => setCaptchaToken(""),
+        action: "form_submit",
+      });
+    };
+
+    // try now, and also retry a few times if script is still loading
+    mount();
+    const iv = setInterval(() => {
+      if (ready() && !widgetIdRef.current) {
+        mount();
+      }
+      if (widgetIdRef.current) clearInterval(iv);
+    }, 300);
+
+    return () => clearInterval(iv);
+  }, [siteKey]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -56,9 +101,12 @@ export default function Form() {
       alert("Please check both boxes before submitting.");
       return;
     }
-
     if (letterFiles.length < 1 && photoFiles.length < 1) {
       alert("Please upload at least 1 image.");
+      return;
+    }
+    if (!captchaToken) {
+      alert("Please complete the captcha.");
       return;
     }
 
@@ -67,9 +115,11 @@ export default function Form() {
 
       const formEl = e.target;
 
-      // IMPORTANT: Build FormData from the form ONLY.
-      // This already includes files from <input type="file" name="...">.
+      // Build FormData from the form ONLY (includes files)
       const formData = new FormData(formEl);
+
+      // Add the token explicitly (defensive) in case hidden field is missing
+      formData.set("cf-turnstile-response", captchaToken);
 
       // Normalize controlled state -> formData (text/booleans only)
       formData.set("uploadType", uploadType);
@@ -82,43 +132,7 @@ export default function Form() {
       formData.set("letterCategory", letterCategory || "");
       formData.set("decade", decade || "");
 
-      // ✅ DO NOT append files manually here.
-      // The <FileInput> fields already put files into the form.
-
-      // ---------- debug logs ----------
-      console.group("📦 FORM SUBMISSION DATA");
-      console.log("Upload Type:", uploadType);
-      console.log("Before 2000:", before2000);
-      console.log("Letter Category:", letterCategory);
-      console.log("Letter Language:", letterLanguage);
-      console.log("Decade:", decade);
-      console.log("Letter Narrative Format:", letterNarrativeFormat);
-      console.log("Photo Narrative Format:", photoNarrativeFormat);
-      console.log("Guidelines Read:", hasReadGuidelines);
-      console.log("Agreed Terms:", agreedTermsSubmission);
-
-      const entries = {};
-      formData.forEach((v, k) => {
-        if (v instanceof File) return;
-        entries[k] = v;
-      });
-      console.log("Text Fields:", entries);
-
-      const formatFileInfo = (files) =>
-        files.map((f) => ({
-          name: f.name,
-          sizeMB: (f.size / (1024 * 1024)).toFixed(2) + " MB",
-          type: f.type,
-        }));
-
-      console.log("Letter Images (state):", formatFileInfo(letterFiles));
-      console.log("Photo Images (state):", formatFileInfo(photoFiles));
-      console.log("Letter Audio (state):", formatFileInfo(letterAudioFiles));
-      console.log("Photo Audio (state):", formatFileInfo(photoAudioFiles));
-      console.groupEnd();
-
       // <---------- API ----------->
-
       const res = await api.post("/submissions", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -126,7 +140,7 @@ export default function Form() {
       console.log("✅ Saved to server:", res.data);
       setShowThankYou(true);
 
-      // Reset form + controlled state
+      // Reset form + state
       formEl.reset();
       setUploadType("Both");
       setBefore2000("No");
@@ -141,7 +155,15 @@ export default function Form() {
       setPhotoFiles([]);
       setLetterAudioFiles([]);
       setPhotoAudioFiles([]);
+      setCaptchaToken("");
       setResetTrigger((prev) => !prev);
+
+      // Reset Turnstile widget instance
+      if (window.turnstile && widgetIdRef.current) {
+        try {
+          window.turnstile.reset(widgetIdRef.current);
+        } catch {}
+      }
     } catch (err) {
       console.error("Submit error:", err?.response?.data || err.message);
       alert(
@@ -240,7 +262,6 @@ export default function Form() {
                   previewType="image"
                   resetTrigger={resetTrigger}
                   fileCategory="letter"
-                  // allow multiple images
                   multiple={true}
                   onFilesChange={setLetterFiles}
                 />
@@ -310,7 +331,6 @@ export default function Form() {
                         wrapperClassName="w-full mt-4"
                         label="Audio"
                         resetTrigger={resetTrigger}
-                        // enforce single audio
                         multiple={false}
                         onFilesChange={(files) =>
                           setLetterAudioFiles(files.slice(0, 1))
@@ -344,7 +364,6 @@ export default function Form() {
                   previewType="image"
                   resetTrigger={resetTrigger}
                   fileCategory="photograph"
-                  // allow multiple images
                   multiple={true}
                   onFilesChange={setPhotoFiles}
                 />
@@ -414,7 +433,6 @@ export default function Form() {
                         wrapperClassName="w-full mt-4"
                         label="Audio"
                         resetTrigger={resetTrigger}
-                        // enforce single audio
                         multiple={false}
                         onFilesChange={(files) =>
                           setPhotoAudioFiles(files.slice(0, 1))
@@ -465,13 +483,20 @@ export default function Form() {
           </div>
         </FormSection>
 
+        {/* --- Turnstile Captcha (render target) --- */}
+        <div className="my-8">
+          <div id="turnstile-widget"></div>
+          {/* defensive hidden input: ensures token is posted */}
+          <input type="hidden" name="cf-turnstile-response" value={captchaToken} />
+        </div>
+
         {/* SUBMIT */}
         <div className="mt-10">
           <ParchmentButton
             className="w-full"
             type="submit"
             disabled={
-              isSubmitting || !hasReadGuidelines || !agreedTermsSubmission
+              isSubmitting || !hasReadGuidelines || !agreedTermsSubmission || !captchaToken
             }
           >
             {isSubmitting ? "Submitting..." : "Submit"}

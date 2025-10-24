@@ -37,10 +37,13 @@ export function AuthProvider({ children }) {
   }, [hydrate]);
 
   // login with credentials
-  const login = async (email, password) => {
+  const login = async (email, password, captchaToken) => {
+    if (!captchaToken) {
+      throw new Error("Captcha token missing.");
+    }
     const { data } = await api.post(
       "/admin/login",
-      { email, password },
+      { email, password, "cf-turnstile-response": captchaToken },
       { headers: { "Content-Type": "application/json" } }
     );
 

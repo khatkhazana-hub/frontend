@@ -1,6 +1,6 @@
 // src/pages/admin/AdminLogin.jsx
 // @ts-nocheck
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { motion } from "framer-motion";
@@ -9,6 +9,7 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, getMe } = useAuth();
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,20 +17,80 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
+  const widgetIdRef = useRef(null);
+
+  useEffect(() => {
+    const ready = () =>
+      typeof window !== "undefined" && window.turnstile && siteKey;
+
+    const mount = () => {
+      if (!ready()) return;
+      try {
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.remove(widgetIdRef.current);
+          widgetIdRef.current = null;
+        }
+      } catch (err) {
+        console.warn("turnstile remove failed:", err);
+      }
+
+      widgetIdRef.current = window.turnstile.render("#admin-turnstile", {
+        sitekey: siteKey,
+        theme: "light",
+        callback: (token) => {
+          setCaptchaToken(token || "");
+        },
+        "expired-callback": () => setCaptchaToken(""),
+        "error-callback": () => setCaptchaToken(""),
+        action: "admin_login",
+      });
+    };
+
+    mount();
+    const iv = setInterval(() => {
+      if (ready() && !widgetIdRef.current) {
+        mount();
+      }
+      if (widgetIdRef.current) clearInterval(iv);
+    }, 300);
+
+    return () => clearInterval(iv);
+  }, [siteKey]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
+    if (!captchaToken) {
+      setErrorMsg("Please complete the captcha first.");
+      return;
+    }
     try {
       setLoading(true);
-      await login(email, password);
+      await login(email, password, captchaToken);
       await getMe();
       setSuccessMsg("Login successful! Redirecting...");
       const redirectTo = location.state?.from?.pathname || "/admin-dashboard";
       setTimeout(() => navigate(redirectTo, { replace: true }), 400);
+      if (window.turnstile && widgetIdRef.current) {
+        try {
+          window.turnstile.reset(widgetIdRef.current);
+        } catch (err) {
+          console.warn("turnstile reset failed:", err);
+        }
+      }
+      setCaptchaToken("");
     } catch (err) {
       setErrorMsg(err?.response?.data?.message || "Login failed. Please try again.");
+      if (window.turnstile && widgetIdRef.current) {
+        try {
+          window.turnstile.reset(widgetIdRef.current);
+        } catch (resetErr) {
+          console.warn("turnstile reset failed:", resetErr);
+        }
+      }
+      setCaptchaToken("");
     } finally {
       setLoading(false);
     }
@@ -144,9 +205,14 @@ export default function AdminLogin() {
                 </Link>
               </div>
 
+              <div className="pt-2">
+                <div id="admin-turnstile" />
+                <input type="hidden" name="cf-turnstile-response" value={captchaToken} />
+              </div>
+
               <motion.button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !captchaToken}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
                 className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-[#6E4A27] px-4 py-2 font-semibold text-white shadow-md transition-colors hover:bg-[#79542f] disabled:cursor-not-allowed disabled:opacity-60"
               >
