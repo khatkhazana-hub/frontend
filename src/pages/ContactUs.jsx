@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HeadingDesc from "../components/InnerComponents/HeadingDesc";
 import ParchmentButton from "@/components/InnerComponents/ParchmentButton";
 import api from "@/utils/api"; // <-- your axios wrapper
@@ -18,6 +18,45 @@ export default function ContactUs() {
   });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState({ type: "", msg: "" });
+  const [captchaToken, setCaptchaToken] = useState("");
+  const widgetIdRef = useRef(null);
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+
+  useEffect(() => {
+    const ready = () =>
+      typeof window !== "undefined" && window.turnstile && siteKey;
+
+    const mount = () => {
+      if (!ready()) return;
+      try {
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.remove(widgetIdRef.current);
+          widgetIdRef.current = null;
+        }
+      } catch (err) {
+        console.warn("turnstile remove failed:", err);
+      }
+
+      widgetIdRef.current = window.turnstile.render("#contact-turnstile", {
+        sitekey: siteKey,
+        theme: "light",
+        callback: (token) => setCaptchaToken(token || ""),
+        "expired-callback": () => setCaptchaToken(""),
+        "error-callback": () => setCaptchaToken(""),
+        action: "contact_submit",
+      });
+    };
+
+    mount();
+    const iv = setInterval(() => {
+      if (ready() && !widgetIdRef.current) {
+        mount();
+      }
+      if (widgetIdRef.current) clearInterval(iv);
+    }, 300);
+
+    return () => clearInterval(iv);
+  }, [siteKey]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -41,6 +80,10 @@ export default function ContactUs() {
       setStatus({ type: "error", msg: err });
       return;
     }
+    if (!captchaToken) {
+      setStatus({ type: "error", msg: "Please complete the captcha first." });
+      return;
+    }
 
     try {
       setLoading(true);
@@ -55,6 +98,7 @@ export default function ContactUs() {
         zip: form.zip.trim(),
         message: form.message.trim(),
         subscribe: !!form.subscribe,
+        "cf-turnstile-response": captchaToken,
       };
 
       await api.post("/contacts", payload); // <-- backend route
@@ -76,12 +120,28 @@ export default function ContactUs() {
         message: "",
         subscribe: false,
       });
+      setCaptchaToken("");
+      if (window.turnstile && widgetIdRef.current) {
+        try {
+          window.turnstile.reset(widgetIdRef.current);
+        } catch (err) {
+          console.warn("turnstile reset failed:", err);
+        }
+      }
     } catch (error) {
       const msg =
         error?.response?.data?.message ||
         error?.message ||
         "Something went wrong sending your message.";
       setStatus({ type: "error", msg });
+      if (window.turnstile && widgetIdRef.current) {
+        try {
+          window.turnstile.reset(widgetIdRef.current);
+        } catch (err) {
+          console.warn("turnstile reset failed:", err);
+        }
+      }
+      setCaptchaToken("");
     } finally {
       setLoading(false);
     }
@@ -194,8 +254,8 @@ export default function ContactUs() {
             />
           </div>
 
-          {/* Checkbox */}
-          {/* <label className="mt-3 flex items-start gap-2 text-[12.5px] text-black">
+          {/* Subscribe */}
+          <label className="mt-4 flex items-start gap-3 text-sm text-black">
             <input
               type="checkbox"
               name="subscribe"
@@ -204,20 +264,28 @@ export default function ContactUs() {
               className="mt-1 h-4 w-4 rounded border-black/40 accent-[#5a3c1e]"
             />
             <span>
-              Yes, please put me on your email list.
+              Subscribe to receive one featured Letter/Photograph delivered to your inbox every month.
               <br />
-              <p className="text-neutral-700">
-                (we will never share your email address with anyone)
-              </p>
+              <span className="text-neutral-600 text-xs">
+                We respect your privacy and you can unsubscribe any time.
+              </span>
             </span>
-          </label> */}
+          </label>
 
           {/* Button */}
+          <div className="mt-6">
+            <div id="contact-turnstile" />
+            <input
+              type="hidden"
+              name="cf-turnstile-response"
+              value={captchaToken}
+            />
+          </div>
           <div className="mt-10">
             <ParchmentButton
               className="w-full"
               type="submit"
-              disabled={loading}
+              disabled={loading || !captchaToken}
             >
               {loading ? "Sending..." : "Send Message"}
             </ParchmentButton>

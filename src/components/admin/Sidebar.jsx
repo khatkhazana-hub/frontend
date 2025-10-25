@@ -28,7 +28,8 @@ const NAV = [
   { to: "/admin/letters", label: "Letters", icon: BookText },
   { to: "/admin/photos", label: "Photos", icon: Images },
   { to: "/admin/categories", label: "Categories", icon: Images },
-  { to: "/admin/contact-data", label: "Contact-Us Data", icon: Images },
+  { to: "/admin/contact-data", label: "Contact-Us Data", icon: Mail },
+  { to: "/admin/subscriptions", label: "Subscriptions", icon: Mail },
 ];
 
 export default function Sidebar() {

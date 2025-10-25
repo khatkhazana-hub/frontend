@@ -1,9 +1,60 @@
 import ParchmentButton from "@/components/InnerComponents/ParchmentButton";
-import React, { useState } from "react";
+import api from "@/utils/api";
+import React, { useEffect, useRef, useState } from "react";
 
 const PopupSubscritionModel = ({ onSubscribe }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const widgetIdRef = useRef(null);
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+
+  useEffect(() => {
+    const ready = () =>
+      typeof window !== "undefined" && window.turnstile && siteKey;
+
+    const mount = () => {
+      if (!ready()) return;
+      try {
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.remove(widgetIdRef.current);
+          widgetIdRef.current = null;
+        }
+      } catch (err) {
+        console.warn("turnstile remove failed:", err);
+      }
+
+      widgetIdRef.current = window.turnstile.render("#subscription-turnstile", {
+        sitekey: siteKey,
+        theme: "light",
+        callback: (token) => setCaptchaToken(token || ""),
+        "expired-callback": () => setCaptchaToken(""),
+        "error-callback": () => setCaptchaToken(""),
+        action: "subscribe_popup",
+      });
+    };
+
+    mount();
+    const iv = setInterval(() => {
+      if (ready() && !widgetIdRef.current) {
+        mount();
+      }
+      if (widgetIdRef.current) clearInterval(iv);
+    }, 300);
+
+    return () => clearInterval(iv);
+  }, [siteKey]);
+
+  const resetCaptcha = () => {
+    if (window.turnstile && widgetIdRef.current) {
+      try {
+        window.turnstile.reset(widgetIdRef.current);
+      } catch (err) {
+        console.warn("turnstile reset failed:", err);
+      }
+    }
+    setCaptchaToken("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -11,9 +62,18 @@ const PopupSubscritionModel = ({ onSubscribe }) => {
       alert("Please enter your email");
       return;
     }
+    if (!captchaToken) {
+      alert("Please complete the captcha first.");
+      return;
+    }
     setLoading(true);
 
     try {
+      await api.post("/subscriptions", {
+        email: email.trim(),
+        "cf-turnstile-response": captchaToken,
+      });
+
       // local storage flag
       localStorage.setItem("isSubscribed", "true");
 
@@ -25,9 +85,15 @@ const PopupSubscritionModel = ({ onSubscribe }) => {
 
       // optional: reset form
       setEmail("");
+      resetCaptcha();
     } catch (err) {
       console.error(err);
-      alert("❌ Something went wrong. Please try again.");
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "❌ Something went wrong. Please try again.";
+      alert(msg);
+      resetCaptcha();
     } finally {
       setLoading(false);
     }
@@ -57,7 +123,20 @@ const PopupSubscritionModel = ({ onSubscribe }) => {
         className="border border-[#6E4A27] w-full p-3 rounded-md focus:outline-none focus:ring-1 focus:ring-[#6E4A27]"
       />
 
-      <ParchmentButton className="w-full" type="submit" disabled={loading}>
+      <div className="w-full">
+        <div id="subscription-turnstile" />
+        <input
+          type="hidden"
+          name="cf-turnstile-response"
+          value={captchaToken}
+        />
+      </div>
+
+      <ParchmentButton
+        className="w-full"
+        type="submit"
+        disabled={loading || !captchaToken}
+      >
         {loading ? "Subscribing..." : "Subscribe"}
       </ParchmentButton>
     </form>

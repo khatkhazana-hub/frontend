@@ -34,9 +34,10 @@ const Homepage = () => {
           block 
           align-top 
           cursor-pointer
-        -mt-10 md:-mt-32
-        
-        "
+          "
+          style={{
+            marginTop: "calc(-1 * clamp(3rem, 17vh, 25rem))",
+          }}
         />
       </section>
     </>
