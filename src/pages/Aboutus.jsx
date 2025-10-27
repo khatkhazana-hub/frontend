@@ -4,9 +4,9 @@ import React, { useState } from "react";
 
 function Aboutus() {
   const images = [
-    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/About-1.webp`,
-    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/About-2.webp`,
-    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/About-3.webp`,
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Aboutt-1.webp`,
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Aboutt-2.webp`,
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Aboutt-3.webp`,
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(null);

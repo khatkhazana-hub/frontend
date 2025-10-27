@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState, useCallback } from "react";
 import ParchmentButton from "./ParchmentButton";
-import PopupSubscritionModel from "@/pages/letters/PopupSubscritionModel";
+import PopupSubscritionModel from "@/pages/letters/PopupSubscritionModel"
 
 
 const Subcription = () => {

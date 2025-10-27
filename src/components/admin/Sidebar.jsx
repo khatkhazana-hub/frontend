@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/tooltip";
 
 const NAV = [
-  { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  // { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/admin/both", label: "Both", icon: BookText },
   { to: "/admin/letters", label: "Letters", icon: BookText },
   { to: "/admin/photos", label: "Photos", icon: Images },

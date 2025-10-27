@@ -245,12 +245,12 @@ export default function SubmissionEdit() {
                 onChange={setLetterNarrative}
                 rows={5}
               />
-              <Textarea
+              {/* <Textarea
                 label="Narrative (Optional)"
                 value={letterNarrativeOptional}
                 onChange={setLetterNarrativeOptional}
                 rows={4}
-              />
+              /> */}
             </Grid>
 
             {/* <div className="mt-4 grid gap-6 sm:grid-cols-2">
@@ -308,12 +308,12 @@ export default function SubmissionEdit() {
                 onChange={setPhotoNarrative}
                 rows={5}
               />
-              <Textarea
+              {/* <Textarea
                 label="Narrative (Optional)"
                 value={photoNarrativeOptional}
                 onChange={setPhotoNarrativeOptional}
                 rows={4}
-              />
+              /> */}
             </Grid>
 
             {/* <div className="mt-4 grid gap-6 sm:grid-cols-2">

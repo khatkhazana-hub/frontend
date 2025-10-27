@@ -23,7 +23,7 @@ const adminRoutes = [
     ),
     children: [
       {
-        path: "dashboard",
+        path: "both",
         element: (
           <ProtectedRoute>
             <Dashboard title="Admin-Dashboard" />
