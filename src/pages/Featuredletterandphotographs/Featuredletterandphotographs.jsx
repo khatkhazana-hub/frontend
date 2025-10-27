@@ -8,6 +8,8 @@ import PopupSubscritionModel from "../letters/PopupSubscritionModel";
 
 const Featuredletterandphotographs = () => {
   const [showPopup, setShowPopup] = useState(false);
+  const [photoOrientation, setPhotoOrientation] = useState("portrait");
+  const [photoErrored, setPhotoErrored] = useState(false);
 
   useEffect(() => {
     const subscribed = typeof window !== "undefined" && localStorage.getItem("isSubscribed");
@@ -69,6 +71,34 @@ const Featuredletterandphotographs = () => {
       title: heroPhoto?.title || "Untitled Photo",
     };
   }, [heroPhoto]);
+
+  useEffect(() => {
+    setPhotoOrientation("portrait");
+    setPhotoErrored(false);
+  }, [heroPhotoVM?.overlay]);
+
+  const handleHeroPhotoLoad = (e) => {
+    const { naturalWidth = 0, naturalHeight = 0 } = e.target;
+    const nextOrientation =
+      naturalWidth >= naturalHeight && naturalWidth !== 0 ? "landscape" : "portrait";
+    setPhotoOrientation(nextOrientation);
+  };
+
+  const handleHeroPhotoError = () => {
+    setPhotoErrored(true);
+  };
+
+  const isLandscape = photoOrientation === "landscape";
+  const frameBoxClass = isLandscape ? "w-[276px] h-[207px]" : "w-[280px] h-[280px]";
+  const windowClass = isLandscape
+    ? "absolute left-1/2 -translate-x-1/2 top-[34px] w-[232px] h-[138px] overflow-hidden rounded-[10px]"
+    : "absolute left-1/2 -translate-x-1/2 top-[30px] w-[180px] h-[240px] overflow-hidden rounded-[6px]";
+  const watermarkClass = isLandscape
+    ? "absolute top-[58px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20"
+    : "absolute top-[80px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20";
+  const frameSrc = isLandscape
+    ? `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Horizantal-Frame.webp`
+    : `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`;
 
   return (
     <div className="flex flex-col justify-center items-start gap-14 mx-auto px-4 sm:px-6 lg:px-10 xl:px-0 max-w-[1270px] lg:py-20 py-10">
@@ -230,17 +260,30 @@ const Featuredletterandphotographs = () => {
                 </span>
 
                 <div className="relative z-10 flex aspect-[7/8] w-full items-center justify-center p-6 sm:p-8">
-                  <img
-                    src={heroPhotoVM.overlay}
-                    alt={heroPhotoVM.title}
-                    loading="eager"
-                    className="h-52 w-40 sm:h-60 sm:w-48 object-contain rounded-sm"
-                  />
-                  <img
-                    src="/images/logo.png"
-                    alt=""
-                    className="pointer-events-none absolute inset-0 m-auto h-24 w-24 opacity-20 select-none object-contain"
-                  />
+                  <div className={`relative ${frameBoxClass}`}>
+                    <div className={windowClass}>
+                      {!photoErrored ? (
+                        <img
+                          src={heroPhotoVM.overlay}
+                          alt={heroPhotoVM.title}
+                          loading="eager"
+                          className="w-full h-full object-contain"
+                          onLoad={handleHeroPhotoLoad}
+                          onError={handleHeroPhotoError}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-full text-xs text-gray-600 bg-gray-200">
+                          image unavailable
+                        </div>
+                      )}
+                    </div>
+                    <img src="/images/logo.png" alt="" className={watermarkClass} />
+                    <img
+                      src={frameSrc}
+                      alt="Frame"
+                      className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none select-none"
+                    />
+                  </div>
                 </div>
 
                 <div className="absolute inset-x-4 bottom-4 text-left">

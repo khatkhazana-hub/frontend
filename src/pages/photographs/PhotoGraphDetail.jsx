@@ -160,7 +160,7 @@ export default function PhotoGraphDetail() {
         <div className="w-full text-black">
           <div className="flex flex-col lg:flex-row justify-start gap-5 mb-6 w-full">
             {/* main image + slider fed from uploaded arrays */}
-            <MainImageWithSlider heroImage={heroImage} images={sliderImages} />
+            <MainImageWithSlider heroImage={heroImage} images={sliderImages} withFrame />
 
             {/* right-side info/thumb card; pass first image normalized */}
             <RelatedPhotoCards photos={letterImages} />
