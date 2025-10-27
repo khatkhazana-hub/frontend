@@ -519,7 +519,7 @@ export default function Form() {
                 🎉 Thank You!
               </h2>
               <p className="mb-6">
-                Your submission has been received successfully.
+                Your submission has been received successfully. Our team will contact you within 3 working days.
               </p>
               <button
                 onClick={() => setShowThankYou(false)}
