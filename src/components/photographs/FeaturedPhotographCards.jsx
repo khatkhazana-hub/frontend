@@ -1,6 +1,6 @@
 // @ts-nocheck
-import React, { useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper/modules";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
@@ -10,11 +10,61 @@ import "swiper/css/navigation";
 import { fileUrl } from "@/utils/files";
 import useFeaturedPhotos from "@/hooks/useFeaturedPhotos";
 
+function FramedPhoto({ src, alt, isLandscape, onLoad, onError }) {
+  const frameSrc = isLandscape
+    ? `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Horizantal-Frame.webp`
+    : `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`;
+
+  const frameBoxClass = isLandscape ? "w-[276px] h-[207px]" : "w-[280px] h-[280px]";
+
+  const windowClass = isLandscape
+    ? "absolute left-1/2 -translate-x-1/2 top-[34px] w-[232px] h-[138px] overflow-hidden rounded-[10px]"
+    : "absolute left-1/2 -translate-x-1/2 top-[30px] w-[180px] h-[240px] overflow-hidden rounded-[6px]";
+
+  return (
+    <div className={`relative ${frameBoxClass}`}>
+      <div className={windowClass}>
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          onLoad={onLoad}
+          onError={onError}
+          className="w-full h-full object-contain"
+        />
+      </div>
+      <img
+        src="/images/logo.png"
+        alt=""
+        aria-hidden="true"
+        className={`absolute ${isLandscape ? "top-[58px]" : "top-[80px]"} left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20`}
+      />
+      <img
+        src={frameSrc}
+        alt="Frame"
+        className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none select-none"
+      />
+    </div>
+  );
+}
+
 
 export default function FeaturedPhotographCards() {
   const { data: letters, loading, error } = useFeaturedPhotos();
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+  const [orientation, setOrientation] = useState({});
+  const [errored, setErrored] = useState({});
+
+  const handleImageLoad = (e, key) => {
+    const { naturalWidth = 0, naturalHeight = 0 } = e.target;
+    const isLandscape = naturalWidth >= naturalHeight && naturalWidth !== 0;
+    setOrientation((prev) => ({ ...prev, [key]: isLandscape ? "landscape" : "portrait" }));
+  };
+
+  const handleImageError = (key) => {
+    setErrored((prev) => ({ ...prev, [key]: true }));
+  };
 
   if (loading) return (
     <div className="mt-14 w-full text-center opacity-70">
@@ -60,18 +110,17 @@ export default function FeaturedPhotographCards() {
             swiper.params.navigation.nextEl = nextRef.current;
           }}
         >
-          {letters.map((r) => {
+          {letters.map((r, idx) => {
             const title = r?.photoCaption || "Untitled";
             const category = r?.photoPlace || "Untitled";
-            const overlayUrl = fileUrl(r?.photoImage[0]?.path) 
-
-
-            const lang = encodeURIComponent((r?.letterLanguage || "english").toLowerCase());
+            const overlayUrl = fileUrl(r?.photoImage[0]?.path);
             const id = encodeURIComponent(r?._id);
             const href = `/photographs/${id}`;
+            const key = r?._id || idx;
+            const isLandscape = orientation[key] === "landscape";
 
             return (
-              <SwiperSlide key={r._id} className="flex justify-start !w-[350px]">
+              <SwiperSlide key={key} className="flex justify-start !w-[350px]">
                 <Link to={href}>
                   <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto">
                     <img
@@ -80,8 +129,19 @@ export default function FeaturedPhotographCards() {
                       className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
                     />
                     <div className="relative flex justify-center z-10 pt-[30px]">
-                      <img src={overlayUrl} alt="" className="object-contain  transition-all duration-300 w-[200px] rounded-sm h-[250px]" />
-                      <img src="/images/logo.png" alt="" className="absolute top-20 left-[100px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none" />
+                      {!errored[key] ? (
+                        <FramedPhoto
+                          src={overlayUrl}
+                          alt={title}
+                          isLandscape={isLandscape}
+                          onLoad={(e) => handleImageLoad(e, key)}
+                          onError={() => handleImageError(key)}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-[220px] h-[180px] rounded bg-gray-200 text-gray-600 text-xs">
+                          image unavailable
+                        </div>
+                      )}
                     </div>
                     <div className="absolute left-[25px] top-[300px] w-[300px] text-left">
                       <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
