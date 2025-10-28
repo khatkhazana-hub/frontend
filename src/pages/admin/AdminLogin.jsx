@@ -71,7 +71,7 @@ export default function AdminLogin() {
       await login(email, password, captchaToken);
       await getMe();
       setSuccessMsg("Login successful! Redirecting...");
-      const redirectTo = location.state?.from?.pathname || "/admin-dashboard";
+      const redirectTo ="/admin/both";
       setTimeout(() => navigate(redirectTo, { replace: true }), 400);
       if (window.turnstile && widgetIdRef.current) {
         try {

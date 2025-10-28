@@ -62,6 +62,9 @@ export default function SubmissionEdit() {
   const [letterAudioFile, setLetterAudioFile] = useState(null);
   const [photoAudioFile, setPhotoAudioFile] = useState(null);
 
+  // Notes (new)
+  const [notes, setNotes] = useState("");
+
   // derived visibility
   const t = norm(uploadType); // 'letter'|'photo'|'both'
   const showLetter = t === "letter" || t === "both";
@@ -103,6 +106,9 @@ export default function SubmissionEdit() {
         setBefore2000(data.before2000 || "No");
         setStatus(data.status || "pending");
         setFeatured(!!data.featured);
+
+        // notes
+        setNotes(data.notes || "");
       } catch (e) {
         setErr(e?.response?.data?.message || "Failed to load submission");
       }
@@ -161,11 +167,14 @@ export default function SubmissionEdit() {
       fd.append("status", status);
       fd.append("featured", String(featured));
 
+      // NEW: include notes (even if empty, server will accept and keep/clear)
+      fd.append("notes", notes);
+
       await api.patch(`/submissions/${id}`, fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      navigate(`/admin/submissions/${id}`, { replace: true });
+      navigate(`/admin/submissions/${id}/edit`, { replace: true });
     } catch (e) {
       setErr(e?.response?.data?.message || "Update failed");
     } finally {
@@ -175,6 +184,9 @@ export default function SubmissionEdit() {
 
   if (!data && !err) return <div className="p-6">Loading…</div>;
   if (err) return <div className="p-6 text-red-600">{err}</div>;
+
+  // decide where to render notes:
+  const hadExistingNotes = ((data?.notes || "").trim().length > 0);
 
   return (
     <div className="p-6">
@@ -189,55 +201,12 @@ export default function SubmissionEdit() {
             <Input label="Phone" value={phone} onChange={setPhone} />
             <Input label="Location" value={location} onChange={setLocation} />
           </Grid>
-
-          {/* <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            <SwitchField
-              label="Has read guidelines"
-              checked={hasReadGuidelines}
-              onChange={setHasReadGuidelines}
-            />
-            <SwitchField
-              label="Agreed to terms"
-              checked={agreedTermsSubmission}
-              onChange={setAgreedTermsSubmission}
-            />
-          </div> */}
         </Section>
-
-        {/* META */}
-        {/* <Section title="Meta">
-          <Grid two>
-            <Select
-              label="Upload Type"
-              value={uploadType}
-              onChange={setUploadType}
-              options={["Letter", "Photo", "Both"]}
-            />
-
-           
-            {showLetter && (
-              <>
-                <Input label="Title" value={title} onChange={setTitle} />
-                <Input label="Letter Category" value={letterCategory} onChange={setLetterCategory} />
-                <Input label="Language" value={letterLanguage} onChange={setLetterLanguage} />
-                <Input label="Decade" value={decade} onChange={setDecade} />
-              </>
-            )}
-
-          
-          </Grid>
-        </Section> */}
 
         {/* LETTER — only if Letter or Both */}
         {showLetter && (
           <Section title="Letter">
             <Grid two>
-              {/* <Select
-                label="Narrative Format"
-                value={letterNarrativeFormat}
-                onChange={setLetterNarrativeFormat}
-                options={["text", "audio", "both"]}
-              /> */}
               <div />
               <Textarea
                 label="Narrative"
@@ -245,47 +214,7 @@ export default function SubmissionEdit() {
                 onChange={setLetterNarrative}
                 rows={5}
               />
-              {/* <Textarea
-                label="Narrative (Optional)"
-                value={letterNarrativeOptional}
-                onChange={setLetterNarrativeOptional}
-                rows={4}
-              /> */}
             </Grid>
-
-            {/* <div className="mt-4 grid gap-6 sm:grid-cols-2">
-             
-              {data?.letterImage?.path && (
-                <MediaPreview label="Current Letter Image">
-                  <img
-                    src={buildFileUrl(data.letterImage.path)}
-                    alt="Letter"
-                    className="w-full rounded border object-contain"
-                  />
-                </MediaPreview>
-              )}
-              {data?.letterAudioFile?.path && (
-                <MediaPreview label="Current Letter Audio">
-                  <audio
-                    controls
-                    src={buildFileUrl(data.letterAudioFile.path)}
-                    className="w-full"
-                  />
-                </MediaPreview>
-              )}
-
-             
-              <FileInput
-                label="Replace Letter Image"
-                accept="image/*"
-                onChange={setLetterImage}
-              />
-              <FileInput
-                label="Replace Letter Audio"
-                accept="audio/*"
-                onChange={setLetterAudioFile}
-              />
-            </div> */}
           </Section>
         )}
 
@@ -295,12 +224,6 @@ export default function SubmissionEdit() {
             <Grid two>
               <Input label="Photo Caption" value={photoCaption} onChange={setPhotoCaption} />
               <Input label="Photo Place" value={photoPlace} onChange={setPhotoPlace} />
-              {/* <Select
-                label="Narrative Format"
-                value={photoNarrativeFormat}
-                onChange={setPhotoNarrativeFormat}
-                options={["text", "audio", "both"]}
-              /> */}
               <div />
               <Textarea
                 label="Narrative"
@@ -308,68 +231,22 @@ export default function SubmissionEdit() {
                 onChange={setPhotoNarrative}
                 rows={5}
               />
-              {/* <Textarea
-                label="Narrative (Optional)"
-                value={photoNarrativeOptional}
-                onChange={setPhotoNarrativeOptional}
-                rows={4}
-              /> */}
             </Grid>
-
-            {/* <div className="mt-4 grid gap-6 sm:grid-cols-2">
-              {data?.photoImage?.path && (
-                <MediaPreview label="Current Photo Image">
-                  <img
-                    src={buildFileUrl(data.photoImage.path)}
-                    alt="Photo"
-                    className="w-full rounded border object-contain"
-                  />
-                </MediaPreview>
-              )}
-              {data?.photoAudioFile?.path && (
-                <MediaPreview label="Current Photo Audio">
-                  <audio
-                    controls
-                    src={buildFileUrl(data.photoAudioFile.path)}
-                    className="w-full"
-                  />
-                </MediaPreview>
-              )}
-
-              <FileInput
-                label="Replace Photo Image"
-                accept="image/*"
-                onChange={setPhotoImage}
-              />
-              <FileInput
-                label="Replace Photo Audio"
-                accept="audio/*"
-                onChange={setPhotoAudioFile}
-              />
-            </div> */}
           </Section>
         )}
 
-        {/* VERIFICATION / STATUS */}
-        {/* <Section title="Verification & Status">
-          <Grid two>
-            <Select
-              label="Before 2000"
-              value={before2000}
-              onChange={setBefore2000}
-              options={["Yes", "No"]}
+        {/* NOTES — show here only if notes already exist */}
+        {hadExistingNotes && (
+          <Section title="Notes">
+            <Textarea
+              label="Internal Notes"
+              value={notes}
+              onChange={setNotes}
+              rows={5}
+              placeholder="Add any moderator/admin notes…"
             />
-            <Select
-              label="Status"
-              value={status}
-              onChange={setStatus}
-              options={["pending", "approved", "rejected"]}
-            />
-            <div className="col-span-2">
-              <SwitchField label="Featured" checked={featured} onChange={setFeatured} />
-            </div>
-          </Grid>
-        </Section> */}
+          </Section>
+        )}
 
         {/* ACTIONS */}
         <div className="flex gap-2">
@@ -380,6 +257,22 @@ export default function SubmissionEdit() {
             Cancel
           </Button>
         </div>
+
+        {/* If there were no notes before, give the option TO ADD NOTES AT THE END */}
+        {!hadExistingNotes && (
+          <Section title="Add Notes (optional)">
+            <Textarea
+              label="Internal Notes"
+              value={notes}
+              onChange={setNotes}
+              rows={4}
+              placeholder="No notes yet — add something useful for your future self…"
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              These notes are internal (not shown to submitters).
+            </p>
+          </Section>
+        )}
       </form>
     </div>
   );
@@ -390,7 +283,7 @@ export default function SubmissionEdit() {
 function Section({ title, children }) {
   return (
     <section className="rounded-xl border bg-white/50 p-5">
-      <h2 className="mb-4 text-base font-semibold">{title}</h2>
+      <h2 className="mb-4 text/base md:text-lg font-semibold">{title}</h2>
       {children}
     </section>
   );

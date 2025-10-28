@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "@/utils/api";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import ImageModalViewer from "@/components/ImageModalViewer/ImageModalViewer";
 
 const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || "http://localhost:8000";
 
@@ -18,9 +19,8 @@ export const buildFileUrl = (p) => {
 // normalize value to an array of file objects with a `path`
 const toFiles = (v) => {
   if (!v) return [];
-  if (Array.isArray(v)) return v.filter(x => x && x.path);
+  if (Array.isArray(v)) return v.filter((x) => x && x.path);
   if (typeof v === "object" && v.path) return [v];
-  // if backend ever returns raw string path
   if (typeof v === "string") return [{ path: v }];
   return [];
 };
@@ -61,6 +61,22 @@ export default function SubmissionDetail() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // modal state
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerImages, setViewerImages] = useState([]);
+  const [viewerIndex, setViewerIndex] = useState(0);
+
+  const openViewer = (imgs, idx) => {
+    setViewerImages(imgs);
+    setViewerIndex(idx);
+    setViewerOpen(true);
+  };
+
+  const closeViewer = () => setViewerOpen(false);
+  const nextViewer = () =>
+    setViewerIndex((i) => (i < viewerImages.length - 1 ? i + 1 : i));
+  const prevViewer = () => setViewerIndex((i) => (i > 0 ? i - 1 : i));
+
   useEffect(() => {
     (async () => {
       try {
@@ -80,10 +96,8 @@ export default function SubmissionDetail() {
   if (!data) return null;
 
   const s = data;
-
-  // new: arrays for images
   const letterFiles = toFiles(s.letterImage);
-  const photoFiles  = toFiles(s.photoImage);
+  const photoFiles = toFiles(s.photoImage);
 
   return (
     <div className="space-y-6 p-6">
@@ -91,13 +105,12 @@ export default function SubmissionDetail() {
         <ArrowLeft className="h-4 w-4" /> Back
       </Button>
 
-      <div className="rounded-xl border bg-white p-6">
+      <div className="rounded-xl border bg-white/70 p-6">
         <h2 className="mb-1 text-xl font-semibold">{s.title || "Untitled"}</h2>
         <p className="text-sm text-muted-foreground">
           {s.fullName} • {s.email}
         </p>
 
-        {/* Meta */}
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <InfoRow label="Language">{s.letterLanguage || "—"}</InfoRow>
           <InfoRow label="Decade">{s.decade || "—"}</InfoRow>
@@ -107,13 +120,14 @@ export default function SubmissionDetail() {
           <InfoRow label="Location">{s.location || "—"}</InfoRow>
         </div>
 
-        {/* Media */}
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          {/* Letter Images (array-safe) */}
+          {/* Letter Images */}
           {letterFiles.length > 0 && (
             <Section
               title="Letter Image(s)"
-              right={s.letterNarrativeFormat && <Badge>{s.letterNarrativeFormat}</Badge>}
+              right={
+                s.letterNarrativeFormat && <Badge>{s.letterNarrativeFormat}</Badge>
+              }
             >
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {letterFiles.map((f, i) => (
@@ -121,19 +135,24 @@ export default function SubmissionDetail() {
                     key={f.filename || f.path || i}
                     src={buildFileUrl(f.path)}
                     alt={`Letter ${i + 1}`}
-                    className="w-full max-h-[420px] rounded-lg border object-contain bg-muted"
+                    className="w-full max-h-[420px] rounded-lg border object-contain bg-muted cursor-pointer transition hover:opacity-80"
                     loading="lazy"
+                    onClick={() =>
+                      openViewer(letterFiles.map((x) => buildFileUrl(x.path)), i)
+                    }
                   />
                 ))}
               </div>
             </Section>
           )}
 
-          {/* Photo Images (array-safe) */}
+          {/* Photo Images */}
           {photoFiles.length > 0 && (
             <Section
               title="Photo Image(s)"
-              right={s.photoNarrativeFormat && <Badge>{s.photoNarrativeFormat}</Badge>}
+              right={
+                s.photoNarrativeFormat && <Badge>{s.photoNarrativeFormat}</Badge>
+              }
             >
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {photoFiles.map((f, i) => (
@@ -141,110 +160,93 @@ export default function SubmissionDetail() {
                     key={f.filename || f.path || i}
                     src={buildFileUrl(f.path)}
                     alt={`Photo ${i + 1}`}
-                    className="w-full max-h-[420px] rounded-lg border object-contain bg-muted"
+                    className="w-full max-h-[420px] rounded-lg border object-contain bg-muted cursor-pointer transition hover:opacity-80"
                     loading="lazy"
+                    onClick={() =>
+                      openViewer(photoFiles.map((x) => buildFileUrl(x.path)), i)
+                    }
                   />
                 ))}
               </div>
             </Section>
           )}
 
-          {/* Audio (single) */}
+          {/* Audio */}
           {s.letterAudioFile?.path && (
             <Section title="Letter Audio">
-              <audio controls src={buildFileUrl(s.letterAudioFile.path)} className="w-full">
+              <audio
+                controls
+                src={buildFileUrl(s.letterAudioFile.path)}
+                className="w-full"
+              >
                 Your browser does not support the audio element.
               </audio>
             </Section>
           )}
-
           {s.photoAudioFile?.path && (
             <Section title="Photo Audio">
-              <audio controls src={buildFileUrl(s.photoAudioFile.path)} className="w-full">
+              <audio
+                controls
+                src={buildFileUrl(s.photoAudioFile.path)}
+                className="w-full"
+              >
                 Your browser does not support the audio element.
               </audio>
             </Section>
           )}
         </div>
 
-        {/* Description */}
-        {s.description && (
-          <Section title="Description">
-            <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-              {s.description}
-            </p>
-          </Section>
-        )}
-
-        {/* Narratives — (unchanged) */}
-        {(s.letterNarrative ||
-          s.letterNarrativeOptional ||
-          s.photoNarrative ||
-          s.photoNarrativeOptional) && (
+        {/* Narratives */}
+        {(s.letterNarrative || s.photoNarrative) && (
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            {(s.letterNarrative || s.letterNarrativeOptional) && (
+            {s.letterNarrative && (
               <div className="rounded-lg border p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <p className="text-sm font-medium">Letter Narrative</p>
-                  {s.letterNarrativeFormat && <Badge>{s.letterNarrativeFormat}</Badge>}
+                  {s.letterNarrativeFormat && (
+                    <Badge>{s.letterNarrativeFormat}</Badge>
+                  )}
                 </div>
-
-                {s.letterNarrative && (
-                  <div className="mb-4">
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">Main</p>
-                    <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-                      {s.letterNarrative}
-                    </p>
-                  </div>
-                )}
-
-                {s.letterNarrativeOptional && (
-                  <div>
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">Optional</p>
-                    <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-                      {s.letterNarrativeOptional}
-                    </p>
-                  </div>
-                )}
+                <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+                  {s.letterNarrative}
+                </p>
               </div>
             )}
-
-            {(s.photoNarrative || s.photoNarrativeOptional) && (
+            {s.photoNarrative && (
               <div className="rounded-lg border p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <p className="text-sm font-medium">Photo Narrative</p>
-                  {s.photoNarrativeFormat && <Badge>{s.photoNarrativeFormat}</Badge>}
+                  {s.photoNarrativeFormat && (
+                    <Badge>{s.photoNarrativeFormat}</Badge>
+                  )}
                 </div>
-
-                {s.photoNarrative && (
-                  <div className="mb-4">
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">Main</p>
-                    <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-                      {s.photoNarrative}
-                    </p>
-                  </div>
-                )}
-
-                {s.photoNarrativeOptional && (
-                  <div>
-                    <p className="mb-1 text-xs font-medium text-muted-foreground">Optional</p>
-                    <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-                      {s.photoNarrativeOptional}
-                    </p>
-                  </div>
-                )}
+                <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+                  {s.photoNarrative}
+                </p>
               </div>
             )}
           </div>
         )}
 
-        {(s.photoCaption || s.photoPlace) && (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {s.photoCaption && <InfoRow label="Photo Caption">{s.photoCaption}</InfoRow>}
-            {s.photoPlace && <InfoRow label="Photo Place">{s.photoPlace}</InfoRow>}
-          </div>
+        {/* Notes */}
+        {s.notes && (
+          <Section title="Notes">
+            <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+              {s.notes}
+            </p>
+          </Section>
         )}
       </div>
+
+      {/* 🔥 Fullscreen viewer */}
+      <ImageModalViewer
+        isOpen={viewerOpen}
+        images={viewerImages}
+        activeIndex={viewerIndex}
+        onClose={closeViewer}
+        onPrev={prevViewer}
+        onNext={nextViewer}
+      />
     </div>
   );
 }

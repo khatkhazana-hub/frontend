@@ -17,7 +17,8 @@ const useAntiZoomScale = (enabled) => {
 
     const compute = () => {
       const currDpr = window.devicePixelRatio || 1;
-      const currVvScale = (window.visualViewport && window.visualViewport.scale) || 1;
+      const currVvScale =
+        (window.visualViewport && window.visualViewport.scale) || 1;
       const baseDpr = baseDprRef.current || 1;
       const baseVvScale =
         baseVvScaleRef.current ??
@@ -116,19 +117,12 @@ export default function ImageModalViewer({
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    // how much content extends beyond viewport on each axis
     const overX = Math.max(0, (rect.width - vw) / 2);
     const overY = Math.max(0, (rect.height - vh) / 2);
 
-    // allow free move only if image is bigger than viewport on that axis
-    const minX = -overX;
-    const maxX = overX;
-    const minY = -overY;
-    const maxY = overY;
-
     return {
-      x: Math.min(maxX, Math.max(minX, nx)),
-      y: Math.min(maxY, Math.max(minY, ny)),
+      x: Math.min(overX, Math.max(-overX, nx)),
+      y: Math.min(overY, Math.max(-overY, ny)),
     };
   };
 
@@ -146,13 +140,11 @@ export default function ImageModalViewer({
     const nx = px + (e.clientX - sx);
     const ny = py + (e.clientY - sy);
 
-    // throttle with rAF
     if (rafRef.current) return;
     rafRef.current = requestAnimationFrame(() => {
       rafRef.current = null;
       setPos((prev) => {
         const clamped = clampPos(nx, ny);
-        // avoid state churn
         if (clamped.x === prev.x && clamped.y === prev.y) return prev;
         return clamped;
       });
@@ -170,13 +162,33 @@ export default function ImageModalViewer({
 
   if (!isOpen) return null;
 
+  // Safe-area aware offsets for iOS notches/home indicator
+  const edgeLeft = {
+    left:
+      window.innerWidth >= 768
+        ? "max(env(safe-area-inset-left, 0px), 3rem)"
+        : "max(env(safe-area-inset-left, 0px), 0rem)",
+  };
+
+  const edgeRight = {
+    right:
+      window.innerWidth >= 768
+        ? "max(env(safe-area-inset-right, 0px), 3rem)"
+        : "max(env(safe-area-inset-right, 0px), 0rem)",
+  };
+
+  const edgeTopRight = {
+    top: "max(env(safe-area-inset-top, 0px), 0.75rem)",
+    right: "max(env(safe-area-inset-right, 0px), 0.75rem)",
+  };
+
   return (
     <AnimatePresence>
       <motion.div
         role="dialog"
         aria-modal="true"
         className="fixed inset-0 z-[9999] flex"
-        style={{ width: "100vw", height: "100vh", overflow: "hidden" }} // no inner scroll; pure drag
+        style={{ width: "100vw", height: "100vh", overflow: "hidden" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -196,8 +208,13 @@ export default function ImageModalViewer({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-5 right-30 w-[42px] h-[42px] rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition z-20"
-          style={{ transform: `scale(${antiScale})`, transformOrigin: "top right" }}
+          className="absolute z-20 rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition
+                     w-9 h-9 md:w-[42px] md:h-[42px]"
+          style={{
+            ...edgeTopRight,
+            transform: `scale(${antiScale})`,
+            transformOrigin: "top right",
+          }}
         >
           <X size={22} />
         </button>
@@ -207,8 +224,14 @@ export default function ImageModalViewer({
           <button
             onClick={onPrev}
             aria-label="Prev"
-            className="absolute left-30 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
-            style={{ transform: `scale(${antiScale})`, transformOrigin: "center left" }}
+            className="absolute z-20 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition
+                       min-w-[40px] h-10 px-2 md:min-w-[44px] md:h-[44px] md:px-3"
+            style={{
+              ...edgeLeft,
+              top: "50%",
+              transform: `translateY(-50%) scale(${antiScale})`,
+              transformOrigin: "center left",
+            }}
           >
             <ChevronLeft size={20} />
           </button>
@@ -217,8 +240,14 @@ export default function ImageModalViewer({
           <button
             onClick={onNext}
             aria-label="Next"
-            className="absolute right-30 top-1/2 -translate-y-1/2 h-[44px] min-w-[44px] px-3 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition z-20"
-            style={{ transform: `scale(${antiScale})`, transformOrigin: "center right" }}
+            className="absolute z-20 rounded-full bg-white/85 hover:bg-white text-black font-semibold shadow transition
+                       min-w-[40px] h-10 px-2 md:min-w-[44px] md:h-[44px] md:px-3"
+            style={{
+              ...edgeRight,
+              top: "50%",
+              transform: `translateY(-50%) scale(${antiScale})`,
+              transformOrigin: "center right",
+            }}
           >
             <ChevronRight size={20} />
           </button>
@@ -233,8 +262,13 @@ export default function ImageModalViewer({
           onPointerCancel={onPointerUp}
           onPointerLeave={onPointerUp}
           style={{
-            touchAction: zoom > 1 ? "none" : "auto", // prevent page panning on touch while dragging
-            cursor: zoom > 1 ? (draggingRef.current ? "grabbing" : "grab") : "default",
+            touchAction: zoom > 1 ? "none" : "auto",
+            cursor:
+              zoom > 1
+                ? draggingRef.current
+                  ? "grabbing"
+                  : "grab"
+                : "default",
           }}
         >
           <img
@@ -243,14 +277,15 @@ export default function ImageModalViewer({
             alt="Zoomed"
             className="select-none"
             style={{
-              // fits at 100%, grows past viewport when zoomed
               maxWidth: "100vw",
               maxHeight: "100vh",
               width: "auto",
               height: "auto",
               transform: `translate3d(${pos.x}px, ${pos.y}px, 0) scale(${zoom})`,
               transformOrigin: "center center",
-              transition: draggingRef.current ? "transform 0s" : "transform 0.2s ease",
+              transition: draggingRef.current
+                ? "transform 0s"
+                : "transform 0.2s ease",
               willChange: "transform",
             }}
             draggable={false}
@@ -261,24 +296,26 @@ export default function ImageModalViewer({
         <div
           className="absolute"
           style={{
-            bottom: 24,
+            bottom: "max(env(safe-area-inset-bottom, 0px), 1rem)",
             left: "50%",
             transform: `translateX(-50%) scale(${antiScale})`,
             transformOrigin: "bottom center",
             zIndex: 20,
           }}
         >
-          <div className="flex items-center gap-3 rounded-full bg-white/20 backdrop-blur-md px-3 py-2 text-white shadow-lg">
+          <div className="flex items-center gap-3 rounded-full bg-white/20 backdrop-blur-md px-2 py-1.5 md:px-3 md:py-2 text-white shadow-lg">
             <button
               onClick={zoomOut}
-              className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition w-10 h-10"
+              className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition w-9 h-9 md:w-10 md:h-10"
             >
               <ZoomOut size={18} />
             </button>
-            <span className="font-semibold w-16 text-center">{Math.round(zoom * 100)}%</span>
+            <span className="font-semibold w-14 md:w-16 text-center">
+              {Math.round(zoom * 100)}%
+            </span>
             <button
               onClick={zoomIn}
-              className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition w-10 h-10"
+              className="flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition w-9 h-9 md:w-10 md:h-10"
             >
               <ZoomIn size={18} />
             </button>
@@ -287,9 +324,9 @@ export default function ImageModalViewer({
 
         {/* Counter */}
         <div
-          className="absolute text-white/90 text-sm px-3 py-1 rounded-full bg-black/40"
+          className="absolute text-white/90 text-xs md:text-sm px-2.5 md:px-3 py-1 rounded-full bg-black/40"
           style={{
-            bottom: 80,
+            bottom: "calc(max(env(safe-area-inset-bottom, 0px), 1rem) + 44px)",
             left: "50%",
             transform: `translateX(-50%) scale(${antiScale})`,
             transformOrigin: "bottom center",

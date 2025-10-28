@@ -33,7 +33,7 @@ const Letters = () => {
       >
         <div className="flex flex-col items-center justify-center gap-8">
           <h2 className="text-5xl text-black mb-8 font-['Philosopher'] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
-            View letter by
+            View letter
           </h2>
 
           <div className="flex flex-col lg:flex-row justify-center gap-4 sm:gap-6">
