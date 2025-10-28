@@ -1,17 +1,31 @@
 // src/pages/admin/SubmissionEdit.jsx
 // @ts-nocheck
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "@/utils/api";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { buildFileUrl as detailFileUrl } from "./SubmissionDetail";
+import ImageModalViewer from "@/components/ImageModalViewer/ImageModalViewer";
+import { ArrowLeft } from "lucide-react";
 
-const FILE_BASE = import.meta.env.VITE_FILE_BASE_URL || "http://localhost:8000";
-const buildFileUrl = (p) => {
-  if (!p) return "";
-  const rel = String(p).replace(/^\/+/, "").replace(/^public[\\/]/, ""); // strip "public/"
-  return `${FILE_BASE}/${rel}`;
+const toFiles = (v) => {
+  if (!v) return [];
+  if (Array.isArray(v)) {
+    return v
+      .map((x) => {
+        if (!x) return null;
+        if (typeof x === "string") return { path: x };
+        if (x.path) return { ...x, path: x.path };
+        return null;
+      })
+      .filter((x) => x && x.path);
+  }
+  if (typeof v === "object" && v.path) return [{ ...v }];
+  if (typeof v === "string") return [{ path: v }];
+  return [];
 };
+
 const norm = (v) => String(v || "").trim().toLowerCase();
 
 export default function SubmissionEdit() {
@@ -64,6 +78,23 @@ export default function SubmissionEdit() {
 
   // Notes (new)
   const [notes, setNotes] = useState("");
+
+  // image modal viewer
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerImages, setViewerImages] = useState([]);
+  const [viewerIndex, setViewerIndex] = useState(0);
+
+  const letterFiles = useMemo(() => toFiles(data?.letterImage), [data?.letterImage]);
+  const photoFiles = useMemo(() => toFiles(data?.photoImage), [data?.photoImage]);
+
+  const letterImageUrls = useMemo(
+    () => letterFiles.map((f) => detailFileUrl(f.path)).filter(Boolean),
+    [letterFiles]
+  );
+  const photoImageUrls = useMemo(
+    () => photoFiles.map((f) => detailFileUrl(f.path)).filter(Boolean),
+    [photoFiles]
+  );
 
   // derived visibility
   const t = norm(uploadType); // 'letter'|'photo'|'both'
@@ -188,9 +219,27 @@ export default function SubmissionEdit() {
   // decide where to render notes:
   const hadExistingNotes = ((data?.notes || "").trim().length > 0);
 
+  const openViewer = (images, index) => {
+    if (!images?.length) return;
+    setViewerImages(images);
+    setViewerIndex(index);
+    setViewerOpen(true);
+  };
+
+  const closeViewer = () => setViewerOpen(false);
+  const nextViewer = () =>
+    setViewerIndex((i) => (i < viewerImages.length - 1 ? i + 1 : i));
+  const prevViewer = () => setViewerIndex((i) => (i > 0 ? i - 1 : i));
+
   return (
     <div className="p-6">
-      <h1 className="mb-4 text-xl font-semibold">Edit Submission</h1>
+      <div className="mb-4 flex items-center gap-3">
+        <Button variant="outline" onClick={() => navigate(-1)} className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <h1 className="text-xl font-semibold">Edit Submission</h1>
+      </div>
 
       <form onSubmit={onSubmit} className="space-y-8">
         {/* PERSONAL */}
@@ -203,7 +252,7 @@ export default function SubmissionEdit() {
           </Grid>
         </Section>
 
-        {/* LETTER — only if Letter or Both */}
+        {/* LETTER - only if Letter or Both */}
         {showLetter && (
           <Section title="Letter">
             <Grid two>
@@ -215,10 +264,28 @@ export default function SubmissionEdit() {
                 rows={5}
               />
             </Grid>
+            {letterImageUrls.length > 0 && (
+              <div className="mt-4">
+                <MediaPreview label="Uploaded Letter Image(s)">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+                    {letterImageUrls.map((src, idx) => (
+                      <img
+                        key={`${src}-${idx}`}
+                        src={src}
+                        alt={`Letter ${idx + 1}`}
+                        className="h-full w-full max-h-[260px] cursor-pointer rounded-lg border object-contain bg-muted transition hover:opacity-80"
+                        onClick={() => openViewer(letterImageUrls, idx)}
+                        loading="lazy"
+                      />
+                    ))}
+                  </div>
+                </MediaPreview>
+              </div>
+            )}
           </Section>
         )}
 
-        {/* PHOTO — only if Photo or Both */}
+        {/* PHOTO - only if Photo or Both */}
         {showPhoto && (
           <Section title="Photo">
             <Grid two>
@@ -232,6 +299,24 @@ export default function SubmissionEdit() {
                 rows={5}
               />
             </Grid>
+            {photoImageUrls.length > 0 && (
+              <div className="mt-4">
+                <MediaPreview label="Uploaded Photo Image(s)">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+                    {photoImageUrls.map((src, idx) => (
+                      <img
+                        key={`${src}-${idx}`}
+                        src={src}
+                        alt={`Photo ${idx + 1}`}
+                        className="h-full w-full max-h-[260px] cursor-pointer rounded-lg border object-contain bg-muted transition hover:opacity-80"
+                        onClick={() => openViewer(photoImageUrls, idx)}
+                        loading="lazy"
+                      />
+                    ))}
+                  </div>
+                </MediaPreview>
+              </div>
+            )}
           </Section>
         )}
 
@@ -239,7 +324,7 @@ export default function SubmissionEdit() {
         {hadExistingNotes && (
           <Section title="Notes">
             <Textarea
-              label="Internal Notes"
+              label="Admin Notes"
               value={notes}
               onChange={setNotes}
               rows={5}
@@ -274,6 +359,15 @@ export default function SubmissionEdit() {
           </Section>
         )}
       </form>
+
+      <ImageModalViewer
+        isOpen={viewerOpen}
+        images={viewerImages}
+        activeIndex={viewerIndex}
+        onClose={closeViewer}
+        onPrev={prevViewer}
+        onNext={nextViewer}
+      />
     </div>
   );
 }

@@ -88,17 +88,25 @@ const Featuredletterandphotographs = () => {
     setPhotoErrored(true);
   };
 
+  const staticImage = (name) => {
+    const base = (import.meta.env.VITE_FILE_BASE_URL || "").replace(/\/+$/, "");
+    if (base) return `${base}/public/StaticImages/${name}`;
+    return `/images/${name}`;
+  };
+
   const isLandscape = photoOrientation === "landscape";
-  const frameBoxClass = isLandscape ? "w-[276px] h-[207px]" : "w-[280px] h-[280px]";
+  const frameBoxClass = isLandscape ? "w-[312px] h-[228px]" : "w-[280px] h-[280px]";
   const windowClass = isLandscape
-    ? "absolute left-1/2 -translate-x-1/2 top-[34px] w-[232px] h-[138px] overflow-hidden rounded-[10px]"
+    ? "absolute left-1/2 -translate-x-1/2 top-[38px] w-[256px] h-[154px] overflow-hidden rounded-[12px]"
     : "absolute left-1/2 -translate-x-1/2 top-[30px] w-[180px] h-[240px] overflow-hidden rounded-[6px]";
   const watermarkClass = isLandscape
-    ? "absolute top-[58px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20"
+    ? "absolute top-[70px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20"
     : "absolute top-[80px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20";
-  const frameSrc = isLandscape
-    ? `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Horizantal-Frame.webp`
-    : `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`;
+  const frameSrc = staticImage(isLandscape ? "Horizantal-Frame.webp" : "Vertical-Frame.webp");
+  const cardBackgroundSrc = staticImage("Card.webp");
+  const cardAspectClass = isLandscape ? "aspect-[10/7]" : "aspect-[7/8]";
+  const cardPaddingClass = isLandscape ? "p-5 sm:p-6" : "p-6 sm:p-8";
+  const badgeOffsetClass = isLandscape ? "right-3 top-3 sm:right-5 sm:top-5" : "right-2 top-2 sm:right-4 sm:top-4";
 
   return (
     <div className="flex flex-col justify-center items-start gap-14 mx-auto px-4 sm:px-6 lg:px-10 xl:px-0 max-w-[1270px] lg:py-20 py-10">
@@ -243,23 +251,23 @@ const Featuredletterandphotographs = () => {
               </div>
             </div>
 
-            <a href={heroPhotoVM.to} className="group relative w-full max-w-[380px]">
-              <div className="relative mx-auto w-full overflow-hidden rounded-[20px]">
+            <a href={heroPhotoVM.to} className="group relative w-full max-w-[420px]">
+              <div className={`relative mx-auto w-full overflow-hidden rounded-[20px] ${isLandscape ? "max-w-[440px]" : ""}`}>
                 <img
-                  src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
+                  src={cardBackgroundSrc}
                   alt=""
                   loading="eager"
                   className="absolute inset-0 h-full w-full rounded-[20px] object-cover"
                 />
 
                 <span
-                  className="absolute right-2 top-2 sm:right-4 sm:top-4 z-20 rounded-full border border-black/10 bg-white px-3 py-1 text-xs sm:text-sm font-semibold text-black shadow-md"
+                  className={`absolute z-20 rounded-full border border-black/10 bg-white px-3 py-1 text-xs sm:text-sm font-semibold text-black shadow-md ${badgeOffsetClass}`}
                   style={{ fontFamily: "Philosopher" }}
                 >
                   Featured
                 </span>
 
-                <div className="relative z-10 flex aspect-[7/8] w-full items-center justify-center p-6 sm:p-8">
+                <div className={`relative z-10 flex w-full items-center justify-center ${cardAspectClass} ${cardPaddingClass}`}>
                   <div className={`relative ${frameBoxClass}`}>
                     <div className={windowClass}>
                       {!photoErrored ? (
@@ -267,12 +275,12 @@ const Featuredletterandphotographs = () => {
                           src={heroPhotoVM.overlay}
                           alt={heroPhotoVM.title}
                           loading="eager"
-                          className="w-full h-full object-contain"
+                          className="h-full w-full object-contain"
                           onLoad={handleHeroPhotoLoad}
                           onError={handleHeroPhotoError}
                         />
                       ) : (
-                        <div className="flex items-center justify-center w-full h-full text-xs text-gray-600 bg-gray-200">
+                        <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-600">
                           image unavailable
                         </div>
                       )}
@@ -281,14 +289,14 @@ const Featuredletterandphotographs = () => {
                     <img
                       src={frameSrc}
                       alt="Frame"
-                      className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none select-none"
+                      className="pointer-events-none absolute inset-0 h-full w-full select-none object-contain"
                     />
                   </div>
                 </div>
 
                 <div className="absolute inset-x-4 bottom-4 text-left">
                   <h3
-                    className="w-full truncate text-lg sm:text-xl font-semibold text-black"
+                    className="w-full truncate text-lg font-semibold text-black sm:text-xl"
                     style={{ fontFamily: "Philosopher" }}
                   >
                     {heroPhotoVM.name}
