@@ -44,7 +44,20 @@ export default function Navbar() {
           <img
             src="/images/logo.svg"
             alt="Logo"
-            className="h-[50px] lg:h-[60px] w-full object-cover cursor-pointer"
+            className="
+      h-[50px] lg:h-[60px]
+      w-auto
+      object-contain
+      object-top
+      cursor-pointer
+      select-none
+    "
+            style={{
+              objectPosition: "center top",
+              WebkitTapHighlightColor: "transparent",
+              transform: "translateZ(0)", // safari GPU boost
+              backgroundColor: "transparent", // helps avoid white border flash
+            }}
           />
         </Link>
 
@@ -59,8 +72,8 @@ export default function Navbar() {
             </NavLink>
           ))}
         </nav>
-        
-           <Link
+
+        <Link
           to="/"
           className="xl:flex items-center mt-[10px] min-w-0 hidden"
           aria-label="Home"
@@ -71,7 +84,6 @@ export default function Navbar() {
             className="h-[50px] lg:h-[60px] w-full object-cover cursor-pointer"
           />
         </Link>
-
 
         {/* RIGHT: Contact Us Button + Hamburger */}
         <div className="flex items-center gap-3">

@@ -107,7 +107,20 @@ const PopupSubscritionModel = ({ onSubscribe }) => {
       <img
         src="/images/logo.svg"
         alt="Watermark"
-        className="w-fit h-[200px] object-cover"
+        className="
+    w-auto 
+    h-[160px] sm:h-[180px] md:h-[200px]
+    object-contain
+    object-top
+    mx-auto
+    select-none
+  "
+        style={{
+          objectPosition: "center top",
+          WebkitTapHighlightColor: "transparent",
+          transform: "translateZ(0)", // fixes Safari render jitter
+          backgroundColor: "transparent",
+        }}
       />
 
       <h2 className="text-xl font-bold text-center text-[#6E4A27]">
