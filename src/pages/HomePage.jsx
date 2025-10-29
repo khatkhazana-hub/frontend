@@ -69,7 +69,7 @@ const Homepage = () => {
               loading="eager"
               decoding="async"
               /* keep the top of the artwork visible on Chrome desktop */
-              className="w-full block align-top object-cover md:-mt-20 h-[65svh] sm:h-[66svh] md:h-[74svh] lg:h-[120dvh]"
+              className="w-full block align-top object-cover md:object-fill md:-mt-20 h-[65svh] sm:h-[66svh] md:h-[74svh] lg:h-[120dvh]"
               /* or use the same focal var as the video: style={{ objectPosition: `center var(--focalY)` }} */
             />
           </picture>
