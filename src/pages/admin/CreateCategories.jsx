@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useCategories from "@/hooks/useCategories";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trash2, Edit3, Check } from "lucide-react";
+import { Loader2, Trash2, Edit3, Check, GripVertical } from "lucide-react";
 import { useSnackbar } from "notistack";
 
 export default function CreateCategories() {
   const [name, setName] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState("");
+  const [ordered, setOrdered] = useState([]);
+  const [draggingId, setDraggingId] = useState(null);
+  const [reordering, setReordering] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const {
@@ -21,7 +24,12 @@ export default function CreateCategories() {
     createCategory,
     updateCategory,
     deleteCategory,
+    reorderCategories,
   } = useCategories({ auto: true });
+
+  useEffect(() => {
+    setOrdered(categories);
+  }, [categories]);
 
   const onCreate = async (e) => {
     e.preventDefault();
@@ -42,7 +50,7 @@ export default function CreateCategories() {
   const onSaveEdit = async () => {
     try {
       const updated = await updateCategory(editingId, { name: editingName });
-      enqueueSnackbar(`Updated → ${updated.name}`, { variant: "success" });
+      enqueueSnackbar(`Updated "${updated.name}"`, { variant: "success" });
       setEditingId(null);
       setEditingName("");
     } catch (err) {
@@ -70,7 +78,71 @@ export default function CreateCategories() {
       enqueueSnackbar(err.message || "Delete failed", { variant: "error" });
     }
   };
-  
+
+  const handleDragStart = (event, id) => {
+    if (reordering) return;
+    // Avoid allowing drag while editing the active row
+    if (editingId === id) {
+      event.preventDefault();
+      return;
+    }
+    setDraggingId(id);
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", id);
+  };
+
+  const handleDragOver = (event, overId) => {
+    event.preventDefault();
+    if (!draggingId || draggingId === overId) return;
+
+    setOrdered((prev) => {
+      const next = [...prev];
+      const fromIndex = next.findIndex((item) => item._id === draggingId);
+      const toIndex = next.findIndex((item) => item._id === overId);
+      if (fromIndex === -1 || toIndex === -1) return prev;
+
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+
+    event.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDragEnd = async (event) => {
+    const dropEffect = event?.dataTransfer?.dropEffect;
+    const validDrop = dropEffect && dropEffect !== "none";
+    const nextIds = ordered.map((cat) => cat._id);
+    const currentIds = categories.map((cat) => cat._id);
+
+    setDraggingId(null);
+
+    if (!validDrop) {
+      setOrdered(categories);
+      return;
+    }
+
+    const changed =
+      nextIds.length !== currentIds.length ||
+      nextIds.some((id, index) => id !== currentIds[index]);
+
+    if (!changed) {
+      setOrdered(categories);
+      return;
+    }
+
+    try {
+      setReordering(true);
+      const updated = await reorderCategories(nextIds);
+      setOrdered(updated);
+      enqueueSnackbar("Category order updated", { variant: "success" });
+    } catch (err) {
+      setOrdered(categories);
+      enqueueSnackbar(err.message || "Failed to reorder categories", { variant: "error" });
+    } finally {
+      setReordering(false);
+    }
+  };
 
   return (
     <Card className="max-w-2xl mx-auto shadow-lg border border-neutral-200">
@@ -90,7 +162,11 @@ export default function CreateCategories() {
             />
           </div>
           <div className="flex items-end">
-            <Button type="submit" disabled={!name.trim() || loading} className="w-full md:w-auto">
+            <Button
+              type="submit"
+              disabled={!name.trim() || loading || reordering}
+              className="w-full md:w-auto"
+            >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add"}
             </Button>
           </div>
@@ -101,22 +177,40 @@ export default function CreateCategories() {
         )}
 
         <div className="space-y-2">
-          <h4 className="font-semibold">Existing</h4>
+          <div className="flex items-baseline justify-between">
+            <h4 className="font-semibold">Existing</h4>
+            {reordering && (
+              <span className="inline-flex items-center text-xs text-primary gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Saving order...
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-neutral-500">Drag rows to change the display order.</p>
           <div className="grid grid-cols-1 gap-2">
-            {categories.map((cat) => (
+            {ordered.map((cat) => (
               <div
                 key={cat._id}
-                className="flex items-center justify-between rounded-xl border p-3 hover:shadow-sm transition"
+                draggable={!reordering}
+                onDragStart={(event) => handleDragStart(event, cat._id)}
+                onDragOver={(event) => handleDragOver(event, cat._id)}
+                onDragEnd={handleDragEnd}
+                onDrop={(event) => event.preventDefault()}
+                className={`flex items-center justify-between rounded-xl border p-3 hover:shadow-sm transition ${
+                  draggingId === cat._id ? "opacity-60 ring-2 ring-primary/40 cursor-grabbing" : "cursor-grab"
+                }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <GripVertical className="h-4 w-4 text-neutral-400 shrink-0" aria-hidden="true" />
                   {editingId === cat._id ? (
                     <Input
                       value={editingName}
                       onChange={(e) => setEditingName(e.target.value)}
                       className="w-56"
+                      autoFocus
                     />
                   ) : (
-                    <span className="font-medium">{cat.name}</span>
+                    <span className="font-medium truncate">{cat.name}</span>
                   )}
                   <Badge variant={cat.active ? "default" : "secondary"}>
                     {cat.active ? "active" : "hidden"}
@@ -124,24 +218,39 @@ export default function CreateCategories() {
                 </div>
                 <div className="flex items-center gap-2">
                   {editingId === cat._id ? (
-                    <Button size="sm" onClick={onSaveEdit}>
+                    <Button size="sm" onClick={onSaveEdit} disabled={reordering}>
                       <Check className="h-4 w-4 mr-1" /> Save
                     </Button>
                   ) : (
-                    <Button variant="outline" size="sm" onClick={() => onStartEdit(cat)}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onStartEdit(cat)}
+                      disabled={reordering}
+                    >
                       <Edit3 className="h-4 w-4 mr-1" /> Edit
                     </Button>
                   )}
-                  <Button variant="outline" size="sm" onClick={() => onToggleActive(cat)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onToggleActive(cat)}
+                    disabled={reordering}
+                  >
                     {cat.active ? "Deactivate" : "Activate"}
                   </Button>
-                  <Button variant="destructive" size="sm" onClick={() => onDelete(cat._id)}>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => onDelete(cat._id)}
+                    disabled={reordering}
+                  >
                     <Trash2 className="h-4 w-4 mr-1" /> Delete
                   </Button>
                 </div>
               </div>
             ))}
-            {categories.length === 0 && (
+            {ordered.length === 0 && (
               <p className="text-sm text-neutral-500">No categories yet.</p>
             )}
           </div>
