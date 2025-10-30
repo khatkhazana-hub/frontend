@@ -71,16 +71,16 @@ const Homepage = () => {
             {/* Mobile image */}
             <source
               media="(max-width: 640px)"
-             srcSet={`${FILE_BASE}/public/StaticImages/approve_poster_1.webp`}
+             srcSet={`${FILE_BASE}/public/StaticImages/poster_mobile.webp`}
               type="image/webp"
             />
             {/* Desktop image */}
             <source
-              srcSet={`${FILE_BASE}/public/StaticImages/approve_poster_2.webp`}
+              srcSet={`${FILE_BASE}/public/StaticImages/poster_desktop.webp`}
               type="image/webp"
             />
             <img
-              src={`${FILE_BASE}/public/StaticImages/approve_poster_2.jpg`}
+              src={`${FILE_BASE}/public/StaticImages/poster_desktop.webp`}
               alt="Poster"
               loading="eager"
               decoding="async"
@@ -96,7 +96,7 @@ const Homepage = () => {
       <noscript>
         <img
           // src={`${FILE_BASE}/public/StaticImages/poster_new.jpg`}
-          src={`${FILE_BASE}/public/StaticImages/approve_poster_2.jpg`}
+          src={`${FILE_BASE}/public/StaticImages/poster_desktop.webp`}
           alt="Poster"
           style={{ width: "100%", display: "block" }}
         />
