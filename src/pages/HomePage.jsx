@@ -43,7 +43,6 @@ const Homepage = () => {
             loop
             muted
             playsInline
-            poster={`${FILE_BASE}/public/StaticImages/poster_new.webp`}
           >
             <source
               src={`${FILE_BASE}/public/StaticImages/Bg-video.webm`}
