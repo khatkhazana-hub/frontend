@@ -208,7 +208,7 @@ export default function ImageModalViewer({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute z-20 rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition
+          className="absolute z-20 mr-20 mt-10 rounded-full bg-white/85 hover:bg-white text-black font-bold shadow flex items-center justify-center transition
                      w-9 h-9 md:w-[42px] md:h-[42px]"
           style={{
             ...edgeTopRight,
