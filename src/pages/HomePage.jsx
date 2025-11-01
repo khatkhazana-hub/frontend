@@ -45,10 +45,6 @@ const Homepage = () => {
             playsInline
           >
             <source
-              src={`${FILE_BASE}/public/StaticImages/Bg-video.webm`}
-              type="video/webm"
-            />
-            <source
               src={`${FILE_BASE}/public/StaticImages/Bg-video.mp4`}
               type="video/mp4"
             />
