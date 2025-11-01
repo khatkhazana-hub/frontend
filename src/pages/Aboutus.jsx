@@ -4,17 +4,16 @@ import React, { useState } from "react";
 
 function Aboutus() {
   const images = [
-    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Aboutt-1.webp`,
-    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Aboutt-2.webp`,
-    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Aboutt-3.webp`,
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Abouttt-1.webp`,
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Abouttt-2.webp`,
+    `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Abouttt-3.webp`,
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(null);
 
   const openAt = (i) => setSelectedIndex(i);
   const close = () => setSelectedIndex(null);
-  const prev = () =>
-    setSelectedIndex((i) => (i > 0 ? i - 1 : i));
+  const prev = () => setSelectedIndex((i) => (i > 0 ? i - 1 : i));
   const next = () =>
     setSelectedIndex((i) => (i < images.length - 1 ? i + 1 : i));
 
@@ -24,7 +23,9 @@ function Aboutus() {
         {/* header */}
         <div>
           <img
-            src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/About-header1.webp`}
+            src={`${
+              import.meta.env.VITE_FILE_BASE_URL
+            }/public/StaticImages/About-header1.webp`}
             alt="About Khat-Khazana"
             className="w-full h-auto object-cover lg:rounded-2xl rounded-md shadow-lg"
           />

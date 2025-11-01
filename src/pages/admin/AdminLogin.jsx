@@ -125,7 +125,7 @@ export default function AdminLogin() {
               <h1 className="mb-1 text-3xl font-extrabold text-[#6E4A27] tracking-wide">
                 Admin Login
               </h1>
-              <p className="text-sm text-[#6E4A27]/70">Welcome back. Let’s ship something clean.</p>
+              
             </div>
 
             {/* alerts */}
