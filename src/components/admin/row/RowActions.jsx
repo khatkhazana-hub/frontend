@@ -1,4 +1,4 @@
-// src/components/admin/row/RowActions.jsx
+﻿// src/components/admin/row/RowActions.jsx
 // @ts-nocheck
 import React from "react";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export default function RowActions({
       ? "Approved"
       : status === "rejected"
       ? "Rejected"
-      : "Decide";
+      : "Pending";
 
   const decideClass =
     status === "approved"
@@ -73,7 +73,7 @@ export default function RowActions({
               </>
             ) : (
               <>
-                Decide
+                Pending
                 <ChevronDown className="h-4 w-4" />
               </>
             )}
@@ -104,3 +104,5 @@ export default function RowActions({
     </div>
   );
 }
+
+
