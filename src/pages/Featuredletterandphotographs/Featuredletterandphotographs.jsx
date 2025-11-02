@@ -213,7 +213,7 @@ const Featuredletterandphotographs = () => {
             </a>
           </div>
         ) : (
-          <div className="opacity-70">no featured letters.</div>
+          <div className="opacity-70">No Featured Letters.</div>
         )}
       </section>
 
@@ -319,7 +319,7 @@ const Featuredletterandphotographs = () => {
             </a>
           </div>
         ) : (
-          <div className="opacity-70">no featured photographs.</div>
+          <div className="opacity-70">No Featured Photographs.</div>
         )}
       </section>
 

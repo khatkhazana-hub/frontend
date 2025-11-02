@@ -24,7 +24,7 @@ export default function FeaturedLetterCards() {
 
   if (error || !letters?.length) return (
     <div className="mt-14 w-full text-center opacity-70">
-      {error || "no featured letters found."}
+      {error || "No Featured Letters Found."}
     </div>
   );
 
