@@ -188,7 +188,7 @@ const SubmissionForm = () => {
           </div>
         )}
 
-        {modalData.type === "guidelines" && (
+        {/* {modalData.type === "guidelines" && (
           <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto sentence max-h-[60vh]">
             <p>
               Thank you for contributing to our archive of handwritten letters
@@ -288,6 +288,163 @@ const SubmissionForm = () => {
               <li>File naming: use descriptive names</li>
               <li>
                 Extra info: date, place, short description (optional but
+                helpful)
+              </li>
+            </ul>
+
+            <p className="mt-4">
+              ✨ By carefully preparing your submission, you help ensure that
+              your memories are preserved with the clarity, dignity, and
+              authenticity they deserve. Thank you for being part of this
+              archive.
+            </p>
+          </div>
+        )} */}
+
+        {modalData.type === "guidelines" && (
+          <div className="text-[#5C4033] leading-relaxed space-y-4 text-left overflow-auto sentence max-h-[60vh]">
+            <p>
+              Thank you for contributing to our archive of handwritten letters
+              and analog photographs. To help us preserve your memories of the
+              highest quality and ensure they remain accessible for future
+              generations, please follow the guidelines below.
+            </p>
+
+            <h3 className="text-xl font-bold mt-4">Relevance & Storytelling</h3>
+            <p>
+              We kindly ask that submissions not be random or without context.
+              Letters and photographs should carry meaning—whether they capture
+              the spirit of an era, tell a personal or historical story, or
+              reflect on a cultural moment worth preserving. Submissions that
+              help future generations understand the people, places, and
+              emotions of their time are most valued in this archive.
+            </p>
+
+            <h3 className="text-xl font-bold mt-4">1. Letters</h3>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Submit clear scans or photographs of your letters.</li>
+              <li>
+                Ensure handwriting is legible and that the entire page (edges
+                included) is visible.
+              </li>
+              <li>Avoid shadows, glare, or cropped corners.</li>
+              <li>
+                If submitting multiple pages, please number or name them in
+                sequence.
+              </li>
+            </ul>
+
+            <h3 className="text-xl font-bold mt-4">2. Photographs</h3>
+            <h4 className="font-semibold mt-2">What we accept</h4>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                Orientation: horizontal (landscape), vertical (portrait), or
+                square — all welcome.
+              </li>
+              <li>
+                Resolution must be at least{" "}
+                <strong>1200 pixels on the long side (100 DPI)</strong>.
+              </li>
+              <li>
+                Images should be sharp, in focus, and free from heavy blur or
+                pixelation.
+              </li>
+              <li>
+                Accepted file formats:{" "}
+                <strong>JPEG, WebP, PNG, or TIFF.</strong>
+              </li>
+              <li>
+                If scanning, please clean the scanner glass to prevent smudges
+                or dust marks.
+              </li>
+              <li>
+                Do not apply filters or alterations that change the authenticity
+                of the image.
+              </li>
+            </ul>
+
+            <h4 className="font-semibold mt-4">
+              Rights & Permissions (simple, but important)
+            </h4>
+            <p>By submitting, you confirm that:</p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                You own the photo or have permission from the owner to share it.
+              </li>
+              <li>
+                You grant us a non-exclusive, royalty-free license to display
+                the image on our website, social channels, and in non-commercial
+                features about the archive, with credit to you.
+              </li>
+              <li>
+                You will not upload images that infringe on others’ rights.
+              </li>
+              <li>
+                For identifiable living people (especially minors), you have
+                their consent (or a guardian’s). If unsure, blur faces or skip
+                the upload.
+              </li>
+              <li>
+                You understand we may lightly crop/resize for layout and
+                accessibility.
+              </li>
+            </ul>
+
+            <h3 className="text-xl font-bold mt-4">
+              3. Audio Recordings (Optional)
+            </h3>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                You may submit an audio file of your letter being read aloud or
+                a short background story about the photograph/letter.
+              </li>
+              <li>
+                Accepted formats: <strong>MP3, WAV, or AAC.</strong>
+              </li>
+              <li>Ensure recordings are clear and audible.</li>
+            </ul>
+
+            <h3 className="text-xl font-bold mt-4">4. File Naming</h3>
+            <p>
+              To help us organize the archive, please name your files in a clear
+              and descriptive way, for example:
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                <strong>Letter_Grandfather_1965</strong>
+              </li>
+              <li>
+                <strong>Photo_Wedding_1972</strong>
+              </li>
+            </ul>
+
+            <h3 className="text-xl font-bold mt-4">
+              5. Additional Information (Optional but Encouraged)
+            </h3>
+            <p>
+              Providing context enriches the archive and helps others understand
+              your contribution. You may include:
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Date or approximate year</li>
+              <li>Location (city, country, or landmark)</li>
+              <li>Names of people involved</li>
+              <li>A brief description of the occasion or memory</li>
+            </ul>
+
+            <h3 className="text-xl font-bold mt-4">
+              6. Quick Checklist Before Submitting
+            </h3>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Letters: Full page, legible, no glare or blur</li>
+              <li>
+                Photographs: Minimum 1200 px, JPEG/WebP/PNG/TIFF, authentic and
+                clear
+              </li>
+              <li>Audio: MP3/WAV/AAC, clear recordings (optional)</li>
+              <li>File Naming: Use descriptive names</li>
+              <li>
+                Extra Info: Date, place, short description (optional but
                 helpful)
               </li>
             </ul>

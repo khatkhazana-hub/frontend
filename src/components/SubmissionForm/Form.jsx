@@ -487,7 +487,11 @@ export default function Form() {
         <div className="my-8">
           <div id="turnstile-widget"></div>
           {/* defensive hidden input: ensures token is posted */}
-          <input type="hidden" name="cf-turnstile-response" value={captchaToken} />
+          <input
+            type="hidden"
+            name="cf-turnstile-response"
+            value={captchaToken}
+          />
         </div>
 
         {/* SUBMIT */}
@@ -496,7 +500,10 @@ export default function Form() {
             className="w-full"
             type="submit"
             disabled={
-              isSubmitting || !hasReadGuidelines || !agreedTermsSubmission || !captchaToken
+              isSubmitting ||
+              !hasReadGuidelines ||
+              !agreedTermsSubmission ||
+              !captchaToken
             }
           >
             {isSubmitting ? "Submitting..." : "Submit"}
@@ -519,8 +526,9 @@ export default function Form() {
                 🎉 Thank You!
               </h2>
               <p className="mb-6">
-                Your submission has been received successfully. Our team will contact you within 3 working days.
+                Thank you for your submission. Our team will contact you soon.
               </p>
+
               <button
                 onClick={() => setShowThankYou(false)}
                 className="bg-[#6E4A27] text-white px-6 py-2 rounded-md cursor-pointer transition"

@@ -1,64 +1,53 @@
 // @ts-nocheck
 import React, { useState, useMemo } from "react";
+import { computeOrientation, FRAME_VARIANTS } from "@/utils/frameVariants";
+
+const FRAME_STYLES = FRAME_VARIANTS.thumbnails;
 
 const Thumbnails = ({ RelatedImage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [imageOk, setImageOk] = useState(true);
+  const [orientation, setOrientation] = useState("portrait");
 
-  // basic sanity check (non-empty string)
   const hasSrc = useMemo(() => {
     return typeof RelatedImage === "string" && RelatedImage.trim().length > 0;
   }, [RelatedImage]);
 
-  // if no valid src OR the image errored, render nothing
   if (!hasSrc || !imageOk) return null;
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
+  const styles = FRAME_STYLES[orientation] || FRAME_STYLES.portrait;
+
   return (
     <>
-      {/* Thumbnail Card */}
       {RelatedImage && RelatedImage.trim() && (
         <div className="flex flex-col items-center w-full gap-10">
-          <div
-            className="relative flex justify-center items-center group cursor-pointer mt-3"
-            onClick={handleOpen}
-          >
-            {/* Frame */}
-            <div className="absolute left-1/2 -translate-x-1/2 w-[300px] h-[230px] z-30">
+          <div className="relative flex justify-center items-center group cursor-pointer mt-3" onClick={handleOpen}>
+            <div className={styles.frameBoxClass}>
+              <img src={styles.frameSrc} alt="Frame" className="w-full h-full object-contain" />
+            </div>
+
+            <div className={styles.windowWrapperClass}>
               <img
-                src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`}
-                alt="Frame"
-                className="w-full h-full object-contain"
+                src={RelatedImage}
+                alt="Overlay"
+                loading="eager"
+                onLoad={(e) => {
+                  const { naturalWidth = 0, naturalHeight = 0 } = e.target;
+                  setOrientation(computeOrientation(naturalWidth, naturalHeight));
+                }}
+                onError={() => setImageOk(false)}
+                className={`${styles.imageClass} w-full h-full`}
               />
             </div>
-            {/* Overlay Image */}
-            <img
-              src={RelatedImage}
-              alt="Overlay"
-              loading="eager"
-              onError={() => setImageOk(false)}
-              className="object-cover group-hover:drop-shadow-xl transition-all duration-300 w-[130px] rounded-sm h-[190px]"
-            />
 
-            {/* ✅ Watermark Image (Full Overlay Area) */}
-            <img
-              src="/images/logo.png"
-              alt="Watermark"
-              className="
-            absolute 
-            top-14
-            w-[80px] h-[80px]   /* same size as overlay */
-            opacity-20     /* adjust transparency */
-            object-cover          /* cover full area */
-            pointer-events-none select-none "
-            />
+            <img src="/images/logo.png" alt="Watermark" className={styles.watermarkClass} />
           </div>
         </div>
       )}
 
-      {/* Modal / Popup */}
       {isOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999]">
           <button

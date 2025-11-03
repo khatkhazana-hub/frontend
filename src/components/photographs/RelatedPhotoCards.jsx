@@ -1,8 +1,9 @@
 // @ts-nocheck
 import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import ImageModalViewer from "../ImageModalViewer/ImageModalViewer";
 
-const RelatedPhotoCards = ({ photos }) => {
+const RelatedPhotoCards = ({ photos, submissionId, letterLanguage }) => {
   const cards = useMemo(() => {
     return Array.isArray(photos)
       ? photos.slice(0, 2).map((img, i) => ({ id: i + 1, img }))
@@ -24,6 +25,9 @@ const RelatedPhotoCards = ({ photos }) => {
   const prev = () => setActive((i) => (i - 1 + cards.length) % cards.length);
 
   const images = cards.map((c) => c.img);
+  const hasDetailLink = Boolean(submissionId);
+  const letterLangSegment = String(letterLanguage || "").toLowerCase();
+  const detailPath = `/letters/${letterLangSegment || "english"}/${submissionId}`;
 
   return (
     <div className="lg:w-[25%] w-full flex flex-col lg:flex-row lg:justify-start justify-center relative items-center lg:items-start gap-5 xl:gap-10">
@@ -81,6 +85,14 @@ const RelatedPhotoCards = ({ photos }) => {
                 </div>
               </button>
             ))}
+
+            {hasDetailLink && (
+              <div className="w-full flex justify-center">
+                <Link to={detailPath} className="text-sm font-semibold text-[#704214] hover:underline">
+                  Read More
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

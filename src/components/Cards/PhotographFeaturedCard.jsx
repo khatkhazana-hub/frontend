@@ -1,16 +1,31 @@
 // @ts-nocheck
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  computeOrientation,
+  FRAME_VARIANTS,
+  staticAsset,
+} from "@/utils/frameVariants";
+
+const FRAME_STYLES = FRAME_VARIANTS.photographFeaturedCard;
+const CARD_BACKGROUND = staticAsset("Card.webp");
 
 const PhotographFeaturedCard = ({
-  to = to,
-  overlayImg, // overlay image prop
-  title = "Want more Lorem Ipsums?", // heading prop
-  description = "Join our archive mailing list and never miss an update.", // description prop
-  isFeatured = true, // naya prop add kiya
-
+  to = "#",
+  overlayImg,
+  title = "Want more Lorem Ipsums?",
+  description = "Join our archive mailing list and never miss an update.",
+  isFeatured = true,
 }) => {
   const navigate = useNavigate();
+  const [orientation, setOrientation] = useState("portrait");
+
+  const handleImageLoad = (e) => {
+    const { naturalWidth = 0, naturalHeight = 0 } = e.target;
+    setOrientation(computeOrientation(naturalWidth, naturalHeight));
+  };
+
+  const styles = FRAME_STYLES[orientation] || FRAME_STYLES.portrait;
 
   return (
     <Link to={to} className="w-full">
@@ -19,16 +34,15 @@ const PhotographFeaturedCard = ({
         className="relative cursor-pointer rounded-[20px] overflow-hidden lg:w-[350px] h-[410px] group mx-auto"
       >
         <img
-          src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
+          src={CARD_BACKGROUND}
           alt="Card Background"
           loading="eager"
           className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
         />
 
-        {/* Featured Badge */}
         {isFeatured && (
           <span
-            className="absolute top-16 right-20 lg:right-28 bg-white  text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md border border-black/10 z-40"
+            className="absolute top-16 right-20 lg:right-28 bg-white text-black text-sm font-semibold px-3 py-1 rounded-full shadow-md border border-black/10 z-40"
             style={{ fontFamily: "Philosopher" }}
           >
             Featured
@@ -36,32 +50,24 @@ const PhotographFeaturedCard = ({
         )}
 
         <div className="relative flex justify-center z-10 pt-[25px]">
-          {/* Frame sabse upar */}
-          <div className="relative w-[280px] h-[280px]">
-            {/* Main Image inside Frame */}
+          <div className={`relative ${styles.frameBoxClass}`}>
+            <div className={styles.windowClass}>
+              <img
+                src={overlayImg}
+                alt={title || "Photograph"}
+                onLoad={handleImageLoad}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <img src="/images/logo.png" alt="Watermark" className={styles.watermarkClass} />
             <img
-              src={overlayImg}
-              alt={title || "Photograph"}
-              className="absolute top-[30px] left-1/2 -translate-x-1/2 w-[180px] h-[240px] rounded-sm object-cover z-10"
-            />
-
-            {/* Watermark on top of image */}
-            <img
-              src="/images/logo.png"
-              alt="Watermark"
-              className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[100px] h-[100px] opacity-20 object-cover pointer-events-none select-none z-20"
-            />
-
-            {/* Frame Image sabse upar */}
-            <img
-              src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`}
+              src={styles.frameSrc}
               alt="Frame"
               className="absolute top-0 left-0 w-full h-full object-contain z-30"
             />
           </div>
         </div>
 
-        {/* Bottom Heading */}
         <div className="absolute left-[25px] top-[310px] w-[300px] text-left">
           <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
             {title}

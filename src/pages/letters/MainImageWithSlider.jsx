@@ -7,19 +7,22 @@ import "swiper/css";
 import "swiper/css/mousewheel";
 import "swiper/css/scrollbar";
 import ImageModalViewer from "@/components/ImageModalViewer/ImageModalViewer";
+import { computeOrientation, FRAME_VARIANTS } from "@/utils/frameVariants";
+
+const FRAME_STYLES = FRAME_VARIANTS.mainSlider;
 
 export default function MainImageWithSlider({ images = [], title, withFrame = false }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [orientation, setOrientation] = useState({});
+  const [orientationMap, setOrientationMap] = useState({});
   const [errored, setErrored] = useState({});
   const swiperRef = useRef(null);
 
   const heroImage = images[selectedIndex] || "/images/placeholder.webp";
-  const heroOrientation = orientation[selectedIndex];
-  const isLandscape = heroOrientation !== "portrait";
+  const heroOrientation = orientationMap[selectedIndex] || "portrait";
+  const heroStyles = FRAME_STYLES[heroOrientation] || FRAME_STYLES.portrait;
 
   const openModalAt = (index) => {
     setSelectedIndex(index);
@@ -53,23 +56,16 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
   const handleImageLoad = (e, index) => {
     if (!withFrame) return;
     const { naturalWidth = 0, naturalHeight = 0 } = e.target;
-    const nextOrientation =
-      naturalWidth >= naturalHeight && naturalWidth !== 0 ? "landscape" : "portrait";
-    setOrientation((prev) => ({ ...prev, [index]: nextOrientation }));
+    setOrientationMap((prev) => ({
+      ...prev,
+      [index]: computeOrientation(naturalWidth, naturalHeight),
+    }));
   };
 
   const handleImageError = (index) => {
     if (!withFrame) return;
     setErrored((prev) => ({ ...prev, [index]: true }));
   };
-
-  const frameBoxClass = isLandscape
-    ? "w-[320px] lg:w-[420px] h-[260px] lg:h-[320px]"
-    : "w-[320px] lg:w-[420px] h-[420px] lg:h-[520px]";
-
-  const windowClass = isLandscape
-    ? "absolute left-1/2 -translate-x-1/2 top-[45px] lg:top-[55px] w-[270px] lg:w-[340px] h-[175px] lg:h-[215px] overflow-hidden rounded-[12px]"
-    : "absolute left-1/2 -translate-x-1/2 top-[45px] lg:top-[55px] w-[210px] lg:w-[270px] h-[360px] lg:h-[445px] overflow-hidden rounded-[12px]";
 
   return (
     <>
@@ -78,7 +74,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
         <div className="relative flex justify-center items-center mx-auto group">
           {withFrame ? (
             <div
-              className={`relative flex justify-center items-center ${frameBoxClass} cursor-zoom-in`}
+              className={`relative flex justify-center items-center ${heroStyles.frameBoxClass} cursor-zoom-in`}
               role="button"
               tabIndex={0}
               onClick={() => openModalAt(selectedIndex)}
@@ -89,7 +85,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                 }
               }}
             >
-              <div className={windowClass}>
+              <div className={heroStyles.windowClass}>
                 {!errored[selectedIndex] ? (
                   <img
                     src={heroImage}
@@ -110,18 +106,12 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
               <img
                 src="/images/logo.png"
                 alt="Watermark"
-                className={`absolute ${
-                  isLandscape ? "top-[75px] lg:top-[95px]" : "top-[120px] lg:top-[150px]"
-                } left-1/2 -translate-x-1/2 w-[110px] lg:w-[150px] h-[110px] lg:h-[150px] opacity-20 object-contain pointer-events-none select-none z-10`}
+                className={heroStyles.watermarkClass}
               />
 
               {/* Frame overlay */}
               <img
-                src={
-                  isLandscape
-                    ? `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Horizantal-Frame.webp`
-                    : `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`
-                }
+                src={heroStyles.frameSrc}
                 alt="Frame"
                 className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none z-20"
               />

@@ -9,21 +9,21 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { fileUrl } from "@/utils/files";
 import useFeaturedPhotos from "@/hooks/useFeaturedPhotos";
+import {
+  computeOrientation,
+  FRAME_VARIANTS,
+  staticAsset,
+} from "@/utils/frameVariants";
 
-function FramedPhoto({ src, alt, isLandscape, onLoad, onError }) {
-  const frameSrc = isLandscape
-    ? `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Horizantal-Frame.webp`
-    : `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`;
+const FRAME_STYLES = FRAME_VARIANTS.featuredCarousel;
+const CARD_BACKGROUND = staticAsset("Card.webp");
 
-  const frameBoxClass = isLandscape ? "w-[276px] h-[207px]" : "w-[280px] h-[280px]";
-
-  const windowClass = isLandscape
-    ? "absolute left-1/2 -translate-x-1/2 top-[34px] w-[232px] h-[138px] overflow-hidden rounded-[10px]"
-    : "absolute left-1/2 -translate-x-1/2 top-[30px] w-[180px] h-[240px] overflow-hidden rounded-[6px]";
+function FramedPhoto({ src, alt, orientation = "portrait", onLoad, onError }) {
+  const styles = FRAME_STYLES[orientation] || FRAME_STYLES.portrait;
 
   return (
-    <div className={`relative ${frameBoxClass}`}>
-      <div className={windowClass}>
+    <div className={`relative ${styles.frameBoxClass}`}>
+      <div className={styles.windowClass}>
         <img
           src={src}
           alt={alt}
@@ -33,14 +33,9 @@ function FramedPhoto({ src, alt, isLandscape, onLoad, onError }) {
           className="w-full h-full object-contain"
         />
       </div>
+      <img src="/images/logo.png" alt="" aria-hidden="true" className={styles.watermarkClass} />
       <img
-        src="/images/logo.png"
-        alt=""
-        aria-hidden="true"
-        className={`absolute ${isLandscape ? "top-[58px]" : "top-[80px]"} left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20`}
-      />
-      <img
-        src={frameSrc}
+        src={styles.frameSrc}
         alt="Frame"
         className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none select-none"
       />
@@ -53,13 +48,15 @@ export default function FeaturedPhotographCards() {
   const { data: letters, loading, error } = useFeaturedPhotos();
   const prevRef = useRef(null);
   const nextRef = useRef(null);
-  const [orientation, setOrientation] = useState({});
+  const [orientationMap, setOrientationMap] = useState({});
   const [errored, setErrored] = useState({});
 
   const handleImageLoad = (e, key) => {
     const { naturalWidth = 0, naturalHeight = 0 } = e.target;
-    const isLandscape = naturalWidth >= naturalHeight && naturalWidth !== 0;
-    setOrientation((prev) => ({ ...prev, [key]: isLandscape ? "landscape" : "portrait" }));
+    setOrientationMap((prev) => ({
+      ...prev,
+      [key]: computeOrientation(naturalWidth, naturalHeight),
+    }));
   };
 
   const handleImageError = (key) => {
@@ -117,14 +114,14 @@ export default function FeaturedPhotographCards() {
             const id = encodeURIComponent(r?._id);
             const href = `/photographs/${id}`;
             const key = r?._id || idx;
-            const isLandscape = orientation[key] === "landscape";
+            const orientationKey = orientationMap[key] || "portrait";
 
             return (
               <SwiperSlide key={key} className="flex justify-start !w-[350px]">
                 <Link to={href}>
                   <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto">
                     <img
-                      src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
+                      src={CARD_BACKGROUND}
                       alt=""
                       className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
                     />
@@ -133,7 +130,7 @@ export default function FeaturedPhotographCards() {
                         <FramedPhoto
                           src={overlayUrl}
                           alt={title}
-                          isLandscape={isLandscape}
+                          orientation={orientationKey}
                           onLoad={(e) => handleImageLoad(e, key)}
                           onError={() => handleImageError(key)}
                         />

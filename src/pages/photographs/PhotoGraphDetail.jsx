@@ -163,7 +163,11 @@ export default function PhotoGraphDetail() {
             <MainImageWithSlider heroImage={heroImage} images={sliderImages} withFrame />
 
             {/* right-side info/thumb card; pass first image normalized */}
-            <RelatedPhotoCards photos={letterImages} />
+            <RelatedPhotoCards
+              photos={letterImages}
+              submissionId={id}
+              letterLanguage={data?.letterLanguage}
+            />
           </div>
 
           {/* fullscreen modal (optional) */}

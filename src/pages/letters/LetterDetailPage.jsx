@@ -151,7 +151,7 @@ const LetterDetailPage = () => {
             />
 
             {/* right-side thumbnails -> all uploaded photo images */}
-            <RelatedLetterCards photos={RelatedImages} />
+            <RelatedLetterCards photos={RelatedImages} submissionId={id} />
           </div>
 
           {/* Letter Audio */}

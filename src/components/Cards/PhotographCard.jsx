@@ -1,103 +1,86 @@
-  // components/PhotographCard.jsx
-  // @ts-nocheck
-  import React, { useState } from "react";
-  import { Link } from "react-router-dom";
+// components/PhotographCard.jsx
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  computeOrientation,
+  FRAME_VARIANTS,
+  staticAsset,
+} from "@/utils/frameVariants";
 
-  export default function PhotographCard({
-    to = "#",
-    overlay,
-    overlayImg,
-    title = "",
-    description = "",
-    className = "",
-  }) {
-    const imgSrc = overlay || overlayImg || "";
-    const [isLandscape, setIsLandscape] = useState(null);
-    const [aspect, setAspect] = useState(1); // w / h
+const FRAME_STYLES = FRAME_VARIANTS.photographCard;
+const CARD_BACKGROUND = staticAsset("Card.webp");
 
-    const handleImgLoad = (e) => {
-      const { naturalWidth: w, naturalHeight: h } = e.target;
-      if (!w || !h) return;
-      setIsLandscape(w >= h);
-      setAspect(w / h);
-    };
+export default function PhotographCard({
+  to = "#",
+  overlay,
+  overlayImg,
+  title = "",
+  description = "",
+  className = "",
+}) {
+  const imgSrc = overlay || overlayImg || "";
+  const [orientation, setOrientation] = useState(null);
 
-    // frame asset
-    const frameSrc = isLandscape
-      ? `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Horizantal-Frame.webp`
-      : `${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Vertical-Frame.webp`;
+  const handleImgLoad = (e) => {
+    const { naturalWidth: w, naturalHeight: h } = e.target;
+    if (!w || !h) return;
+    setOrientation(computeOrientation(w, h));
+  };
 
-    // frame box (whole frame image size)
-    const frameBoxClass = isLandscape ? "w-[285px] h-[205px]" : "w-[280px] h-[280px]";
+  const orientationKey = orientation || "portrait";
+  const styles = FRAME_STYLES[orientationKey] || FRAME_STYLES.portrait;
 
-    // window (mat opening) — adjust if your PNGs differ
-    const windowClass = isLandscape
-      ? // a touch taller than before so fills nicer
-        "absolute left-1/2 -translate-x-1/2 top-[34px] w-[232px] h-[138px] overflow-hidden rounded-[10px]"
-      : "absolute left-1/2 -translate-x-1/2 top-[30px] w-[180px] h-[240px] overflow-hidden rounded-[6px]";
+  return (
+    <Link to={to}>
+      <div
+        className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[420px] group mx-auto [transform:translateZ(0)] ${className}`}
+      >
+        <img
+          src={CARD_BACKGROUND}
+          alt="Card Background"
+          loading="eager"
+          className="absolute inset-0 w-full h-full object-cover rounded-[20px] block"
+          draggable={false}
+        />
 
-    // placement
-    const wrapperClass = isLandscape
-      ? "absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10"
-      : "relative flex justify-center z-10 pt-[25px]";
-
-    // 🚀 adaptive fit: cover for most landscape shots (no gaps),
-    // but if it's ultra-wide (panorama), switch to contain to avoid brutal crops.
-    const isUltraWide = aspect > 2.0; // tune threshold if you like (1.9–2.2)
-    const fitClass =
-      isLandscape && !isUltraWide ? "object-cover" : isLandscape ? "object-contain" : "object-contain";
-
-    return (
-      <Link to={to}>
-        <div className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[420px] group mx-auto ${className}`}>
-          {/* parchment */}
-          <img
-            src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
-            alt="Card Background"
-            loading="eager"
-            className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
-          />
-
-          {/* framed photo */}
-          <div className={wrapperClass}>
-            <div className={`relative ${frameBoxClass}`}>
-              {/* clipped window */}
-              <div className={windowClass}>
-                <img
-                  src={imgSrc}
-                  alt={title || "Photograph"}
-                  onLoad={handleImgLoad}
-                  className={`w-full h-full ${fitClass}`}
-                />
-              </div>
-
-              {/* watermark */}
+        <div className={styles.wrapperClass}>
+          <div className={`relative ${styles.frameBoxClass}`}>
+            <div className={`${styles.windowClass} overflow-hidden`}>
               <img
-                src="/images/logo.png"
-                alt=""
-                aria-hidden="true"
-                className={`absolute ${isLandscape ? "top-[58px]" : "top-[80px]"} left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20`}
-              />
-
-              {/* frame on top */}
-              <img
-                src={frameSrc}
-                alt="Frame"
-                className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none select-none"
+                src={imgSrc}
+                alt={title || "Photograph"}
+                onLoad={handleImgLoad}
+                className="w-full h-full block object-contain"
+                draggable={false}
               />
             </div>
-          </div>
 
-          {/* text */}
-          <div className="absolute left-[25px] top-[320px] w-[300px] text-left">
-            <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
-              {title}
-            </h2>
-            <p className="font-[Ephesis] font-normal text-[20px] leading-[100%] text-black m-0 line-clamp-2 capitalize">
-              {description}
-            </p>
+            <img
+              src="/images/logo.png"
+              alt=""
+              aria-hidden="true"
+              className={`${styles.watermarkClass} block`}
+              draggable={false}
+            />
+
+            <img
+              src={styles.frameSrc}
+              alt="Frame"
+              className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none select-none block"
+              draggable={false}
+            />
           </div>
         </div>
-      </Link>
-    );
-  }
+
+        <div className="absolute left-[25px] top-[320px] w-[300px] text-left">
+          <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
+            {title}
+          </h2>
+          <p className="font-[Ephesis] font-normal text-[20px] leading-[100%] text-black m-0 line-clamp-2 capitalize">
+            {description}
+          </p>
+        </div>
+      </div>
+    </Link>
+  );
+}
