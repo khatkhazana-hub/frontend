@@ -105,7 +105,7 @@ export default function ContactUs() {
 
       setStatus({
         type: "success",
-        msg: "Message sent. We will contact you within 24 hours.",
+        msg: "Message Sent. We will contact you soon",
       });
       // reset only non-requireds so UX doesn’t nuke everything
       setForm({

@@ -45,7 +45,7 @@ const FileInput = ({
         ? "Allowed formats: JPEG, PNG, WebP, TIFF • Aspect ratio: 16:9, 9:16, or 1:1"
         : "Letters: any file type is allowed • Image previews shown when possible"
       : previewType === "audio"
-      ? "Accepted audio: MP3, WAV, AAC (common formats)"
+      ? "Accepted audio: MP3, WAV, AAC"
       : subtext || "";
 
   const revokeAll = (urls) => {

@@ -6,20 +6,6 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-// 🔹 Helper for Gmail compose
-const buildGmailCompose = ({ to, subject = "", body = "", cc = "", bcc = "" }) => {
-  const params = new URLSearchParams();
-  params.set("view", "cm"); // compose view
-  params.set("fs", "1"); // full-screen
-  params.set("tf", "1"); // open in new tab
-  params.set("to", to);
-  if (subject) params.set("su", subject);
-  if (body) params.set("body", body);
-  if (cc) params.set("cc", cc);
-  if (bcc) params.set("bcc", bcc);
-  return `https://mail.google.com/mail/?${params.toString()}`;
-};
-
 export default function Footer() {
   const QUICK_LINKS = [
     { label: "Home", href: "/" },
@@ -130,18 +116,25 @@ export default function Footer() {
                 <li key={i}>
                   {info.label}{" "}
                   {info.label === "Email:" ? (
-                    <a
-                      href={buildGmailCompose({
-                        to: info.value,
-                        subject: "Hello from Long Lost Letters",
-                        body: "Hey team,\n\nI’d like to get in touch regarding...",
-                      })}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      {info.value}
-                    </a>
+                    <>
+                      {/* 🔹 Mailto link */}
+                      <a
+                        href={`mailto:${info.value}`}
+                        
+                      >
+                        {info.value}
+                      </a>
+
+                      {/* 🔹 OR Button Option */}
+                      {/* <button
+                        onClick={() =>
+                          (window.location.href = `mailto:${info.value}?subject=Hello%20from%20Long%20Lost%20Letters&body=Hey%20team,%0A%0AI’d%20like%20to%20get%20in%20touch%20regarding...`)
+                        }
+                        className="mt-2 block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                      >
+                        Email Us
+                      </button> */}
+                    </>
                   ) : (
                     <a
                       href={info.href}

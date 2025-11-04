@@ -513,12 +513,12 @@ export default function Form() {
 
       {showThankYou && (
         <>
-          <ReactConfetti
+          {/* <ReactConfetti
             width={window.innerWidth}
             height={window.innerHeight}
             numberOfPieces={1000}
             recycle={false}
-          />
+          /> */}
 
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full text-center">
