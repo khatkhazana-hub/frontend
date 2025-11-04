@@ -1,5 +1,4 @@
-﻿// src/components/admin/row/RowActions.jsx
-// @ts-nocheck
+﻿// @ts-nocheck
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +16,7 @@ import {
   XCircle,
   ChevronDown,
   Trash2,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,26 +26,14 @@ export default function RowActions({
   onEdit,
   onApprove,
   onReject,
+  onSetPending,   // 👈 NEW
   onDelete,
 }) {
   const handleDelete = () => {
     if (confirm("Delete this submission? This cannot be undone.")) onDelete();
   };
 
-  // decide button ka color aur text dynamically set karo
-  const decideText =
-    status === "approved"
-      ? "Approved"
-      : status === "rejected"
-      ? "Rejected"
-      : "Pending";
-
-  const decideClass =
-    status === "approved"
-      ? "bg-green-500 text-white hover:bg-green-600"
-      : status === "rejected"
-      ? "bg-red-500 text-white hover:bg-red-600"
-      : "";
+  const s = (status || "").toLowerCase();
 
   return (
     <div className="flex items-center justify-end gap-2">
@@ -61,18 +49,21 @@ export default function RowActions({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button size="sm" className="gap-1">
-            {status === "approved" ? (
+            {s === "approved" ? (
               <>
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
                 Approved
+                <ChevronDown className="h-4 w-4" />
               </>
-            ) : status === "rejected" ? (
+            ) : s === "rejected" ? (
               <>
                 <XCircle className="h-4 w-4 text-red-600" />
                 Rejected
+                <ChevronDown className="h-4 w-4" />
               </>
             ) : (
               <>
+                <Clock className="h-4 w-4" />
                 Pending
                 <ChevronDown className="h-4 w-4" />
               </>
@@ -83,20 +74,37 @@ export default function RowActions({
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuLabel>Moderation</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={onApprove}
-            className={cn(status === "approved" && "text-green-600")}
-          >
-            <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={onReject}
-            className={cn(status === "rejected" && "text-red-600")}
-          >
-            <XCircle className="mr-2 h-4 w-4" /> Reject
-          </DropdownMenuItem>
+
+          {/* Only show actions that make sense for current status */}
+          {s !== "approved" && (
+            <DropdownMenuItem
+              onClick={onApprove}
+              className={cn("cursor-pointer", s === "approved" && "text-green-600")}
+            >
+              <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
+            </DropdownMenuItem>
+          )}
+
+          {s !== "rejected" && (
+            <DropdownMenuItem
+              onClick={onReject}
+              className={cn("cursor-pointer", s === "rejected" && "text-red-600")}
+            >
+              <XCircle className="mr-2 h-4 w-4" /> Reject
+            </DropdownMenuItem>
+          )}
+
+          {s !== "pending" && (
+            <DropdownMenuItem
+              onClick={onSetPending}
+              className="cursor-pointer"
+            >
+              <Clock className="mr-2 h-4 w-4" />pending
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+          <DropdownMenuItem onClick={handleDelete} className="text-red-600 cursor-pointer">
             <Trash2 className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -104,5 +112,3 @@ export default function RowActions({
     </div>
   );
 }
-
-

@@ -9,11 +9,14 @@ const normalize = (value) => String(value || "").toLowerCase();
 export default function SubmissionsPage({ title = "Submissions", type, serverFilter = false, columns: colsProp }) {
   const navigate = useNavigate();
 
-  const { rows, loading, err, approve, reject, toggleFeatured, remove } =
+  const { rows, loading, err, approve, reject, toggleFeatured, remove, setPending } =
     useSubmissions({ type, serverFilter });
 
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // NEW: local overrides so items don't disappear after action
+  const [localStatus, setLocalStatus] = useState({}); // { [id]: 'approved' | 'rejected' | 'pending' }
 
   const columns = useMemo(
     () =>
@@ -26,7 +29,6 @@ export default function SubmissionsPage({ title = "Submissions", type, serverFil
     [colsProp]
   );
 
-  // letters -> letter, photos -> photo, else both
   const baseFeatureScope = useMemo(() => {
     const t = normalize(type);
     if (t === "letter") return "letter";
@@ -53,15 +55,21 @@ export default function SubmissionsPage({ title = "Submissions", type, serverFil
         (typeFilter === "photo" &&
           (rowType === "photo" || rowType === "photographs" || rowType === "both"));
 
+      // use effective status = local override OR server status
+      const effectiveStatus = normalize(localStatus[row?._id] ?? row?.status);
       const matchesStatus =
-        statusFilter === "all" || normalize(row?.status) === statusFilter;
+        statusFilter === "all" || effectiveStatus === statusFilter;
 
       return matchesType && matchesStatus;
     });
-  }, [rows, statusFilter, typeFilter]);
+  }, [rows, statusFilter, typeFilter, localStatus]);
 
   const onView = (id) => navigate(`/admin/submissions/${id}`);
   const onEdit = (id) => navigate(`/admin/submissions/${id}/edit`);
+
+  // helpers to set local status on success
+  const bump = (id, next) =>
+    setLocalStatus((m) => ({ ...m, [id]: next }));
 
   return (
     <div className="min-h-screen p-6">
@@ -71,37 +79,16 @@ export default function SubmissionsPage({ title = "Submissions", type, serverFil
         </div>
 
         <div className="flex flex-wrap items-end justify-center gap-3 sm:justify-end">
-          {/* <div className="flex flex-col text-left">
-            <label
-              htmlFor="submission-type-filter"
-              className="text-sm font-medium text-gray-700"
-            >
-              Submission Type
-            </label>
-            <select
-              id="submission-type-filter"
-              className="mt-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-black focus:outline-none"
-              value={typeFilter}
-              onChange={(event) => setTypeFilter(event.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="photo">Photographs</option>
-              <option value="letter">Letters</option>
-            </select>
-          </div> */}
-
+          {/* if you want the Type filter back, just uncomment your block */}
           <div className="flex flex-col text-left">
-            <label
-              htmlFor="submission-status-filter"
-              className="text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="submission-status-filter" className="text-sm font-medium text-gray-700">
               Status
             </label>
             <select
               id="submission-status-filter"
               className="mt-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-black focus:outline-none"
               value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
+              onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="all">All</option>
               <option value="approved">Approved</option>
@@ -124,6 +111,7 @@ export default function SubmissionsPage({ title = "Submissions", type, serverFil
         onApprove={async (id) => {
           try {
             await approve(id);
+            bump(id, "approved");
           } catch (e) {
             alert(e?.response?.data?.message || "Approve failed");
           }
@@ -131,8 +119,18 @@ export default function SubmissionsPage({ title = "Submissions", type, serverFil
         onReject={async (id) => {
           try {
             await reject(id);
+            bump(id, "rejected");
           } catch (e) {
             alert(e?.response?.data?.message || "Reject failed");
+          }
+        }}
+        onSetPending={async (id) => {
+          try {
+            // your hook should expose this; if not, call a generic updateStatus(id, 'pending')
+            await (setPending ? setPending(id) : Promise.resolve());
+            bump(id, "pending");
+          } catch (e) {
+            alert(e?.response?.data?.message || "Set pending failed");
           }
         }}
         onToggleFeatured={async (id, field, next) => {
@@ -145,6 +143,12 @@ export default function SubmissionsPage({ title = "Submissions", type, serverFil
         onDelete={async (id) => {
           try {
             await remove(id);
+            // optional: clear local override so GC doesn’t keep stale status
+            setLocalStatus((m) => {
+              const copy = { ...m };
+              delete copy[id];
+              return copy;
+            });
           } catch (e) {
             alert(e?.response?.data?.message || "Delete failed");
           }

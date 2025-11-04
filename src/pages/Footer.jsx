@@ -1,12 +1,24 @@
 import React from "react";
 import {
   FaFacebookF,
-  FaTwitter,
   FaInstagram,
   FaLinkedinIn,
 } from "react-icons/fa";
-import EmailOrPhone from "../components/InnerComponents/EmailOrPhone";
 import { Link } from "react-router-dom";
+
+// 🔹 Helper for Gmail compose
+const buildGmailCompose = ({ to, subject = "", body = "", cc = "", bcc = "" }) => {
+  const params = new URLSearchParams();
+  params.set("view", "cm"); // compose view
+  params.set("fs", "1"); // full-screen
+  params.set("tf", "1"); // open in new tab
+  params.set("to", to);
+  if (subject) params.set("su", subject);
+  if (body) params.set("body", body);
+  if (cc) params.set("cc", cc);
+  if (bcc) params.set("bcc", bcc);
+  return `https://mail.google.com/mail/?${params.toString()}`;
+};
 
 export default function Footer() {
   const QUICK_LINKS = [
@@ -24,8 +36,7 @@ export default function Footer() {
   const SUPPORT_INFO = [
     {
       label: "Email:",
-      value: "info@longlostletters.com",
-      href: "mailto:info@longlostletters.com",
+      value: "khatkhazana@gmail.com",
     },
     {
       label: "Location:",
@@ -37,7 +48,6 @@ export default function Footer() {
   const SOCIAL_LINKS = [
     { icon: <FaLinkedinIn />, href: "#", label: "LinkedIn" },
     { icon: <FaInstagram />, href: "#", label: "Instagram" },
-    // { icon: <FaTwitter />, href: "#", label: "Twitter" },
     { icon: <FaFacebookF />, href: "#", label: "Facebook" },
   ];
 
@@ -54,7 +64,7 @@ export default function Footer() {
         backgroundImage: `url(${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/updated_bg.webp)`,
         backgroundRepeat: "repeat",
         backgroundSize: "cover",
-        backgroundPosition: "bottom", // neeche align
+        backgroundPosition: "bottom",
         boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
       }}
     >
@@ -74,12 +84,12 @@ export default function Footer() {
         <div
           className="
             grid grid-cols-2 lg:grid-cols-4 
-             text-left
+            text-left
             xl:gap-10 gap-5 py-[30px]
           "
         >
           {/* Quick Links */}
-          <div className=" ">
+          <div>
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Quick Links
             </h3>
@@ -95,7 +105,7 @@ export default function Footer() {
           </div>
 
           {/* Submission */}
-          <div className="">
+          <div>
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Submission
             </h3>
@@ -110,6 +120,7 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Contact Info */}
           <div>
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-5">
               Contact Us
@@ -118,22 +129,28 @@ export default function Footer() {
               {SUPPORT_INFO.map((info, i) => (
                 <li key={i}>
                   {info.label}{" "}
-                  {info.href ? (
+                  {info.label === "Email:" ? (
                     <a
-                      href={info.href}
+                      href={buildGmailCompose({
+                        to: info.value,
+                        subject: "Hello from Long Lost Letters",
+                        body: "Hey team,\n\nI’d like to get in touch regarding...",
+                      })}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`${
-                        info.href.startsWith("mailto:") ||
-                        info.href.includes("maps")
-                          ? "hover:underline target:_blank"
-                          : ""
-                      }`}
+                      className="hover:underline"
                     >
                       {info.value}
                     </a>
                   ) : (
-                    info.value
+                    <a
+                      href={info.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={info.href?.includes("maps") ? "hover:underline" : ""}
+                    >
+                      {info.value}
+                    </a>
                   )}
                 </li>
               ))}
@@ -141,7 +158,7 @@ export default function Footer() {
           </div>
 
           {/* Social Links */}
-          <div className="">
+          <div>
             <h3 className="font-['Philosopher'] font-bold text-lg md:text-2xl mb-7">
               Social Links
             </h3>

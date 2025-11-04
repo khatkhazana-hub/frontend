@@ -8,12 +8,13 @@ export default function SubmissionsTable({
   loading,
   rows,
   columns,
-  featureScope = "both",        // "letter" | "photo" | "both"
+  featureScope = "both",
   onView,
   onEdit,
   onDelete,
   onApprove,
   onReject,
+  onSetPending,      // NEW
   onToggleFeatured,
 }) {
   if (loading) return <div className="p-6">Loading submissions…</div>;
@@ -22,8 +23,6 @@ export default function SubmissionsTable({
   const scope = norm(featureScope);
   const showLetterCol = scope === "both" || scope === "letter";
   const showPhotoCol  = scope === "both" || scope === "photo";
-
-  console.log(showPhotoCol , 'photocol')
 
   return (
     <div className="overflow-x-auto rounded-xl border bg-white/50">
@@ -57,12 +56,13 @@ export default function SubmissionsTable({
               key={r._id}
               row={r}
               columns={columns}
-              showLetterCol={showLetterCol}          
-              showPhotoCol={showPhotoCol}            
+              showLetterCol={showLetterCol}
+              showPhotoCol={showPhotoCol}
               onView={onView}
               onEdit={onEdit}
               onApprove={onApprove}
               onReject={onReject}
+              onSetPending={onSetPending}     // NEW
               onToggleFeatured={onToggleFeatured}
               onDelete={onDelete}
             />
