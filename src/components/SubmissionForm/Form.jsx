@@ -52,6 +52,9 @@ export default function Form() {
       const end = start + 10;
       return { value: `${start}-${end}`, label: `${start} - ${end}` };
     }),
+    { value: "2000-2010", label: "2000 - 2010" },
+    { value: "2010-2020", label: "2010 - 2020" },
+    { value: "2020-present", label: "2020 - Present" },
   ];
 
   // ---- Turnstile: explicit render ----
@@ -447,8 +450,8 @@ export default function Form() {
         )}
 
         {/* VERIFICATION */}
-        <FormSection title="Verification">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
+        <FormSection>
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
             <RadioGroup
               label="Is the Photograph/Letter from before 2000?"
               name="before2000"
@@ -459,7 +462,7 @@ export default function Form() {
               value={before2000}
               onChange={(e) => setBefore2000(e.target.value)}
             />
-          </div>
+          </div>/ */}
           <div className="mt-8 space-y-2 text-sm font-semibold text-black ">
             <label className="flex items-center gap-2 ">
               <input

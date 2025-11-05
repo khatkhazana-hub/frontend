@@ -22,7 +22,8 @@ export default function Footer() {
   const SUPPORT_INFO = [
     {
       label: "Email:",
-      value: "khatkhazana@gmail.com",
+      value: "info@longlostletters.com",
+      valueto: "KhatKhazana@gmail.com"
     },
     {
       label: "Location:",
@@ -119,7 +120,7 @@ export default function Footer() {
                     <>
                       {/* 🔹 Mailto link */}
                       <a
-                        href={`mailto:${info.value}`}
+                        href={`mailto:${info.valueto}`}
                         
                       >
                         {info.value}
