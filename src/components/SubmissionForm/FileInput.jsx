@@ -208,7 +208,7 @@ const FileInput = ({
           <ParchmentButton className="w-fit !text-[14px] !py-2" type="button" onClick={handleButtonClick}>
             Choose Files
           </ParchmentButton>
-          {guidanceText && <p className="text-[11px] text-gray-500">{guidanceText}</p>}
+          {guidanceText && <p className="text-[11px] text-black">{guidanceText}</p>}
         </>
       )}
 
