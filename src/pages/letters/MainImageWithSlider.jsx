@@ -90,7 +90,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                   <img
                     src={heroImage}
                     alt={title || "Photo"}
-                    className="w-full h-full object-contain select-none"
+                    className="w-full h-full object-fill select-none"
                     onLoad={(e) => handleImageLoad(e, selectedIndex)}
                     onError={() => handleImageError(selectedIndex)}
                     draggable={false}

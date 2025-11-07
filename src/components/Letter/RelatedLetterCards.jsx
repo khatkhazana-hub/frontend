@@ -19,7 +19,7 @@ function FramedThumb({ src, onLoad, onError, orientation = "portrait" }) {
             loading="eager"
             onLoad={onLoad}
             onError={onError}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-fill"
           />
         </div>
 

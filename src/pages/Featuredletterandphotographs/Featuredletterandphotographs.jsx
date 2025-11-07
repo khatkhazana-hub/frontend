@@ -274,7 +274,7 @@ const Featuredletterandphotographs = () => {
                           src={heroPhotoVM.overlay}
                           alt={heroPhotoVM.title}
                           loading="eager"
-                          className="h-full w-full object-contain"
+                          className="h-full w-full object-fill"
                           onLoad={handleHeroPhotoLoad}
                           onError={handleHeroPhotoError}
                         />
