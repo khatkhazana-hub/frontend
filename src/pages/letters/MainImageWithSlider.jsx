@@ -90,7 +90,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                   <img
                     src={heroImage}
                     alt={title || "Photo"}
-                    className="w-full h-full object-fill select-none"
+                    className="w-full h-full object-cover select-none"
                     onLoad={(e) => handleImageLoad(e, selectedIndex)}
                     onError={() => handleImageError(selectedIndex)}
                     draggable={false}
@@ -134,7 +134,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
               <img
                 src={heroImage}
                 alt={title || "Photo"}
-                className="rounded-md mx-auto w-[240px] lg:w-[330px] h-[350px] lg:h-[500px] object-contain cursor-zoom-in"
+                className="rounded-md mx-auto w-[240px] lg:w-[330px] h-[350px] lg:h-[500px] object-cover cursor-zoom-in"
                 onClick={() => openModalAt(selectedIndex)}
                 draggable={false}
               />

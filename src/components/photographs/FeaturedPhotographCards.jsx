@@ -30,7 +30,7 @@ function FramedPhoto({ src, alt, orientation = "portrait", onLoad, onError }) {
           loading="lazy"
           onLoad={onLoad}
           onError={onError}
-          className="w-full h-full object-fill"
+          className="w-full h-full object-cover"
         />
       </div>
       <img src="/images/logo.png" alt="" aria-hidden="true" className={styles.watermarkClass} />
