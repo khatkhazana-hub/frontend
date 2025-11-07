@@ -136,9 +136,7 @@ export default function Form() {
       formData.set("decade", decade || "");
 
       // <---------- API ----------->
-      const res = await api.post("/submissions", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await api.post("/submissions", formData)
 
       console.log("✅ Saved to server:", res.data);
       setShowThankYou(true);

@@ -23,7 +23,7 @@ export default function Footer() {
     {
       label: "Email:",
       value: "info@longlostletters.com",
-      valueto: "KhatKhazana@gmail.com"
+      valueto: "info@longlostletters.com",
     },
     {
       label: "Location:",
@@ -117,31 +117,22 @@ export default function Footer() {
                 <li key={i}>
                   {info.label}{" "}
                   {info.label === "Email:" ? (
-                    <>
-                      {/* 🔹 Mailto link */}
-                      <a
-                        href={`mailto:${info.valueto}`}
-                        
-                      >
-                        {info.value}
-                      </a>
-
-                      {/* 🔹 OR Button Option */}
-                      {/* <button
-                        onClick={() =>
-                          (window.location.href = `mailto:${info.value}?subject=Hello%20from%20Long%20Lost%20Letters&body=Hey%20team,%0A%0AI’d%20like%20to%20get%20in%20touch%20regarding...`)
-                        }
-                        className="mt-2 block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                      >
-                        Email Us
-                      </button> */}
-                    </>
+                    <a
+                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${info.valueto}&su=Hello%20from%20Khat%20Khazana&body=Hey%20team,%0A%0AI’d%20like%20to%20get%20in%20touch%20regarding...`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline text-black"
+                    >
+                      {info.value}
+                    </a>
                   ) : (
                     <a
                       href={info.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={info.href?.includes("maps") ? "hover:underline" : ""}
+                      className={`${
+                        info.href?.includes("maps") ? "hover:underline" : ""
+                      } text-black`}
                     >
                       {info.value}
                     </a>
@@ -162,7 +153,7 @@ export default function Footer() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="hover:opacity-80"
+                  className="hover:opacity-80 text-black"
                 >
                   {social.icon}
                 </a>

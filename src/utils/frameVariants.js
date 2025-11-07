@@ -36,7 +36,7 @@ export const FRAME_VARIANTS = {
         "absolute top-[80px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
     },
     square: {
-      frameSrc: '/images/onebyone.png',
+     frameSrc: staticAsset("onebyone.png"),
       frameBoxClass: "w-[280px] h-[280px]",
       windowClass:
         "absolute left-1/2 -translate-x-1/2 top-[26px] w-[224px] h-[224px] overflow-hidden ",
@@ -69,7 +69,7 @@ export const FRAME_VARIANTS = {
         "absolute left-1/2 -translate-x-1/2 top-[30px] w-[224px] h-[224px] overflow-hidden ",
       watermarkClass:
         "absolute top-[82px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
-      frameSrc: '/images/onebyone.png',
+     frameSrc: staticAsset("onebyone.png"),
     },
   },
 
@@ -91,7 +91,7 @@ export const FRAME_VARIANTS = {
         "absolute top-[80px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
     },
     square: {
-      frameSrc: '/images/onebyone.png',
+     frameSrc: staticAsset("onebyone.png"),
       frameBoxClass: "w-[260px] h-[260px]",
       windowClass:
         "absolute left-1/2 -translate-x-1/2 top-[30px] w-[212px] h-[212px] overflow-hidden ",
@@ -118,7 +118,7 @@ export const FRAME_VARIANTS = {
         "absolute top-[80px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
     },
     square: {
-      frameSrc: '/images/onebyone.png',
+     frameSrc: staticAsset("onebyone.png"),
       frameBoxClass: "w-[260px] h-[260px]",
       windowClass:
         "absolute left-1/2 -translate-x-1/2 top-[30px] w-[212px] h-[212px] overflow-hidden ",
@@ -147,7 +147,7 @@ export const FRAME_VARIANTS = {
         "absolute top-14 left-1/2 -translate-x-1/2 w-[80px] h-[80px] opacity-20 object-contain pointer-events-none select-none",
     },
     square: {
-      frameSrc: '/images/onebyone.png',
+     frameSrc: staticAsset("onebyone.png"),
       frameBoxClass: "absolute left-1/2 -translate-x-1/2 w-[280px] h-[220px] z-30 pointer-events-none",
       windowWrapperClass:
         "relative flex items-center justify-center w-[200px] h-[200px]  overflow-hidden",
@@ -180,7 +180,7 @@ export const FRAME_VARIANTS = {
         "absolute left-1/2 -translate-x-1/2 top-[48px] lg:top-[58px] w-[260px] lg:w-[340px] h-[260px] lg:h-[340px] overflow-hidden rounded-[14px]",
       watermarkClass:
         "absolute top-[110px] lg:top-[140px] left-1/2 -translate-x-1/2 w-[110px] lg:w-[150px] h-[110px] lg:h-[150px] opacity-20 object-contain pointer-events-none select-none z-10",
-      frameSrc: '/images/onebyone.png',
+     frameSrc: staticAsset("onebyone.png"),
     },
   },
 
@@ -213,7 +213,7 @@ export const FRAME_VARIANTS = {
         "absolute left-1/2 -translate-x-1/2 top-[30px] w-[212px] h-[212px] overflow-hidden ",
       watermarkClass:
         "absolute top-[80px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
-      frameSrc: '/images/onebyone.png',
+     frameSrc: staticAsset("onebyone.png"),
       cardAspectClass: "aspect-square",
       cardPaddingClass: "p-6 sm:p-7",
       badgeOffsetClass: "right-3 top-3 sm:right-4 sm:top-4",

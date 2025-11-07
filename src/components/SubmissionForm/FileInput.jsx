@@ -42,7 +42,7 @@ const FileInput = ({
   const guidanceText =
     previewType === "image"
       ? fileCategory === "photograph"
-        ? "Allowed formats: JPEG, PNG, WebP, TIFF • Aspect ratio: 16:9, 9:16, or 1:1"
+        ? "Allowed formats: JPEG, PNG, WebP, TIFF"
         : "Letters: any file type is allowed • Image previews shown when possible"
       : previewType === "audio"
       ? "Accepted audio: MP3, WAV, AAC"
@@ -102,7 +102,7 @@ const FileInput = ({
 
       if (previewType === "image") {
         if (fileCategory === "photograph") {
-          // photographs: strict formats + ratios
+          // photographs: strict formats ONLY (no aspect ratio check anymore)
           if (!allowedImageTypes.includes(file.type)) {
             invalidFiles.push(
               `${file.name} → Unsupported format. Only JPEG, WebP, PNG, or TIFF allowed.`
@@ -110,26 +110,6 @@ const FileInput = ({
             continue;
           }
           const url = URL.createObjectURL(file);
-          const isValid = await new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => {
-              const ratio = img.width / img.height;
-              const tolerance = 0.05;
-              const is16by9 = Math.abs(ratio - 16 / 9) < tolerance;
-              const is9by16 = Math.abs(ratio - 9 / 16) < tolerance;
-              const is1by1 = Math.abs(ratio - 1) < tolerance;
-              resolve(is16by9 || is9by16 || is1by1);
-            };
-            img.onerror = () => resolve(false);
-            img.src = url;
-          });
-          if (!isValid) {
-            invalidFiles.push(
-              `${file.name} → Invalid aspect ratio. Allowed: 16:9, 9:16, or 1:1.`
-            );
-            URL.revokeObjectURL(url);
-            continue;
-          }
           newPreviews.push(url);
           newNames.push(file.name);
           newFiles.push(file);

@@ -50,7 +50,7 @@ export default function PhotographCard({
                 src={imgSrc}
                 alt={title || "Photograph"}
                 onLoad={handleImgLoad}
-                className="w-full h-full block object-contain"
+                className="w-full h-full block object-cover"
                 draggable={false}
               />
             </div>
