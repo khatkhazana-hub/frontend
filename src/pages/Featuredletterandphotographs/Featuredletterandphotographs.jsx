@@ -113,7 +113,7 @@ const Featuredletterandphotographs = () => {
             >
               ✖
             </button>
-            {/* <PopupSubscritionModel onSubscribe={() => setShowPopup(false)} /> */}
+            <PopupSubscritionModel onSubscribe={() => setShowPopup(false)} />
           </div>
         </div>
       )}
