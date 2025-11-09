@@ -32,7 +32,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
   const handlePrev = () => setSelectedIndex((i) => Math.max(0, i - 1));
   const handleNext = () => setSelectedIndex((i) => Math.min(images.length - 1, i + 1));
 
-  // ✅ Track scrollability for mobile Swiper
+  // Track scrollability for mobile Swiper
   useEffect(() => {
     if (!swiperRef.current) return;
     const swiper = swiperRef.current.swiper;
@@ -71,7 +71,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
     <>
       <div className="flex flex-col lg:flex-row gap-5 justify-between items-start w-full">
         {/* Main image */}
-        <div className="relative flex justify-center items-center mx-auto group">
+        <div className="relative flex justify-center items-center mx-auto group w-full max-w-[480px] px-2 sm:px-0">
           {withFrame ? (
             <div
               className={`relative flex justify-center items-center ${heroStyles.frameBoxClass} cursor-zoom-in`}
@@ -85,7 +85,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                 }
               }}
             >
-              <div className={heroStyles.windowClass}>
+              <div className={`${heroStyles.windowClass} overflow-hidden`}>
                 {!errored[selectedIndex] ? (
                   <img
                     src={heroImage}
@@ -134,7 +134,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
               <img
                 src={heroImage}
                 alt={title || "Photo"}
-                className="rounded-md mx-auto w-[240px] lg:w-[330px] h-[350px] lg:h-[500px] object-cover cursor-zoom-in"
+                className="rounded-md mx-auto w-full max-w-[360px] sm:max-w-[420px] h-[320px] sm:h-[360px] lg:h-[500px] object-cover cursor-zoom-in"
                 onClick={() => openModalAt(selectedIndex)}
                 draggable={false}
               />
@@ -143,7 +143,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
               <img
                 src="/images/logo.png"
                 alt="Watermark"
-                className="absolute w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none z-10"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45%] max-w-[160px] opacity-20 object-contain pointer-events-none select-none z-10"
               />
 
               {/* Fullscreen button */}
@@ -161,7 +161,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
 
         {/* Thumbnails Section */}
         <div className="w-full lg:w-fit mt-5 relative">
-          {/* Mobile → Horizontal scroll */}
+                    {/* Mobile horizontal scroll */}
           <div className="block lg:hidden relative">
             <Swiper
               ref={swiperRef}
@@ -227,7 +227,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
             )}
           </div>
 
-          {/* Desktop → Vertical scroll */}
+                    {/* Desktop vertical scroll */}
           <div className="hidden lg:block w-fit h-[450px]">
             <Swiper
               direction="vertical"

@@ -10,7 +10,7 @@ const LetterCard = ({ to, overlay, title, letcategory, className }) => {
   return (
     <Link to={to}>
       <div
-        className={`relative cursor-pointer grop rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto ${className}`}
+        className={`relative cursor-pointer grop rounded-[20px] overflow-hidden w-full max-w-[350px] h-[410px] group mx-auto ${className}`}
       >
         <img
           src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
@@ -24,7 +24,7 @@ const LetterCard = ({ to, overlay, title, letcategory, className }) => {
             src={imgSrc}
             alt="Overlay"
             loading="eager"
-            className="object-contain transition-all duration-300 w-[200px]  h-[250px]"
+            className="object-contain transition-all duration-300 w-[160px] h-[210px] sm:w-[190px] sm:h-[240px] md:w-[200px] md:h-[250px]"
           />
           <img
             src="/images/logo.png"
@@ -33,11 +33,11 @@ const LetterCard = ({ to, overlay, title, letcategory, className }) => {
           />
         </div>
 
-        <div className="absolute left-[25px] top-[300px] w-[300px] text-left">
-          <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
+        <div className="absolute left-4 right-4 bottom-6 text-left sm:left-6 sm:right-6 sm:bottom-6 md:left-[25px] md:right-[25px] md:bottom-[25px]">
+          <h2 className="text-xl sm:text-2xl lg:text-[24px] font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
             {title}
           </h2>
-          <p className="font-[Ephesis] font-normal text-[20px] leading-[100%] text-black m-0 line-clamp-2 capitalize">
+          <p className="font-[Ephesis] font-normal text-base sm:text-lg leading-tight text-black m-0 line-clamp-2 capitalize">
             {letcategory}
           </p>
         </div>

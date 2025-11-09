@@ -33,13 +33,13 @@ export default function PhotographCard({
   return (
     <Link to={to}>
       <div
-        className={`relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[420px] group mx-auto [transform:translateZ(0)] ${className}`}
+        className={`relative cursor-pointer rounded-[20px] overflow-hidden w-full max-w-[350px] h-[420px] group mx-auto [transform:translateZ(0)] ${className}`}  
       >
         <img
           src={CARD_BACKGROUND}
           alt="Card Background"
           loading="eager"
-          className="absolute inset-0 w-full h-full object-cover rounded-[20px] block"
+          className="absolute inset-0 w-full  h-full object-cover rounded-[20px] block "
           draggable={false}
         />
 
@@ -72,11 +72,11 @@ export default function PhotographCard({
           </div>
         </div>
 
-        <div className="absolute left-[25px] top-[320px] w-[300px] text-left">
-          <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
+        <div className="absolute left-4 right-4 bottom-6 text-left sm:left-6 sm:right-6 sm:bottom-6 md:left-[25px] md:right-[25px] md:bottom-[25px]">
+          <h2 className="text-xl sm:text-2xl lg:text-[24px] font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
             {title}
           </h2>
-          <p className="font-[Ephesis] font-normal text-[20px] leading-[100%] text-black m-0 line-clamp-2 capitalize">
+          <p className="font-[Ephesis] font-normal text-base sm:text-lg leading-tight text-black m-0 line-clamp-2 capitalize">
             {description}
           </p>
         </div>

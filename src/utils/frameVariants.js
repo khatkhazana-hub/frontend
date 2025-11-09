@@ -103,27 +103,30 @@ export const FRAME_VARIANTS = {
   featuredCarousel: {
     landscape: {
       frameSrc: staticAsset("Horizantal-Frame.webp"),
-      frameBoxClass: "w-[276px] h-[207px]",
+      frameBoxClass:
+        "w-[230px] sm:w-[260px] lg:w-[276px] h-[172px] sm:h-[192px] lg:h-[207px]",
       windowClass:
-        "absolute left-1/2 -translate-x-1/2 top-[34px] w-[232px] h-[138px] overflow-hidden rounded-[10px]",
+        "absolute left-1/2 -translate-x-1/2 top-[26px] sm:top-[30px] lg:top-[34px] w-[190px] sm:w-[210px] lg:w-[232px] h-[120px] sm:h-[130px] lg:h-[138px] overflow-hidden rounded-[10px]",
       watermarkClass:
-        "absolute top-[58px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
+        "absolute top-[44px] sm:top-[52px] lg:top-[58px] left-1/2 -translate-x-1/2 w-[70px] sm:w-[82px] lg:w-[90px] h-[70px] sm:h-[82px] lg:h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
     },
     portrait: {
       frameSrc: staticAsset("Vertical-Frame.webp"),
-      frameBoxClass: "w-[280px] h-[280px]",
+      frameBoxClass:
+        "w-[230px] sm:w-[260px] lg:w-[280px] h-[250px] sm:h-[270px] lg:h-[280px]",
       windowClass:
-        "absolute left-1/2 -translate-x-1/2 top-[30px] w-[180px] h-[240px] overflow-hidden rounded-[6px]",
+        "absolute left-1/2 -translate-x-1/2 top-[24px] sm:top-[28px] lg:top-[30px] w-[150px] sm:w-[168px] lg:w-[180px] h-[210px] sm:h-[228px] lg:h-[240px] overflow-hidden rounded-[6px]",
       watermarkClass:
-        "absolute top-[80px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
+        "absolute top-[60px] sm:top-[70px] lg:top-[80px] left-1/2 -translate-x-1/2 w-[70px] sm:w-[82px] lg:w-[90px] h-[70px] sm:h-[82px] lg:h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
     },
     square: {
-     frameSrc: staticAsset("onebyone.png"),
-      frameBoxClass: "w-[260px] h-[260px]",
+      frameSrc: staticAsset("onebyone.png"),
+      frameBoxClass:
+        "w-[220px] sm:w-[240px] lg:w-[260px] h-[220px] sm:h-[240px] lg:h-[260px]",
       windowClass:
-        "absolute left-1/2 -translate-x-1/2 top-[30px] w-[212px] h-[212px] overflow-hidden ",
+        "absolute left-1/2 -translate-x-1/2 top-[24px] sm:top-[28px] lg:top-[30px] w-[180px] sm:w-[198px] lg:w-[212px] h-[180px] sm:h-[198px] lg:h-[212px] overflow-hidden",
       watermarkClass:
-        "absolute top-[82px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
+        "absolute top-[64px] sm:top-[74px] lg:top-[82px] left-1/2 -translate-x-1/2 w-[70px] sm:w-[82px] lg:w-[90px] h-[70px] sm:h-[82px] lg:h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
     },
   },
 
@@ -159,28 +162,31 @@ export const FRAME_VARIANTS = {
 
   mainSlider: {
     landscape: {
-      frameBoxClass: "w-[320px] lg:w-[420px] h-[260px] lg:h-[320px]",
+      frameBoxClass:
+        "w-[260px] sm:w-[320px] lg:w-[420px] h-[220px] sm:h-[260px] lg:h-[320px]",
       windowClass:
-        "absolute left-1/2 -translate-x-1/2 top-[45px] lg:top-[55px] w-[270px] lg:w-[340px] h-[175px] lg:h-[215px] overflow-hidden ",
+        "absolute left-1/2 -translate-x-1/2 top-[38px] sm:top-[45px] lg:top-[55px] w-[215px] sm:w-[270px] lg:w-[340px] h-[135px] sm:h-[175px] lg:h-[215px] overflow-hidden",
       watermarkClass:
-        "absolute top-[75px] lg:top-[95px] left-1/2 -translate-x-1/2 w-[110px] lg:w-[150px] h-[110px] lg:h-[150px] opacity-20 object-contain pointer-events-none select-none z-10",
+        "absolute top-[60px] sm:top-[75px] lg:top-[95px] left-1/2 -translate-x-1/2 w-[90px] sm:w-[110px] lg:w-[150px] h-[90px] sm:h-[110px] lg:h-[150px] opacity-20 object-contain pointer-events-none select-none z-10",
       frameSrc: staticAsset("Horizantal-Frame.webp"),
     },
     portrait: {
-      frameBoxClass: "w-[320px] lg:w-[420px] h-[420px] lg:h-[520px]",
+      frameBoxClass:
+        "w-[260px] sm:w-[320px] lg:w-[420px] h-[360px] sm:h-[420px] lg:h-[520px]",
       windowClass:
-        "absolute left-1/2 -translate-x-1/2 top-[45px] lg:top-[55px] w-[210px] lg:w-[270px] h-[360px] lg:h-[445px] overflow-hidden ",
+        "absolute left-1/2 -translate-x-1/2 top-[35px] sm:top-[45px] lg:top-[55px] w-[170px] sm:w-[210px] lg:w-[270px] h-[300px] sm:h-[360px] lg:h-[445px] overflow-hidden",
       watermarkClass:
-        "absolute top-[120px] lg:top-[150px] left-1/2 -translate-x-1/2 w-[110px] lg:w-[150px] h-[110px] lg:h-[150px] opacity-20 object-contain pointer-events-none select-none z-10",
+        "absolute top-[100px] sm:top-[120px] lg:top-[150px] left-1/2 -translate-x-1/2 w-[90px] sm:w-[110px] lg:w-[150px] h-[90px] sm:h-[110px] lg:h-[150px] opacity-20 object-contain pointer-events-none select-none z-10",
       frameSrc: staticAsset("Vertical-Frame.webp"),
     },
     square: {
-      frameBoxClass: "w-[320px] lg:w-[420px] h-[320px] lg:h-[420px]",
+      frameBoxClass:
+        "w-[240px] sm:w-[320px] lg:w-[420px] h-[240px] sm:h-[320px] lg:h-[420px]",
       windowClass:
-        "absolute left-1/2 -translate-x-1/2 top-[48px] lg:top-[58px] w-[260px] lg:w-[340px] h-[260px] lg:h-[340px] overflow-hidden rounded-[14px]",
+        "absolute left-1/2 -translate-x-1/2 top-[38px] sm:top-[48px] lg:top-[58px] w-[200px] sm:w-[260px] lg:w-[340px] h-[200px] sm:h-[260px] lg:h-[340px] overflow-hidden rounded-[14px]",
       watermarkClass:
-        "absolute top-[110px] lg:top-[140px] left-1/2 -translate-x-1/2 w-[110px] lg:w-[150px] h-[110px] lg:h-[150px] opacity-20 object-contain pointer-events-none select-none z-10",
-     frameSrc: staticAsset("onebyone.png"),
+        "absolute top-[90px] sm:top-[110px] lg:top-[140px] left-1/2 -translate-x-1/2 w-[90px] sm:w-[110px] lg:w-[150px] h-[90px] sm:h-[110px] lg:h-[150px] opacity-20 object-contain pointer-events-none select-none z-10",
+      frameSrc: staticAsset("onebyone.png"),
     },
   },
 

@@ -22,7 +22,7 @@ function FramedPhoto({ src, alt, orientation = "portrait", onLoad, onError }) {
   const styles = FRAME_STYLES[orientation] || FRAME_STYLES.portrait;
 
   return (
-    <div className={`relative ${styles.frameBoxClass}`}>
+    <div className={`relative mx-auto ${styles.frameBoxClass}`}>
       <div className={styles.windowClass}>
         <img
           src={src}
@@ -78,8 +78,11 @@ export default function FeaturedPhotographCards() {
   return (
     <div className="flex flex-col gap-14 max-w-[1270px] mx-auto">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="font-bold text-3xl lg:text-[40px] capitalize" style={{ fontFamily: "Philosopher" }}>
+      <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-4">
+        <h1
+          className="font-bold text-2xl sm:text-3xl lg:text-[40px] text-center sm:text-left capitalize"
+          style={{ fontFamily: "Philosopher" }}
+        >
           Featured Photographs
         </h1>
         <div className="flex items-center gap-3">
@@ -93,11 +96,17 @@ export default function FeaturedPhotographCards() {
       </div>
 
       {/* Swiper */}
-      <div className="w-full">
+      <div className="w-full px-2 sm:px-0">
         <Swiper
           modules={[Pagination, Navigation]}
-          spaceBetween={50}
           slidesPerView="auto"
+          centeredSlides={false}
+          centerInsufficientSlides
+          breakpoints={{
+            0: { spaceBetween: 16 },
+            640: { spaceBetween: 32 },
+            1024: { spaceBetween: 50 },
+          }}
           navigation={{
             prevEl: prevRef.current,
             nextEl: nextRef.current,
@@ -117,15 +126,15 @@ export default function FeaturedPhotographCards() {
             const orientationKey = orientationMap[key] || "portrait";
 
             return (
-              <SwiperSlide key={key} className="flex justify-start !w-[350px]">
+              <SwiperSlide key={key} className="flex justify-start !w-[280px] sm:!w-[320px] lg:!w-[350px]">
                 <Link to={href}>
-                  <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-[350px] h-[410px] group mx-auto">
+                  <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-full max-w-[350px] h-[410px] group mx-auto">
                     <img
                       src={CARD_BACKGROUND}
                       alt=""
                       className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
                     />
-                    <div className="relative flex justify-center z-10 pt-[30px]">
+                    <div className="relative flex justify-center z-10 pt-[20px] sm:pt-[30px]">
                       {!errored[key] ? (
                         <FramedPhoto
                           src={overlayUrl}
@@ -140,12 +149,12 @@ export default function FeaturedPhotographCards() {
                         </div>
                       )}
                     </div>
-                    <div className="absolute left-[25px] top-[300px] w-[300px] text-left">
-                      <h2 className="text-[24px] sm:text-base lg:text-xl font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
+                    <div className="absolute left-4 right-4 bottom-6 text-left sm:left-[25px] sm:right-[25px]">
+                      <h2 className="text-xl sm:text-[22px] lg:text-[24px] font-semibold text-black mb-1 truncate font-[philosopher] capitalize">
                         {title}
                       </h2>
                       {category && (
-                        <p className="font-[Ephesis] font-normal text-[20px] leading-[100%] text-black m-0 line-clamp-2 capitalize">
+                        <p className="font-[Ephesis] font-normal text-base sm:text-[20px] leading-tight text-black m-0 line-clamp-2 capitalize">
                           {category}
                         </p>
                       )}
