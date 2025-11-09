@@ -136,7 +136,7 @@ export default function Form() {
       formData.set("decade", decade || "");
 
       // <---------- API ----------->
-      const res = await api.post("/submissions", formData)
+      const res = await api.post("/submissions", formData);
 
       console.log("✅ Saved to server:", res.data);
       setShowThankYou(true);
@@ -527,7 +527,8 @@ export default function Form() {
                 🎉 Thank You!
               </h2>
               <p className="mb-6">
-                Thank you for your submission. Our team will contact you soon.
+                Thank you. If your submission is approved, you will see it soon
+                on the website.
               </p>
 
               <button

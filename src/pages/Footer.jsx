@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaLinkedinIn,
-} from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
@@ -48,7 +44,9 @@ export default function Footer() {
         overflow-hidden Padding-container 
       "
       style={{
-        backgroundImage: `url(${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/updated_bg.webp)`,
+        backgroundImage: `url(${
+          import.meta.env.VITE_FILE_BASE_URL
+        }/public/StaticImages/updated_bg.webp)`,
         backgroundRepeat: "repeat",
         backgroundSize: "cover",
         backgroundPosition: "bottom",
@@ -118,7 +116,7 @@ export default function Footer() {
                   {info.label}{" "}
                   {info.label === "Email:" ? (
                     <a
-                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${info.valueto}&su=Hello%20from%20Khat%20Khazana&body=Hey%20team,%0A%0AI’d%20like%20to%20get%20in%20touch%20regarding...`}
+                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${info.valueto}&su=Hello%20from%20LongLostLetters`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:underline text-black"
