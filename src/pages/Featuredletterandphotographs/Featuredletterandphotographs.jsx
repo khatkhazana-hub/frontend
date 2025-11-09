@@ -113,7 +113,7 @@ const Featuredletterandphotographs = () => {
             >
               ✖
             </button>
-            <PopupSubscritionModel onSubscribe={() => setShowPopup(false)} />
+            {/* <PopupSubscritionModel onSubscribe={() => setShowPopup(false)} /> */}
           </div>
         </div>
       )}
@@ -171,7 +171,7 @@ const Featuredletterandphotographs = () => {
                     src={heroLetterVM.overlay}
                     alt={heroLetterVM.title}
                     loading="eager"
-                    className="h-52 w-40 sm:h-60 sm:w-48 object-contain rounded-sm"
+                    className="h-42 md:h-full w-40 object-contain rounded-sm"
                   />
                   <img
                     src="/images/logo.png"
@@ -247,7 +247,7 @@ const Featuredletterandphotographs = () => {
             <a href={heroPhotoVM.to} className="group relative w-full max-w-[420px]">
               <div
                 className={`relative mx-auto w-full overflow-hidden rounded-[20px] ${
-                  isLandscape ? "max-w-[440px]" : ""
+                  isLandscape ? "max-w-[450px]" : ""
                 }`}
               >
                 <img
@@ -265,7 +265,7 @@ const Featuredletterandphotographs = () => {
                 </span>
 
                 <div
-                  className={`relative z-10 flex w-full items-center justify-center ${frameStyles.cardAspectClass} ${frameStyles.cardPaddingClass}`}
+                  className={`relative z-10 flex mb-10 w-full items-center justify-center ${frameStyles.cardAspectClass} ${frameStyles.cardPaddingClass}`}
                 >
                   <div className={`relative ${frameStyles.frameBoxClass}`}>
                     <div className={frameStyles.windowClass}>
@@ -274,7 +274,7 @@ const Featuredletterandphotographs = () => {
                           src={heroPhotoVM.overlay}
                           alt={heroPhotoVM.title}
                           loading="eager"
-                          className="h-full w-full object-fill"
+                          className="h-full w-full object-cover  object-center"
                           onLoad={handleHeroPhotoLoad}
                           onError={handleHeroPhotoError}
                         />
@@ -285,11 +285,11 @@ const Featuredletterandphotographs = () => {
                       )}
                     </div>
                     <img src="/images/logo.png" alt="" className={frameStyles.watermarkClass} />
-                    <img
-                      src={frameStyles.frameSrc}
-                      alt="Frame"
-                      className="pointer-events-none absolute inset-0 h-full w-full select-none object-contain"
-                    />
+                      <img
+                        src={frameStyles.frameSrc}
+                        alt="Frame"
+                        className="pointer-events-none absolute inset-0 h-full w-full select-none object-contain"
+                      />
                   </div>
                 </div>
 

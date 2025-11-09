@@ -192,9 +192,9 @@ export const FRAME_VARIANTS = {
 
   featuredBundle: {
     landscape: {
-      frameBoxClass: "w-[312px] h-[228px]",
+      frameBoxClass: "w-[220px] h-[200px]",
       windowClass:
-        "absolute left-1/2 -translate-x-1/2 top-[38px] w-[256px] h-[154px] overflow-hidden ",
+        "absolute left-1/2 -translate-x-1/2 top-[38px] w-[200px] h-[130px] overflow-hidden",
       watermarkClass:
         "absolute top-[70px] left-1/2 -translate-x-1/2 w-[90px] h-[90px] opacity-20 object-contain pointer-events-none select-none z-20",
       frameSrc: staticAsset("Horizantal-Frame.webp"),
