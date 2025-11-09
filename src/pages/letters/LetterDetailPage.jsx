@@ -36,16 +36,24 @@ const LetterDetailPage = () => {
   // use the hook
   const { data, loading, error: err } = useSubmission(id);
 
-  // redirect out if not approved (once we have data)
+  const uploadType = String(data?.uploadType || "").toLowerCase();
+  const isBoth = uploadType === "both";
+  const baseStatus = String(data?.status || "").toLowerCase();
+  const letterStatus = String(data?.letterStatus || baseStatus).toLowerCase();
+  const photoStatus = String(data?.photoStatus || baseStatus).toLowerCase();
+  const canViewLetter = isBoth ? letterStatus === "approved" : baseStatus === "approved";
+  const canShowPhotos = !isBoth || photoStatus === "approved";
+
+  // redirect out if the letter portion itself is not approved
   React.useEffect(() => {
     if (!data) return;
-    const status = data?.status?.toLowerCase?.() || "";
-    if (status !== "approved") {
-      navigate(`/letters/${data?.letterLanguage?.toLowerCase() || "english"}`, {
-        replace: true,
-      });
+    if (!canViewLetter) {
+      navigate(
+        `/letters/${data?.letterLanguage?.toLowerCase() || "english"}`,
+        { replace: true }
+      );
     }
-  }, [data, navigate]);
+  }, [data, canViewLetter, navigate]);
 
   // scroll to top when page loads or id changes
   useEffect(() => {
@@ -101,14 +109,14 @@ const LetterDetailPage = () => {
 
   // build image sources from arrays
   const letterImages = fieldToUrls(letterImage);
-  const photoImages = fieldToUrls(photoImage);
+  const photoImages = canShowPhotos ? fieldToUrls(photoImage) : [];
 
-  // hero = first letter image; fallback to first photo image
-  const heroImage = photoImages[0] || "";
-  const RelatedImages = photoImages;
-
-  // slider prefers letter images; if none, uses photos
+  // slider prefers letter images; if none, uses approved photos
   const sliderImages = letterImages.length ? letterImages : photoImages;
+
+  // hero = first slide image (letter first, then approved photos)
+  const heroImage = sliderImages[0] || "";
+  const RelatedImages = photoImages;
 
   const audioSrc = metaToUrl(letterAudioFile);
 
@@ -150,7 +158,7 @@ const LetterDetailPage = () => {
               images={sliderImages}
             />
 
-            {/* right-side thumbnails -> all uploaded photo images */}
+            {/* right-side thumbnails -> section stays, content empty if photo not approved */}
             <RelatedLetterCards photos={RelatedImages} submissionId={id} />
           </div>
 

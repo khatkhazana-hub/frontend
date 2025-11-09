@@ -39,11 +39,20 @@ export default function useSubmissions({ type, serverFilter = false } = {}) {
   const updateRow = (id, patch) =>
     setRows((prev) => prev.map((r) => (r._id === id ? { ...r, ...patch } : r)));
 
+  const mergeFromResponse = (id, response, fallback) => {
+    const next = response?.data?.data;
+    if (next && typeof next === "object") {
+      updateRow(id, next);
+    } else if (fallback) {
+      updateRow(id, fallback);
+    }
+  };
+
   // --- mutations that ALWAYS clear error on success ---
   const approve = useCallback(async (id) => {
     try {
-      await api.patch(`/submissions/${id}/approve`);
-      updateRow(id, { status: "approved" });
+      const res = await api.patch(`/submissions/${id}/approve`);
+      mergeFromResponse(id, res, { status: "approved" });
       setErr("");
     } catch (e) {
       setErr(e?.response?.data?.message || "Action failed");
@@ -53,8 +62,8 @@ export default function useSubmissions({ type, serverFilter = false } = {}) {
 
   const reject = useCallback(async (id) => {
     try {
-      await api.patch(`/submissions/${id}/reject`);
-      updateRow(id, { status: "rejected" });
+      const res = await api.patch(`/submissions/${id}/reject`);
+      mergeFromResponse(id, res, { status: "rejected" });
       setErr("");
     } catch (e) {
       setErr(e?.response?.data?.message || "Action failed");
@@ -64,8 +73,8 @@ export default function useSubmissions({ type, serverFilter = false } = {}) {
 
   const updateStatus = useCallback(async (id, status) => {
     try {
-      await api.patch(`/submissions/${id}`, { status });
-      updateRow(id, { status });
+      const res = await api.patch(`/submissions/${id}`, { status });
+      mergeFromResponse(id, res, { status });
       setErr("");
     } catch (e) {
       setErr(e?.response?.data?.message || "Action failed");
@@ -77,14 +86,14 @@ export default function useSubmissions({ type, serverFilter = false } = {}) {
   const setPending = useCallback(async (id) => {
     try {
       // try explicit /pending route if your API has it
-      await api.patch(`/submissions/${id}/pending`);
-      updateRow(id, { status: "pending" });
+      const res = await api.patch(`/submissions/${id}/pending`);
+      mergeFromResponse(id, res, { status: "pending" });
       setErr("");
     } catch (e1) {
       try {
         // fallback to generic status patch
-        await api.patch(`/submissions/${id}`, { status: "pending" });
-        updateRow(id, { status: "pending" });
+        const res = await api.patch(`/submissions/${id}`, { status: "pending" });
+        mergeFromResponse(id, res, { status: "pending" });
         setErr(""); // make sure banner is cleared after successful fallback
       } catch (e2) {
         setErr(
@@ -99,8 +108,45 @@ export default function useSubmissions({ type, serverFilter = false } = {}) {
 
   const toggleFeatured = useCallback(async (id, field, next) => {
     try {
-      await api.patch(`/submissions/${id}`, { [field]: next });
-      updateRow(id, { [field]: next });
+      const res = await api.patch(`/submissions/${id}`, { [field]: next });
+      mergeFromResponse(id, res, { [field]: next });
+      setErr("");
+    } catch (e) {
+      setErr(e?.response?.data?.message || "Action failed");
+      throw e;
+    }
+  }, []);
+
+  const moderatePart = useCallback(async (id, part, nextStatus) => {
+    const targetPart = norm(part);
+    if (!["letter", "photo"].includes(targetPart)) {
+      throw new Error("Invalid part target");
+    }
+    const targetStatus = norm(nextStatus);
+    if (!["approved", "rejected", "pending"].includes(targetStatus)) {
+      throw new Error("Invalid status value");
+    }
+
+    try {
+      let res;
+      if (targetStatus === "approved" || targetStatus === "rejected") {
+        const endpoint = targetStatus === "approved" ? "approve" : "reject";
+        res = await api.patch(`/submissions/${id}/${endpoint}`, {
+          part: targetPart,
+        });
+      } else {
+        const field =
+          targetPart === "letter" ? "letterStatus" : "photoStatus";
+        res = await api.patch(`/submissions/${id}`, {
+          [field]: "pending",
+        });
+      }
+
+      const fallback =
+        targetPart === "letter"
+          ? { letterStatus: targetStatus }
+          : { photoStatus: targetStatus };
+      mergeFromResponse(id, res, fallback);
       setErr("");
     } catch (e) {
       setErr(e?.response?.data?.message || "Action failed");
@@ -133,6 +179,7 @@ export default function useSubmissions({ type, serverFilter = false } = {}) {
     reject,
     setPending,
     updateStatus,
+    moderatePart,
     toggleFeatured,
     remove,
     setRows,

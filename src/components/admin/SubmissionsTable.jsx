@@ -15,6 +15,7 @@ export default function SubmissionsTable({
   onApprove,
   onReject,
   onSetPending,      // NEW
+  onModeratePart,
   onToggleFeatured,
 }) {
   if (loading) return <div className="p-6">Loading submissions…</div>;
@@ -63,6 +64,7 @@ export default function SubmissionsTable({
               onApprove={onApprove}
               onReject={onReject}
               onSetPending={onSetPending}     // NEW
+              onModeratePart={onModeratePart}
               onToggleFeatured={onToggleFeatured}
               onDelete={onDelete}
             />

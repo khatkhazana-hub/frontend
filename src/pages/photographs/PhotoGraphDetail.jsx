@@ -3,9 +3,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { IoCalendarOutline } from "react-icons/io5";
 import api from "@/utils/api";
-import useSubmissions from "@/hooks/useSubmissions";
-import RelatedPhotographs from "@/components/Cards/RelatedPhotographs";
-import ThumbnailPhotoCard from "@/components/InnerComponents/ThumbnailPhotoCard";
 import MainImageWithSlider from "../letters/MainImageWithSlider";
 import FeaturedPhotographCards from "@/components/photographs/FeaturedPhotographCards";
 import RelatedPhotoCards from "@/components/photographs/RelatedPhotoCards";
@@ -33,6 +30,22 @@ const fieldToUrls = (v) => {
   return arr.map(metaToUrl).filter(Boolean);
 };
 
+const norm = (v) => String(v || "").toLowerCase();
+
+const isPhotoApproved = (submission) => {
+  const type = norm(submission?.uploadType);
+  const base = norm(submission?.status);
+  const photo = norm(submission?.photoStatus || submission?.status);
+  return type === "both" ? photo === "approved" : base === "approved";
+};
+
+const isLetterApproved = (submission) => {
+  const type = norm(submission?.uploadType);
+  const base = norm(submission?.status);
+  const letter = norm(submission?.letterStatus || submission?.status);
+  return type === "both" ? letter === "approved" : base === "approved";
+};
+
 export default function PhotoGraphDetail() {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -40,15 +53,12 @@ export default function PhotoGraphDetail() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // global submissions (used for related)
-  const { rows: allRows } = useSubmissions();
-
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
         const { data } = await api.get(`/submissions/${id}`);
-        if (String(data?.status || "").toLowerCase() !== "approved") {
+        if (!isPhotoApproved(data)) {
           throw new Error("This photograph is not available.");
         }
         setData(data);
@@ -82,22 +92,17 @@ export default function PhotoGraphDetail() {
   }, [data]);
 
   // build arrays from uploaded meta
+  const letterReady = isLetterApproved(data);
   const photoImages = useMemo(() => fieldToUrls(data?.photoImage), [data]);
-  const letterImages = useMemo(() => fieldToUrls(data?.letterImage), [data]);
+  const letterImages = useMemo(
+    () => (letterReady ? fieldToUrls(data?.letterImage) : []),
+    [data, letterReady]
+  );
 
   // hero & slider
-  const heroImage = photoImages[0] || letterImages[0] || "";
-  const sliderImages = photoImages.length ? photoImages : letterImages;
-
-  // related photographs (featured + approved, not current)
-  const relatedPhotos = useMemo(() => {
-    return (allRows || []).filter(
-      (r) =>
-        r?._id !== id &&
-        r?.featuredPhoto === true &&
-        String(r?.status || "").toLowerCase() === "approved"
-    );
-  }, [allRows, id]);
+  const heroImage = photoImages[0] || (letterReady ? letterImages[0] : "") || "";
+  const sliderImages =
+    photoImages.length ? photoImages : letterReady ? letterImages : [];
 
   if (loading) {
     return (
@@ -162,7 +167,7 @@ export default function PhotoGraphDetail() {
             {/* main image + slider fed from uploaded arrays */}
             <MainImageWithSlider heroImage={heroImage} images={sliderImages} withFrame />
 
-            {/* right-side info/thumb card; pass first image normalized */}
+            {/* right-side info/thumb card stays rendered; content empty when letter not approved */}
             <RelatedPhotoCards
               photos={letterImages}
               submissionId={id}

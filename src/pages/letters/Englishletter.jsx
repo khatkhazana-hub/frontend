@@ -52,11 +52,24 @@ function LettersPage() {
         if (!alive) return;
         const data = res.data || [];
         const filtered = data
-          .filter(
-            (d) =>
-              d.letterLanguage?.toLowerCase() === lang.toLowerCase() &&
-              d.status?.toLowerCase() === "approved"
-          )
+          .filter((d) => {
+            const langMatches =
+              String(d.letterLanguage || "").toLowerCase() ===
+              String(lang).toLowerCase();
+            if (!langMatches) return false;
+
+            const type = String(d.uploadType || "").toLowerCase();
+            if (type === "both") {
+              const partStatus = String(
+                d.letterStatus || d.status || ""
+              ).toLowerCase();
+              return partStatus === "approved";
+            }
+            if (type === "letter") {
+              return String(d.status || "").toLowerCase() === "approved";
+            }
+            return false;
+          })
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setAll(filtered);
       })

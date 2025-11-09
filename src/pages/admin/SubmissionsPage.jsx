@@ -9,7 +9,7 @@ const normalize = (value) => String(value || "").toLowerCase();
 export default function SubmissionsPage({ title = "Submissions", type, serverFilter = false, columns: colsProp }) {
   const navigate = useNavigate();
 
-  const { rows, loading, err, approve, reject, toggleFeatured, remove, setPending } =
+  const { rows, loading, err, approve, reject, toggleFeatured, remove, setPending, moderatePart } =
     useSubmissions({ type, serverFilter });
 
   const [typeFilter, setTypeFilter] = useState("all");
@@ -131,6 +131,13 @@ export default function SubmissionsPage({ title = "Submissions", type, serverFil
             bump(id, "pending");
           } catch (e) {
             alert(e?.response?.data?.message || "Set pending failed");
+          }
+        }}
+        onModeratePart={async (id, part, nextStatus) => {
+          try {
+            await moderatePart(id, part, nextStatus);
+          } catch (e) {
+            alert(e?.response?.data?.message || "Partial moderation failed");
           }
         }}
         onToggleFeatured={async (id, field, next) => {

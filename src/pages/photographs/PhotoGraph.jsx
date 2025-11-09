@@ -36,7 +36,10 @@ export default function PhotoGraph() {
         const type = String(r?.uploadType || "").toLowerCase();
         const isAllowedType = okTypes.has(type);
         const isApproved =
-          String(r?.status || "").toLowerCase() === "approved";
+          type === "both"
+            ? String(r?.photoStatus || r?.status || "")
+                .toLowerCase() === "approved"
+            : String(r?.status || "").toLowerCase() === "approved";
 
         const meta = firstMeta(r?.photoImage);
         const hasImage = !!(meta && (meta.path || meta.location || meta.url));
