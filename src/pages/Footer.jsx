@@ -53,7 +53,7 @@ export default function Footer() {
         boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
       }}
     >
-      {/* 🔹 Top: Logo + Brand */}
+      {/* Logo */}
       <div className="w-fit mx-auto ">
         <Link to="/" className="flex items-center justify-center gap-5">
           <img
@@ -64,7 +64,7 @@ export default function Footer() {
         </Link>
       </div>
 
-      {/* 🔹 Middle: Links & Info */}
+      {/* Middle content */}
       <div className="w-full xl:px-[80px] mx-auto mt-[30px] max-w-[1920px]">
         <div
           className="
@@ -116,9 +116,7 @@ export default function Footer() {
                   {info.label}{" "}
                   {info.label === "Email:" ? (
                     <a
-                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${info.valueto}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`mailto:${info.valueto}?subject=Long%20Lost%20Letters%20Inquiry&body=Hi%20there,%0D%0A%0D%0A`}
                       className="hover:underline text-black"
                     >
                       {info.value}
@@ -161,7 +159,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* 🔹 Bottom: Copyright */}
+      {/* Bottom */}
       <div className="absolute bottom-5 text-center">
         <p className="text-sm ">
           © {new Date().getFullYear()} Long Lost Letters. All rights reserved.
@@ -170,3 +168,4 @@ export default function Footer() {
     </footer>
   );
 }
+  
