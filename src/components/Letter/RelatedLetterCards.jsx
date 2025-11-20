@@ -8,6 +8,7 @@ const FRAME_STYLES = FRAME_VARIANTS.relatedSidebar;
 
 function FramedThumb({ src, onLoad, onError, orientation = "portrait" }) {
   const styles = FRAME_STYLES[orientation] || FRAME_STYLES.portrait;
+  const blockContextMenu = (e) => e.preventDefault();
 
   return (
     <div className="relative flex justify-center items-start mt-2 group">
@@ -20,15 +21,26 @@ function FramedThumb({ src, onLoad, onError, orientation = "portrait" }) {
             onLoad={onLoad}
             onError={onError}
             className="w-full h-full object-cover"
+            draggable={false}
+            onContextMenu={blockContextMenu}
           />
         </div>
 
-        <img src="/images/logo.png" alt="" aria-hidden="true" className={styles.watermarkClass} />
+        <img
+          src="/images/logo.png"
+          alt=""
+          aria-hidden="true"
+          className={styles.watermarkClass}
+          draggable={false}
+          onContextMenu={blockContextMenu}
+        />
 
         <img
           src={styles.frameSrc}
           alt="Frame"
           className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none select-none"
+          draggable={false}
+          onContextMenu={blockContextMenu}
         />
       </div>
     </div>
@@ -51,6 +63,7 @@ export default function RelatedLetterCards({ photos, submissionId }) {
 
   const images = cards.map((c) => c.img);
   const hasDetailLink = Boolean(submissionId);
+  const blockContextMenu = (e) => e.preventDefault();
 
   const markError = (idx) => setErrored((prev) => ({ ...prev, [idx]: true }));
   const openAt = (idx) => {
@@ -99,6 +112,7 @@ export default function RelatedLetterCards({ photos, submissionId }) {
                     type="button"
                     className="flex flex-col items-center w-full gap-6 focus:outline-none"
                     onClick={() => openAt(idx)}
+                    onContextMenu={blockContextMenu}
                   >
                     {!errored[idx] ? (
                       <FramedThumb
@@ -140,6 +154,7 @@ export default function RelatedLetterCards({ photos, submissionId }) {
         onNext={next}
         title="Related photograph"
         zoomOverlayOffsetPct={12}
+        onContextMenu={(e) => e.preventDefault()}
       />
     </div>
   );

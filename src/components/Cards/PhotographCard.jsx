@@ -20,6 +20,7 @@ export default function PhotographCard({
 }) {
   const imgSrc = overlay || overlayImg || "";
   const [orientation, setOrientation] = useState(null);
+  const blockContextMenu = (e) => e.preventDefault();
 
   const handleImgLoad = (e) => {
     const { naturalWidth: w, naturalHeight: h } = e.target;
@@ -52,6 +53,7 @@ export default function PhotographCard({
                 onLoad={handleImgLoad}
                 className="w-full h-full block object-cover"
                 draggable={false}
+                onContextMenu={blockContextMenu}
               />
             </div>
 
@@ -61,6 +63,7 @@ export default function PhotographCard({
               aria-hidden="true"
               className={`${styles.watermarkClass} block`}
               draggable={false}
+              onContextMenu={blockContextMenu}
             />
 
             <img

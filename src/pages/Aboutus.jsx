@@ -10,6 +10,7 @@ function Aboutus() {
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const blockContextMenu = (e) => e.preventDefault();
 
   const openAt = (i) => setSelectedIndex(i);
   const close = () => setSelectedIndex(null);
@@ -40,6 +41,8 @@ function Aboutus() {
               alt={`About Khat-Khazana ${i + 1}`}
               className="w-full h-auto object-contain shadow-lg cursor-pointer"
               onClick={() => openAt(i)}
+              draggable={false}
+              onContextMenu={blockContextMenu}
             />
           ))}
         </div>
@@ -53,6 +56,7 @@ function Aboutus() {
         onClose={close}
         onPrev={prev}
         onNext={next}
+        onContextMenu={blockContextMenu}
       />
     </div>
   );

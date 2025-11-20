@@ -19,6 +19,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
   const [orientationMap, setOrientationMap] = useState({});
   const [errored, setErrored] = useState({});
   const swiperRef = useRef(null);
+  const blockContextMenu = (e) => e.preventDefault();
 
   const heroImage = images[selectedIndex] || "/images/placeholder.webp";
   const heroOrientation = orientationMap[selectedIndex] || "portrait";
@@ -94,6 +95,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                     onLoad={(e) => handleImageLoad(e, selectedIndex)}
                     onError={() => handleImageError(selectedIndex)}
                     draggable={false}
+                    onContextMenu={blockContextMenu}
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full text-xs text-gray-600 bg-gray-200">
@@ -107,6 +109,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                 src="/images/logo.png"
                 alt="Watermark"
                 className={heroStyles.watermarkClass}
+                onContextMenu={blockContextMenu}
               />
 
               {/* Frame overlay */}
@@ -114,6 +117,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                 src={heroStyles.frameSrc}
                 alt="Frame"
                 className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none z-20"
+                onContextMenu={blockContextMenu}
               />
 
               {/* Fullscreen button */}
@@ -137,6 +141,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                 className="rounded-md mx-auto w-full max-w-[360px] sm:max-w-[420px] h-[320px] sm:h-[360px] lg:h-[500px] object-cover cursor-zoom-in"
                 onClick={() => openModalAt(selectedIndex)}
                 draggable={false}
+                onContextMenu={blockContextMenu}
               />
 
               {/* Watermark */}
@@ -144,6 +149,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                 src="/images/logo.png"
                 alt="Watermark"
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45%] max-w-[160px] opacity-20 object-contain pointer-events-none select-none z-10"
+                onContextMenu={blockContextMenu}
               />
 
               {/* Fullscreen button */}
@@ -190,6 +196,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                       alt={`Thumbnail ${i + 1}`}
                       className="w-20 h-14 object-cover rounded-md"
                       draggable={false}
+                      onContextMenu={blockContextMenu}
                     />
                   </div>
                 </SwiperSlide>
@@ -247,6 +254,7 @@ export default function MainImageWithSlider({ images = [], title, withFrame = fa
                       alt={`Thumbnail ${i + 1}`}
                       className="lg:w-28 h-20 object-contain rounded-md"
                       draggable={false}
+                      onContextMenu={blockContextMenu}
                     />
                   </div>
                 </SwiperSlide>

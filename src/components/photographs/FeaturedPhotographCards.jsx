@@ -20,6 +20,7 @@ const CARD_BACKGROUND = staticAsset("Card.webp");
 
 function FramedPhoto({ src, alt, orientation = "portrait", onLoad, onError }) {
   const styles = FRAME_STYLES[orientation] || FRAME_STYLES.portrait;
+  const blockContextMenu = (e) => e.preventDefault();
 
   return (
     <div className={`relative mx-auto ${styles.frameBoxClass}`}>
@@ -31,13 +32,24 @@ function FramedPhoto({ src, alt, orientation = "portrait", onLoad, onError }) {
           onLoad={onLoad}
           onError={onError}
           className="w-full h-full object-cover"
+          draggable={false}
+          onContextMenu={blockContextMenu}
         />
       </div>
-      <img src="/images/logo.png" alt="" aria-hidden="true" className={styles.watermarkClass} />
+      <img
+        src="/images/logo.png"
+        alt=""
+        aria-hidden="true"
+        className={styles.watermarkClass}
+        draggable={false}
+        onContextMenu={blockContextMenu}
+      />
       <img
         src={styles.frameSrc}
         alt="Frame"
         className="absolute inset-0 w-full h-full object-contain z-30 pointer-events-none select-none"
+        draggable={false}
+        onContextMenu={blockContextMenu}
       />
     </div>
   );
@@ -128,7 +140,7 @@ export default function FeaturedPhotographCards() {
             return (
               <SwiperSlide key={key} className="flex justify-start !w-[280px] sm:!w-[320px] lg:!w-[350px]">
                 <Link to={href}>
-                  <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-full max-w-[350px] h-[410px] group mx-auto">
+                  <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-full max-w-[350px] h-[410px] group mx-auto" onContextMenu={(e) => e.preventDefault()}>
                     <img
                       src={CARD_BACKGROUND}
                       alt=""

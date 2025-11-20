@@ -52,6 +52,7 @@ export default function PhotoGraphDetail() {
   const [err, setErr] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const blockContextMenu = (e) => e.preventDefault();
 
   useEffect(() => {
     (async () => {
@@ -188,6 +189,8 @@ export default function PhotoGraphDetail() {
                 src={heroImage}
                 alt={caption}
                 className="w-[50vh] lg:w-[70vh] lg:h-[80vh] object-contain select-none"
+                draggable={false}
+                onContextMenu={blockContextMenu}
               />
             </div>
           )}

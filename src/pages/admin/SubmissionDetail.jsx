@@ -71,6 +71,7 @@ export default function SubmissionDetail() {
     setViewerIndex(idx);
     setViewerOpen(true);
   };
+  const blockContextMenu = (e) => e.preventDefault();
 
   const closeViewer = () => setViewerOpen(false);
   const nextViewer = () =>
@@ -129,7 +130,10 @@ export default function SubmissionDetail() {
                 s.letterNarrativeFormat && <Badge>{s.letterNarrativeFormat}</Badge>
               }
             >
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div
+                className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+                onContextMenu={blockContextMenu}
+              >
                 {letterFiles.map((f, i) => (
                   <img
                     key={f.filename || f.path || i}
@@ -137,6 +141,7 @@ export default function SubmissionDetail() {
                     alt={`Letter ${i + 1}`}
                     className="w-full max-h-[420px] rounded-lg border object-contain bg-muted cursor-pointer transition hover:opacity-80"
                     loading="lazy"
+                    draggable={false}
                     onClick={() =>
                       openViewer(letterFiles.map((x) => buildFileUrl(x.path)), i)
                     }
@@ -154,7 +159,10 @@ export default function SubmissionDetail() {
                 s.photoNarrativeFormat && <Badge>{s.photoNarrativeFormat}</Badge>
               }
             >
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div
+                className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+                onContextMenu={blockContextMenu}
+              >
                 {photoFiles.map((f, i) => (
                   <img
                     key={f.filename || f.path || i}
@@ -162,6 +170,7 @@ export default function SubmissionDetail() {
                     alt={`Photo ${i + 1}`}
                     className="w-full max-h-[420px] rounded-lg border object-contain bg-muted cursor-pointer transition hover:opacity-80"
                     loading="lazy"
+                    draggable={false}
                     onClick={() =>
                       openViewer(photoFiles.map((x) => buildFileUrl(x.path)), i)
                     }

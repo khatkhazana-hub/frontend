@@ -15,6 +15,7 @@ export default function FeaturedLetterCards() {
   const { data: letters, loading, error } = useFeaturedLetters();
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+  const blockContextMenu = (e) => e.preventDefault();
 
   if (loading) return (
     <div className="mt-14 w-full text-center opacity-70">
@@ -81,22 +82,30 @@ export default function FeaturedLetterCards() {
             return (
               <SwiperSlide key={r?._id || idx} className="flex justify-start !w-[280px] sm:!w-[320px] lg:!w-[350px]">
                 <Link to={href}>
-                  <div className="relative cursor-pointer rounded-[20px] overflow-hidden w-full max-w-[350px] h-[410px] group mx-auto">
+                  <div
+                    className="relative cursor-pointer rounded-[20px] overflow-hidden w-full max-w-[350px] h-[410px] group mx-auto"
+                    onContextMenu={blockContextMenu}
+                  >
                     <img
                       src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
                       alt=""
                       className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
+                      draggable={false}
+                      onContextMenu={blockContextMenu}
                     />
                     <div className="relative flex justify-center z-10 pt-[20px] sm:pt-[30px]">
                       <img
                         src={overlayUrl}
                         alt=""
                         className="object-contain transition-all duration-300 w-[160px] h-[210px] sm:w-[190px] sm:h-[240px] rounded-sm"
+                        draggable={false}
+                        onContextMenu={blockContextMenu}
                       />
                       <img
                         src="/images/logo.png"
                         alt=""
                         className="absolute top-14 left-1/2 -translate-x-1/2 w-[120px] h-[120px] opacity-20 object-cover pointer-events-none"
+                        onContextMenu={blockContextMenu}
                       />
                     </div>
                     <div className="absolute left-4 right-4 bottom-6 text-left sm:left-[25px] sm:right-[25px]">

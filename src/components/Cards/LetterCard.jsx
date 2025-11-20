@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 const LetterCard = ({ to, overlay, title, letcategory, className }) => {
   const imgSrc = overlay;
+  const blockContextMenu = (e) => e.preventDefault();
 
   // console.log(imgSrc);
 
@@ -11,12 +12,15 @@ const LetterCard = ({ to, overlay, title, letcategory, className }) => {
     <Link to={to}>
       <div
         className={`relative cursor-pointer grop rounded-[20px] overflow-hidden w-full max-w-[350px] h-[410px] group mx-auto ${className}`}
+        onContextMenu={blockContextMenu}
       >
         <img
           src={`${import.meta.env.VITE_FILE_BASE_URL}/public/StaticImages/Card.webp`}
           alt="Card Background"
           loading="eager"
           className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
+          draggable={false}
+          onContextMenu={blockContextMenu}
         />
 
         <div className="relative flex justify-center z-10 pt-[30px]">
@@ -25,11 +29,14 @@ const LetterCard = ({ to, overlay, title, letcategory, className }) => {
             alt="Overlay"
             loading="eager"
             className="object-contain transition-all duration-300 w-[160px] h-[210px] sm:w-[190px] sm:h-[240px] md:w-[200px] md:h-[250px]"
+            draggable={false}
+            onContextMenu={blockContextMenu}
           />
           <img
             src="/images/logo.png"
             alt="Watermark"
             className="absolute top-20 left-[100px] w-[150px] h-[150px] opacity-20 object-cover pointer-events-none select-none"
+            onContextMenu={blockContextMenu}
           />
         </div>
 

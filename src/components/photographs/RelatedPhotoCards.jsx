@@ -13,6 +13,7 @@ const RelatedPhotoCards = ({ photos, submissionId, letterLanguage }) => {
   const [errored, setErrored] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [active, setActive] = useState(0);
+  const blockContextMenu = (e) => e.preventDefault();
 
   const markError = (idx) => setErrored((prev) => ({ ...prev, [idx]: true }));
 
@@ -53,6 +54,7 @@ const RelatedPhotoCards = ({ photos, submissionId, letterLanguage }) => {
                 type="button"
                 className="flex flex-col items-center w-full gap-10 focus:outline-none"
                 onClick={() => openAt(idx)}
+                onContextMenu={blockContextMenu}
               >
                 <div className="relative flex justify-center items-center group cursor-pointer mt-3">
                   {/* <div className="absolute left-1/2 -translate-x-1/2 w-[300px] h-[230px] z-30 pointer-events-none">
@@ -70,6 +72,8 @@ const RelatedPhotoCards = ({ photos, submissionId, letterLanguage }) => {
                       loading="eager"
                       onError={() => markError(idx)}
                       className="object-cover group-hover:drop-shadow-xl transition-all duration-300 w-[130px] rounded-sm h-[190px]"
+                      draggable={false}
+                      onContextMenu={blockContextMenu}
                     />
                   ) : (
                     <div className="flex items-center justify-center w-[130px] h-[190px] rounded-sm bg-gray-200 text-gray-600 text-xs">
@@ -81,6 +85,7 @@ const RelatedPhotoCards = ({ photos, submissionId, letterLanguage }) => {
                     src="/images/logo.png"
                     alt="Watermark"
                     className="absolute top-14 w-[80px] h-[80px] opacity-20 object-cover pointer-events-none select-none"
+                    onContextMenu={blockContextMenu}
                   />
                 </div>
               </button>
@@ -107,6 +112,8 @@ const RelatedPhotoCards = ({ photos, submissionId, letterLanguage }) => {
         onNext={next}
         title="Related photograph"
         zoomOverlayOffsetPct={12}
+        // prevent saving via context menu in modal as well
+        onContextMenu={(e) => e.preventDefault()}
       />
     </div>
   );
