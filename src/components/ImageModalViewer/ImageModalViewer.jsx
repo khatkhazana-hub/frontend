@@ -202,7 +202,10 @@ export default function ImageModalViewer({
           exit={{ opacity: 0 }}
           onClick={onClose}
           aria-label="Close backdrop"
-          onContextMenu={(e) => e.preventDefault()}
+          onContextMenu={(e) => {
+            onContextMenu?.(e);
+            e.preventDefault();
+          }}
         />
 
         {/* Close */}
@@ -263,7 +266,10 @@ export default function ImageModalViewer({
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
           onPointerLeave={onPointerUp}
-          onContextMenu={(e) => e.preventDefault()}
+          onContextMenu={(e) => {
+            onContextMenu?.(e);
+            e.preventDefault();
+          }}
           style={{
             touchAction: zoom > 1 ? "none" : "auto",
             cursor:
@@ -279,7 +285,10 @@ export default function ImageModalViewer({
             src={images[activeIndex]}
             alt="Zoomed"
             className="select-none"
-            onContextMenu={(e) => e.preventDefault()}
+            onContextMenu={(e) => {
+              onContextMenu?.(e);
+              e.preventDefault();
+            }}
             style={{
               maxWidth: "100vw",
               maxHeight: "100vh",

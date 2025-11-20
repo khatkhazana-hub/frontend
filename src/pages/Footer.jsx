@@ -116,7 +116,7 @@ export default function Footer() {
                   {info.label}{" "}
                   {info.label === "Email:" ? (
                     <a
-                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${info.valueto}&su=Hello%20from%20LongLostLetters`}
+                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${info.valueto}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:underline text-black"
