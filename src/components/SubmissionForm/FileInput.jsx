@@ -43,7 +43,7 @@ const FileInput = ({
     previewType === "image"
       ? fileCategory === "photograph"
         ? "Allowed formats: JPEG, PNG, WebP, TIFF"
-        : "Letters: any file type is allowed • Image previews shown when possible"
+        : "Letters: any file type is allowed. Image previews shown when possible"
       : previewType === "audio"
       ? "Accepted audio: MP3, WAV, AAC"
       : subtext || "";
@@ -62,9 +62,15 @@ const FileInput = ({
       setFilesData([]);
       setFileNames([]);
       if (onFilesChange) onFilesChange([]);
+      setErrorMessage("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetTrigger]);
+
+  // keep parent in sync with current file list
+  useEffect(() => {
+    onFilesChange?.(filesData);
+  }, [filesData, onFilesChange]);
 
   // accept attr:
   // - photographs: strict image whitelist
@@ -96,36 +102,33 @@ const FileInput = ({
 
     for (let file of files) {
       if (newPreviews.length >= MAX_FILES) {
-        invalidFiles.push(`${file.name} → You can only upload up to ${MAX_FILES} files.`);
+        invalidFiles.push(
+          `${file.name} - You can only upload up to ${MAX_FILES} files.`
+        );
         break;
       }
 
       if (previewType === "image") {
         if (fileCategory === "photograph") {
-          // photographs: strict formats ONLY (no aspect ratio check anymore)
+          // photographs: strict formats ONLY
           if (!allowedImageTypes.includes(file.type)) {
             invalidFiles.push(
-              `${file.name} → Unsupported format. Only JPEG, WebP, PNG, or TIFF allowed.`
+              `${file.name} - Unsupported format. Only JPEG, WebP, PNG, or TIFF allowed.`
             );
             continue;
           }
-          const url = URL.createObjectURL(file);
-          newPreviews.push(url);
-          newNames.push(file.name);
-          newFiles.push(file);
-        } else {
-          // letters: allow ANY file; preview images if possible, else show as a file chip
-          let url = null;
-          if (file.type.startsWith("image/")) {
-            url = URL.createObjectURL(file);
-          }
-          newPreviews.push(url); // null means "no image preview"
-          newNames.push(file.name);
-          newFiles.push(file);
         }
+        // letters: allow ANY file; preview images if possible, else show as a file chip
+        let url = null;
+        if (file.type.startsWith("image/")) {
+          url = URL.createObjectURL(file);
+        }
+        newPreviews.push(url);
+        newNames.push(file.name);
+        newFiles.push(file);
       } else if (previewType === "audio") {
         if (!file.type.startsWith("audio/")) {
-          invalidFiles.push(`${file.name} → Not an audio file`);
+          invalidFiles.push(`${file.name} - Not an audio file`);
           continue;
         }
         const url = URL.createObjectURL(file);
@@ -138,7 +141,6 @@ const FileInput = ({
     setPreviews(newPreviews);
     setFileNames(newNames);
     setFilesData(newFiles);
-    onFilesChange?.(newFiles);
 
     if (invalidFiles.length > 0) {
       const message =

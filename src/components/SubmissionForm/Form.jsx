@@ -118,8 +118,22 @@ export default function Form() {
 
       const formEl = e.target;
 
-      // Build FormData from the form ONLY (includes files)
-      const formData = new FormData(formEl);
+      // Build FormData from scratch (text fields only), then append files from state
+      const formData = new FormData();
+
+      // copy non-file inputs from the form
+      const rawForm = new FormData(formEl);
+      rawForm.forEach((value, key) => {
+        if (
+          key === "letterImage" ||
+          key === "photoImage" ||
+          key === "letterAudioFile" ||
+          key === "photoAudioFile"
+        ) {
+          return; // skip file inputs; we append from state below
+        }
+        formData.append(key, value);
+      });
 
       // Add the token explicitly (defensive) in case hidden field is missing
       formData.set("cf-turnstile-response", captchaToken);
@@ -134,6 +148,24 @@ export default function Form() {
       formData.set("letterLanguage", letterLanguage || "");
       formData.set("letterCategory", letterCategory || "");
       formData.set("decade", decade || "");
+
+      // Append all files accumulated across multiple chooser opens
+      letterFiles.forEach((file) => formData.append("letterImage", file));
+      photoFiles.forEach((file) => formData.append("photoImage", file));
+      letterAudioFiles.forEach((file) =>
+        formData.append("letterAudioFile", file)
+      );
+      photoAudioFiles.forEach((file) =>
+        formData.append("photoAudioFile", file)
+      );
+
+      // quick sanity log
+      console.log("Submitting files:", {
+        letterImages: letterFiles.length,
+        photoImages: photoFiles.length,
+        letterAudio: letterAudioFiles.length,
+        photoAudio: photoAudioFiles.length,
+      });
 
       // <---------- API ----------->
       const res = await api.post("/submissions", formData);
