@@ -12,6 +12,7 @@ import AdminPhotos from "@/pages/admin/AdminPhotos";
 import CreateCategories from "@/pages/admin/CreateCategories";
 import ContactData from "@/pages/admin/ContactData";
 import SubscriptionData from "@/pages/admin/SubscriptionData";
+import ProductsAdmin from "@/pages/admin/ProductsAdmin";
 
 const adminRoutes = [
   {
@@ -67,6 +68,14 @@ const adminRoutes = [
         element: (
           <ProtectedRoute>
             <CreateCategories />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "products",
+        element: (
+          <ProtectedRoute>
+            <ProductsAdmin />
           </ProtectedRoute>
         ),
       },

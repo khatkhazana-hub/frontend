@@ -2,11 +2,10 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import {
-  LayoutDashboard,
   Mail,
   Images,
   BookText,
-  Settings,
+  Package,
   ChevronLeft,
   ChevronRight,
   Lock,
@@ -28,6 +27,7 @@ const NAV = [
   { to: "/admin/letters", label: "Letters", icon: BookText },
   { to: "/admin/photos", label: "Photos", icon: Images },
   { to: "/admin/categories", label: "Categories", icon: Images },
+  // { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/contact-data", label: "Contact-Us Data", icon: Mail },
   { to: "/admin/subscriptions", label: "Subscriptions", icon: Mail },
 ];

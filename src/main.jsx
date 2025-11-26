@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes/index.jsx";
 import { SnackbarProvider } from "notistack";
+import { CartProvider } from "./context/CartContext.jsx";
 
 if (typeof window !== "undefined") {
   const fileBase =
@@ -18,12 +19,14 @@ if (typeof window !== "undefined") {
 
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
-    <SnackbarProvider
-      maxSnack={3}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      autoHideDuration={3000}
-    >
-      <RouterProvider router={router} />
-    </SnackbarProvider>
+    <CartProvider>
+      <SnackbarProvider
+        maxSnack={3}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        autoHideDuration={3000}
+      >
+        <RouterProvider router={router} />
+      </SnackbarProvider>
+    </CartProvider>
   </AuthProvider>
 );

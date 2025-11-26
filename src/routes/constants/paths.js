@@ -11,6 +11,9 @@ export const paths = {
   CONTACT: "/contact",
   SUBMISSION: "/submission",
   SHOP: "/shop",
+  SHOP_DETAIL: "/shop/:productId",
+  CART: "/cart",
+  CHECKOUT: "/checkout",
   FORGOT: "/forgot-password",
   RESET: "/reset-password",
 

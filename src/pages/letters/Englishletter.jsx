@@ -25,14 +25,16 @@ function LettersPage() {
   const [decadeQ, setDecadeQ] = useState(""); // decade
 
   const decadeOptions = [
-    { value: "unknown", label: "Unknown" }, // akhri option
-    { value: "before-1900", label: "Before 1900" }, // pehla option
-
+    { value: "unknown", label: "Unknown" },
+    { value: "before-1900", label: "Before 1900" },
     ...Array.from({ length: 10 }, (_, i) => {
       const start = 1900 + i * 10;
       const end = start + 10;
       return { value: `${start}-${end}`, label: `${start} - ${end}` };
     }),
+    { value: "2000-2010", label: "2000 - 2010" },
+    { value: "2010-2020", label: "2010 - 2020" },
+    { value: "2020-present", label: "2020 - Present" },
   ];
 
   // ⬅️ naya effect add kiya: jab bhi lang change ho, page top se show kare
@@ -127,8 +129,6 @@ function LettersPage() {
 
   const visible = filtered.slice(0, visibleCount);
 
-
-
   const handleLoadMore = () => {
     setLoadMoreBusy(true);
     setTimeout(() => {
@@ -144,22 +144,20 @@ function LettersPage() {
     return `${BASE_URL}/${cleaned}`;
   };
 
-
   const getFirstImageUrl = (item) => {
-  // normalize: might be array (new) or single object (old docs)
-  const pick0 = (v) => (Array.isArray(v) ? v[0] : v);
+    // normalize: might be array (new) or single object (old docs)
+    const pick0 = (v) => (Array.isArray(v) ? v[0] : v);
 
-  const firstLetter = pick0(item.letterImage);
-  const firstPhoto  = pick0(item.photoImage);
+    const firstLetter = pick0(item.letterImage);
+    const firstPhoto = pick0(item.photoImage);
 
-  const meta = firstLetter || firstPhoto; // prefer letter, fallback photo
-  if (!meta) return "";
+    const meta = firstLetter || firstPhoto; // prefer letter, fallback photo
+    if (!meta) return "";
 
-  // we stored S3 object key in `path`; multer-s3 also has `location` sometimes
-  const raw = meta.path || meta.location || meta.url;
-  return raw ? fileUrl(raw) : "";
-};
-
+    // we stored S3 object key in `path`; multer-s3 also has `location` sometimes
+    const raw = meta.path || meta.location || meta.url;
+    return raw ? fileUrl(raw) : "";
+  };
 
   return (
     <div className=" bg-cover bg-center flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 mb-10 lg:mb-20 ">
@@ -243,7 +241,7 @@ function LettersPage() {
       {!loading && !error && filtered.length > 0 && (
         <div className="mt-8 w-full max-w-[1270px] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
           {visible.map((item, i) => {
-             const img = getFirstImageUrl(item);
+            const img = getFirstImageUrl(item);
             const title = item.fullName || "Untitled Letter";
             const category = item.letterCategory || "Untitled Letter";
             const desc =
@@ -252,8 +250,8 @@ function LettersPage() {
               `${item.letterCategory || "Unknown Category"} · ${
                 item.decade || "Unknown Decade"
               }`;
-            return (  
-              <LetterCard 
+            return (
+              <LetterCard
                 key={item._id || i}
                 to={`/letters/${lang}/${item._id || i}`}
                 overlay={img}
