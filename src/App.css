@@ -20,7 +20,8 @@ body {
   background: none; /* background handled by #bg to avoid repaints */
   min-height: 100vh;
   cursor: url("/cursor/my-cursor.png") 4 4, auto !important;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Fixed background layer (independent of app layout) */

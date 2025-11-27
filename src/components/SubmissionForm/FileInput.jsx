@@ -6,6 +6,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Pagination } from "swiper/modules";
+import * as pdfjsLib from "pdfjs-dist";
+
+// configure pdf.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 const FileInput = ({
   label,
@@ -24,6 +31,7 @@ const FileInput = ({
   const [filesData, setFilesData] = useState([]);
   const [fileNames, setFileNames] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isConvertingPdf, setIsConvertingPdf] = useState(false);
 
   const MAX_FILES = 20;
   const MIN_FILES = 1;
@@ -37,13 +45,14 @@ const FileInput = ({
     "image/webp",
     "image/tiff",
   ];
+  const allowedLetterTypes = [...allowedImageTypes, "application/pdf"];
 
   // guidance
   const guidanceText =
     previewType === "image"
       ? fileCategory === "photograph"
         ? "Allowed formats: JPEG, PNG, WebP, TIFF"
-        : "Letters: any file type is allowed. Image previews shown when possible"
+        : "Letters: images or PDF"
       : previewType === "audio"
       ? "Accepted audio: MP3, WAV, AAC"
       : subtext || "";
@@ -82,12 +91,46 @@ const FileInput = ({
       acceptAttr =
         fileCategory === "photograph"
           ? "image/jpeg,image/png,image/webp,image/tiff"
-          : undefined; // accept anything
+          : "image/jpeg,image/png,image/webp,image/tiff,application/pdf";
     }
     if (previewType === "audio") acceptAttr = "audio/*";
   }
 
   const handleButtonClick = () => fileInputRef.current?.click();
+
+  const convertPdfToImageFiles = async (file, maxPages = 999) => {
+    try {
+      setIsConvertingPdf(true);
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const totalPages = Math.min(pdf.numPages, maxPages);
+      const images = [];
+      const baseName = file.name.replace(/\\.pdf$/i, "") || "page";
+
+      for (let pageNum = 1; pageNum <= totalPages; pageNum += 1) {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        await page.render({ canvasContext: context, viewport }).promise;
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png", 0.92));
+        if (!blob) throw new Error("Unable to render PDF page.");
+        const imageFile = new File([blob], `${baseName}-page${pageNum}.png`, {
+          type: "image/png",
+        });
+        images.push(imageFile);
+      }
+
+      return images;
+    } catch (err) {
+      console.error("PDF to image conversion failed:", err);
+      throw err;
+    } finally {
+      setIsConvertingPdf(false);
+    }
+  };
 
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -117,15 +160,42 @@ const FileInput = ({
             );
             continue;
           }
+          const url = URL.createObjectURL(file);
+          newPreviews.push(url);
+          newNames.push(file.name);
+          newFiles.push(file);
+        } else {
+          // letters: allow images or PDF; convert PDFs to image
+          if (!allowedLetterTypes.includes(file.type)) {
+            invalidFiles.push(`${file.name} - Unsupported format. Use images or PDF.`);
+            continue;
+          }
+          if (file.type === "application/pdf") {
+            try {
+              const remainingSlots = MAX_FILES - newPreviews.length;
+              const imageFiles = await convertPdfToImageFiles(file, remainingSlots);
+              imageFiles.forEach((imageFile) => {
+                if (newPreviews.length >= MAX_FILES) return;
+                const url = URL.createObjectURL(imageFile);
+                newPreviews.push(url);
+                newNames.push(imageFile.name);
+                newFiles.push(imageFile);
+              });
+              if (imageFiles.length > remainingSlots) {
+                invalidFiles.push(
+                  `${file.name} - Only the first ${remainingSlots} page(s) were added due to file limit.`
+                );
+              }
+            } catch (err) {
+              invalidFiles.push(`${file.name} - Failed to convert PDF to image.`);
+            }
+          } else {
+            const url = URL.createObjectURL(file);
+            newPreviews.push(url);
+            newNames.push(file.name);
+            newFiles.push(file);
+          }
         }
-        // letters: allow ANY file; preview images if possible, else show as a file chip
-        let url = null;
-        if (file.type.startsWith("image/")) {
-          url = URL.createObjectURL(file);
-        }
-        newPreviews.push(url);
-        newNames.push(file.name);
-        newFiles.push(file);
       } else if (previewType === "audio") {
         if (!file.type.startsWith("audio/")) {
           invalidFiles.push(`${file.name} - Not an audio file`);
@@ -211,6 +281,12 @@ const FileInput = ({
             Choose Files
           </ParchmentButton>
           {guidanceText && <p className="text-[11px] text-black">{guidanceText}</p>}
+          {isConvertingPdf && (
+            <div className="mt-2 flex items-center gap-2 text-[11px] text-gray-600">
+              <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-t-[#6E4A27] animate-spin" />
+              <span>Converting PDF pages...</span>
+            </div>
+          )}
         </>
       )}
 
@@ -268,13 +344,22 @@ const FileInput = ({
                   onClick={handleButtonClick}
                   className="w-10 h-10 ml-1 mt-2 flex items-center justify-center border-2 border-dashed border-gray-400 rounded-md cursor-pointer"
                 >
-                  <Plus size={16} className="text-gray-600" />
+                  {isConvertingPdf ? (
+                    <span className="text-[10px] text-gray-600">...</span>
+                  ) : (
+                    <Plus size={16} className="text-gray-600" />
+                  )}
                 </button>
               </SwiperSlide>
             )}
           </Swiper>
 
           <div className={`${paginationClass} custom-pagination mt-1 space-x-1 flex justify-center`} />
+          {isConvertingPdf && (
+            <p className="mt-2 text-[11px] text-gray-600">
+              Converting PDF pages to images...
+            </p>
+          )}
         </div>
       )}
 

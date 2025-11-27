@@ -1,6 +1,6 @@
 // components/Form.jsx
 // @ts-nocheck
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import FormSection from "./FormSection";
 import InputField from "./InputField";
 import RadioGroup from "./RadioGroup";
@@ -33,6 +33,7 @@ export default function Form() {
   const [decade, setDecade] = useState("");
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [showThankYou, setShowThankYou] = useState(false);
   const [resetTrigger, setResetTrigger] = useState(false);
 
@@ -42,6 +43,14 @@ export default function Form() {
   const widgetIdRef = useRef(null);
 
   const handleUploadTypeChange = (e) => setUploadType(e.target.value);
+  const handleLetterAudioChange = useCallback(
+    (files) => setLetterAudioFiles(files.slice(0, 1)),
+    []
+  );
+  const handlePhotoAudioChange = useCallback(
+    (files) => setPhotoAudioFiles(files.slice(0, 1)),
+    []
+  );
 
   // decade options
   const decadeOptions = [
@@ -115,6 +124,7 @@ export default function Form() {
 
     try {
       setIsSubmitting(true);
+      setUploadProgress(0);
 
       const formEl = e.target;
 
@@ -168,7 +178,13 @@ export default function Form() {
       });
 
       // <---------- API ----------->
-      const res = await api.post("/submissions", formData);
+      const res = await api.post("/submissions", formData, {
+        onUploadProgress: (evt) => {
+          if (!evt.total) return;
+          const percent = Math.round((evt.loaded / evt.total) * 100);
+          setUploadProgress(percent);
+        },
+      });
 
       console.log("✅ Saved to server:", res.data);
       setShowThankYou(true);
@@ -190,6 +206,7 @@ export default function Form() {
       setPhotoAudioFiles([]);
       setCaptchaToken("");
       setResetTrigger((prev) => !prev);
+      setUploadProgress(0);
 
       // Reset Turnstile widget instance
       if (window.turnstile && widgetIdRef.current) {
@@ -205,6 +222,7 @@ export default function Form() {
       );
     } finally {
       setIsSubmitting(false);
+      setUploadProgress(0);
     }
   };
 
@@ -290,7 +308,7 @@ export default function Form() {
                 <FileInput
                   label="Upload"
                   name="letterImage"
-                  subtext="Accepted formats: PNG/JPG"
+                  subtext="Accepted formats: PNG/JPG/PDF (PDF will convert to image)"
                   required
                   previewType="image"
                   resetTrigger={resetTrigger}
@@ -365,9 +383,7 @@ export default function Form() {
                         label="Audio"
                         resetTrigger={resetTrigger}
                         multiple={false}
-                        onFilesChange={(files) =>
-                          setLetterAudioFiles(files.slice(0, 1))
-                        }
+                        onFilesChange={handleLetterAudioChange}
                       />
                     )}
                   </div>
@@ -467,9 +483,7 @@ export default function Form() {
                         label="Audio"
                         resetTrigger={resetTrigger}
                         multiple={false}
-                        onFilesChange={(files) =>
-                          setPhotoAudioFiles(files.slice(0, 1))
-                        }
+                        onFilesChange={handlePhotoAudioChange}
                       />
                     )}
                   </div>
@@ -529,6 +543,14 @@ export default function Form() {
 
         {/* SUBMIT */}
         <div className="mt-10">
+          {isSubmitting && (
+            <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-amber-100">
+              <div
+                className="h-full bg-[#6E4A27] transition-all"
+                style={{ width: `${Math.min(uploadProgress || 5, 100)}%` }}
+              />
+            </div>
+          )}
           <ParchmentButton
             className="w-full"
             type="submit"
