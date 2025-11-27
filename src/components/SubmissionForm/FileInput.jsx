@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { X, Plus, File as FileIcon } from "lucide-react";
 import ParchmentButton from "../InnerComponents/ParchmentButton";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -7,11 +7,10 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Pagination } from "swiper/modules";
 
-// pdf.js (v4+) – THIS is the correct production-safe worker config
+// pdf.js worker setup (v4+)
 import * as pdfjsLib from "pdfjs-dist";
 import PdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?worker";
 
-// Attach worker safely (no workerSrc, no CDN path issues)
 if (typeof window !== "undefined") {
   pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
 }
@@ -38,8 +37,10 @@ const FileInput = ({
   const MAX_FILES = 20;
   const MIN_FILES = 1;
 
-  const uniqueId = useId();
-  const paginationClass = `custom-pagination-${uniqueId}`;
+  // ✅ safe CSS class (letters/numbers only)
+  const [paginationClass] = useState(
+    () => `custom-pagination-${Math.random().toString(36).slice(2, 9)}`
+  );
 
   const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/tiff"];
   const allowedLetterTypes = [...allowedImageTypes, "application/pdf"];
@@ -59,7 +60,6 @@ const FileInput = ({
     } catch {}
   };
 
-  // reset handler
   useEffect(() => {
     if (resetTrigger) {
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -72,12 +72,10 @@ const FileInput = ({
     }
   }, [resetTrigger]);
 
-  // external sync
   useEffect(() => {
     onFilesChange?.(filesData);
-  }, [filesData]);
+  }, [filesData, onFilesChange]);
 
-  // accept rules
   let acceptAttr = props.accept;
   if (!acceptAttr) {
     if (previewType === "image") {
@@ -91,7 +89,6 @@ const FileInput = ({
 
   const handleButtonClick = () => fileInputRef.current?.click();
 
-  // 🔥 PDF → Image conversion using pdf.js worker
   const convertPdfToImageFiles = async (file, maxPages = 999) => {
     try {
       setIsConvertingPdf(true);
@@ -150,7 +147,6 @@ const FileInput = ({
         break;
       }
 
-      // IMAGE MODE - photographs only
       if (previewType === "image" && fileCategory === "photograph") {
         if (!allowedImageTypes.includes(file.type)) {
           invalid.push(`${file.name} - Unsupported format.`);
@@ -164,7 +160,6 @@ const FileInput = ({
         continue;
       }
 
-      // LETTERS: allow image or PDF
       if (previewType === "image" && fileCategory === "letter") {
         if (!allowedLetterTypes.includes(file.type)) {
           invalid.push(`${file.name} - Unsupported format.`);
@@ -188,7 +183,6 @@ const FileInput = ({
           continue;
         }
 
-        // normal image
         const url = URL.createObjectURL(file);
         newPreviews.push(url);
         newNames.push(file.name);
@@ -196,7 +190,6 @@ const FileInput = ({
         continue;
       }
 
-      // AUDIO MODE
       if (previewType === "audio") {
         if (!file.type.startsWith("audio/")) {
           invalid.push(`${file.name} - Not an audio file`);
@@ -262,6 +255,7 @@ const FileInput = ({
         accept={acceptAttr}
         multiple
         required={required && previews.length < MIN_FILES}
+        {...props}
       />
 
       {previews.length === 0 && (
@@ -284,9 +278,12 @@ const FileInput = ({
         </>
       )}
 
-      {/* IMAGE PREVIEW MODE */}
       {previewType === "image" && previews.length > 0 && (
         <div className="relative w-full">
+          <p className="text-[10px] text-gray-500 absolute -top-5 right-0">
+            {previews.length} / {MAX_FILES} Files
+          </p>
+
           <Swiper
             modules={[Navigation, Pagination]}
             pagination={{ clickable: true, el: `.${paginationClass}` }}
@@ -299,10 +296,12 @@ const FileInput = ({
                   <img
                     src={p}
                     className="w-full h-full object-cover rounded border"
+                    alt={`Preview ${i}`}
                   />
                   <button
                     onClick={() => handleRemoveFile(i)}
                     className="absolute -top-1 -right-1 bg-black/60 text-white p-1 rounded-full"
+                    type="button"
                   >
                     <X size={12} />
                   </button>
@@ -323,7 +322,9 @@ const FileInput = ({
             )}
           </Swiper>
 
-          <div className={`${paginationClass} mt-1 flex justify-center`} />
+          <div
+            className={`${paginationClass} custom-pagination mt-1 flex justify-center`}
+          />
 
           {isConvertingPdf && (
             <p className="text-[11px] text-gray-600 mt-1">
@@ -333,7 +334,6 @@ const FileInput = ({
         </div>
       )}
 
-      {/* AUDIO MODE */}
       {previewType === "audio" &&
         previews.map((p, i) => (
           <div key={i} className="relative flex items-center">
@@ -341,6 +341,7 @@ const FileInput = ({
             <button
               onClick={() => handleRemoveFile(i)}
               className="absolute -top-1 -right-1 bg-black/60 text-white p-1 rounded-full"
+              type="button"
             >
               <X size={14} />
             </button>
