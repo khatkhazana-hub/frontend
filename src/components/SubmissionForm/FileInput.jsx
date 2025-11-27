@@ -7,12 +7,11 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Pagination } from "swiper/modules";
 import * as pdfjsLib from "pdfjs-dist";
+// bundle-safe worker URL (works in Vite builds)
+import pdfWorkerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
-// configure pdf.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+// configure pdf.js worker with an explicit, hashed-safe URL
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerSrc;
 
 const FileInput = ({
   label,
