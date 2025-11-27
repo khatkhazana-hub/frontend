@@ -39,7 +39,7 @@ const publicRoutes = [
   { path: paths.FEATURED, element: <Featuredletterandphotographs/> },
   { path: paths.CONTACT, element: <ContactUs /> },
   { path: paths.SUBMISSION, element: <SubmissionForm /> },
-  { path: paths.SHOP, element: <ShopPage title="Shop" /> },
+  // { path: paths.SHOP, element: <ShopPage title="Shop" /> },
   { path: paths.SHOP_DETAIL, element: <ProductDetailPage /> },
   { path: paths.CART, element: <CartPage /> },
   { path: paths.CHECKOUT, element: <CheckoutPage /> },
