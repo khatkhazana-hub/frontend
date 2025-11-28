@@ -1,14 +1,6 @@
 // @ts-nocheck
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
 import {
   Eye,
   Pencil,
@@ -43,8 +35,13 @@ export default function RowActions({
   onModeratePart,
   onDelete,
 }) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+  const triggerRef = useRef(null);
+
   const handleDelete = () => {
     if (confirm("Delete this submission? This cannot be undone.")) onDelete();
+    setOpen(false);
   };
 
   const s = norm(status);
@@ -58,6 +55,29 @@ export default function RowActions({
   const handleModerate = (part, nextStatus) => {
     if (!onModeratePart) return;
     onModeratePart(part, nextStatus);
+    setOpen(false);
+  };
+
+  // close when clicking outside
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open]);
+
+  const act = (fn) => () => {
+    if (fn) fn();
+    setOpen(false);
   };
 
   return (
@@ -79,132 +99,172 @@ export default function RowActions({
           Edit
         </Button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="sm" className="gap-1">
-              {s === "approved" ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
-                  Approved
-                  <ChevronDown className="h-4 w-4" />
-                </>
-              ) : s === "rejected" ? (
-                <>
-                  <XCircle className="h-4 w-4 text-red-600" />
-                  Rejected
-                  <ChevronDown className="h-4 w-4" />
-                </>
-              ) : (
-                <>
-                  <Clock className="h-4 w-4" />
-                  Pending
-                  <ChevronDown className="h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Submission</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-
-            {s !== "approved" && (
-              <DropdownMenuItem
-                onClick={onApprove}
-                className={cn(
-                  "cursor-pointer",
-                  s === "approved" && "text-green-600"
-                )}
-              >
-                <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
-              </DropdownMenuItem>
-            )}
-
-            {s !== "rejected" && (
-              <DropdownMenuItem
-                onClick={onReject}
-                className={cn(
-                  "cursor-pointer",
-                  s === "rejected" && "text-red-600"
-                )}
-              >
-                <XCircle className="mr-2 h-4 w-4" /> Reject
-              </DropdownMenuItem>
-            )}
-
-            {s !== "pending" && (
-              <DropdownMenuItem onClick={onSetPending} className="cursor-pointer">
-                <Clock className="mr-2 h-4 w-4" /> Pending
-              </DropdownMenuItem>
-            )}
-
-            {isBoth && onModeratePart && (
+        <div className="relative">
+          <Button
+            ref={triggerRef}
+            size="sm"
+            className="gap-1"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-haspopup="menu"
+          >
+            {s === "approved" ? (
               <>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel>Letter (Both)</DropdownMenuLabel>
-                {letter !== "approved" && (
-                  <DropdownMenuItem
-                    onClick={() => handleModerate("letter", "approved")}
-                    className="cursor-pointer"
-                  >
-                    <CheckCircle2 className="mr-2 h-4 w-4" /> Approve Letter
-                  </DropdownMenuItem>
-                )}
-                {letter !== "rejected" && (
-                  <DropdownMenuItem
-                    onClick={() => handleModerate("letter", "rejected")}
-                    className="cursor-pointer"
-                  >
-                    <XCircle className="mr-2 h-4 w-4" /> Reject Letter
-                  </DropdownMenuItem>
-                )}
-                {letter !== "pending" && (
-                  <DropdownMenuItem
-                    onClick={() => handleModerate("letter", "pending")}
-                    className="cursor-pointer"
-                  >
-                    <Clock className="mr-2 h-4 w-4" /> Mark Letter Pending
-                  </DropdownMenuItem>
-                )}
-
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel>Photo (Both)</DropdownMenuLabel>
-                {photo !== "approved" && (
-                  <DropdownMenuItem
-                    onClick={() => handleModerate("photo", "approved")}
-                    className="cursor-pointer"
-                  >
-                    <CheckCircle2 className="mr-2 h-4 w-4" /> Approve Photo
-                  </DropdownMenuItem>
-                )}
-                {photo !== "rejected" && (
-                  <DropdownMenuItem
-                    onClick={() => handleModerate("photo", "rejected")}
-                    className="cursor-pointer"
-                  >
-                    <XCircle className="mr-2 h-4 w-4" /> Reject Photo
-                  </DropdownMenuItem>
-                )}
-                {photo !== "pending" && (
-                  <DropdownMenuItem
-                    onClick={() => handleModerate("photo", "pending")}
-                    className="cursor-pointer"
-                  >
-                    <Clock className="mr-2 h-4 w-4" /> Mark Photo Pending
-                  </DropdownMenuItem>
-                )}
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                Approved
+                <ChevronDown className="h-4 w-4" />
+              </>
+            ) : s === "rejected" ? (
+              <>
+                <XCircle className="h-4 w-4 text-red-600" />
+                Rejected
+                <ChevronDown className="h-4 w-4" />
+              </>
+            ) : (
+              <>
+                <Clock className="h-4 w-4" />
+                Pending
+                <ChevronDown className="h-4 w-4" />
               </>
             )}
+          </Button>
 
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleDelete}
-              className="cursor-pointer text-red-600"
+          {open && (
+            <div
+              ref={menuRef}
+              className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-md border bg-white shadow-lg"
+              role="menu"
             >
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <div className="px-3 py-2 text-sm font-semibold text-gray-700">
+                Submission
+              </div>
+              <div className="h-px bg-gray-200" />
+
+              {s !== "approved" && (
+                <button
+                  type="button"
+                  onClick={act(onApprove)}
+                  className={cn(
+                    "flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50",
+                    s === "approved" && "text-green-600"
+                  )}
+                  role="menuitem"
+                >
+                  <CheckCircle2 className="h-4 w-4" /> Approve
+                </button>
+              )}
+
+              {s !== "rejected" && (
+                <button
+                  type="button"
+                  onClick={act(onReject)}
+                  className={cn(
+                    "flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50",
+                    s === "rejected" && "text-red-600"
+                  )}
+                  role="menuitem"
+                >
+                  <XCircle className="h-4 w-4" /> Reject
+                </button>
+              )}
+
+              {s !== "pending" && (
+                <button
+                  type="button"
+                  onClick={act(onSetPending)}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
+                  role="menuitem"
+                >
+                  <Clock className="h-4 w-4" /> Pending
+                </button>
+              )}
+
+              {isBoth && onModeratePart && (
+                <>
+                  <div className="h-px bg-gray-200" />
+                  <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Letter (Both)
+                  </div>
+                  {letter !== "approved" && (
+                    <button
+                      type="button"
+                      onClick={() => handleModerate("letter", "approved")}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
+                      role="menuitem"
+                    >
+                      <CheckCircle2 className="h-4 w-4" /> Approve Letter
+                    </button>
+                  )}
+                  {letter !== "rejected" && (
+                    <button
+                      type="button"
+                      onClick={() => handleModerate("letter", "rejected")}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
+                      role="menuitem"
+                    >
+                      <XCircle className="h-4 w-4" /> Reject Letter
+                    </button>
+                  )}
+                  {letter !== "pending" && (
+                    <button
+                      type="button"
+                      onClick={() => handleModerate("letter", "pending")}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
+                      role="menuitem"
+                    >
+                      <Clock className="h-4 w-4" /> Mark Letter Pending
+                    </button>
+                  )}
+
+                  <div className="h-px bg-gray-200" />
+                  <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Photo (Both)
+                  </div>
+                  {photo !== "approved" && (
+                    <button
+                      type="button"
+                      onClick={() => handleModerate("photo", "approved")}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
+                      role="menuitem"
+                    >
+                      <CheckCircle2 className="h-4 w-4" /> Approve Photo
+                    </button>
+                  )}
+                  {photo !== "rejected" && (
+                    <button
+                      type="button"
+                      onClick={() => handleModerate("photo", "rejected")}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
+                      role="menuitem"
+                    >
+                      <XCircle className="h-4 w-4" /> Reject Photo
+                    </button>
+                  )}
+                  {photo !== "pending" && (
+                    <button
+                      type="button"
+                      onClick={() => handleModerate("photo", "pending")}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
+                      role="menuitem"
+                    >
+                      <Clock className="h-4 w-4" /> Mark Photo Pending
+                    </button>
+                  )}
+                </>
+              )}
+
+              <div className="h-px bg-gray-200" />
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                role="menuitem"
+              >
+                <Trash2 className="h-4 w-4" /> Delete
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
