@@ -6,6 +6,22 @@ import FeaturedSwitch from "./row/FeaturedSwitch";
 const norm = (v) => String(v || "").toLowerCase();
 const safeValue = (v) => (v === undefined || v === null ? "" : v);
 
+const prettyDateTime = (value) => {
+  if (!value) return "";
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? "" : d.toLocaleString();
+};
+
+const renderCell = (column, row) => {
+  if (typeof column.render === "function") return column.render(row);
+
+  if (column.key === "createdAt" || column.key === "updatedAt") {
+    return prettyDateTime(row[column.key]);
+  }
+
+  return String(safeValue(row[column.key]));
+};
+
 export default function SubmissionRow({
   row,
   columns,
@@ -28,7 +44,7 @@ export default function SubmissionRow({
     <tr className="border-t">
       {columns.map((c) => (
         <td key={c.key} className="px-4 py-3 text-sm">
-          {String(safeValue(row[c.key]))}
+          {renderCell(c, row)}
         </td>
       ))}
 

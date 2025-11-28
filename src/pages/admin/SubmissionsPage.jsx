@@ -5,6 +5,11 @@ import useSubmissions from "@/hooks/useSubmissions";
 import SubmissionsTable from "@/components/admin/SubmissionsTable";
 
 const normalize = (value) => String(value || "").toLowerCase();
+const prettyDateTime = (iso) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : d.toLocaleString();
+};
 
 export default function SubmissionsPage({ title = "Submissions", type, serverFilter = false, columns: colsProp }) {
   const navigate = useNavigate();
@@ -25,6 +30,11 @@ export default function SubmissionsPage({ title = "Submissions", type, serverFil
         { key: "email", label: "Email" },
         { key: "title", label: "Title" },
         { key: "decade", label: "Decade" },
+        {
+          key: "createdAt",
+          label: "Submitted",
+          render: (row) => prettyDateTime(row.createdAt),
+        },
       ],
     [colsProp]
   );
