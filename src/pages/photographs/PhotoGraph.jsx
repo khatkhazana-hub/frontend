@@ -125,54 +125,7 @@ export default function PhotoGraph() {
         containerClassName="mt-6"
       />
 
-      <div className="w-[90%] max-w-[1270px] mt-10 md:mt-16 flex flex-col md:flex-row justify-between items-end gap-5 lg:gap-5">
-        <FilterDropdownCOD
-          label="By Category"
-          value={categoryQ}
-          onChange={(e) => {
-            setCategoryQ(e.target.value);
-            setVisibleCount(PAGE);
-          }}
-          placeholder="All categories"
-          options={categories.map((c) => ({ value: c.slug, label: c.name }))}
-        />
-
-        <FilterDropdownCOD
-          label="By Owner's Name"
-          value={ownerQ}
-          onChange={(e) => {
-            setOwnerQ(e.target.value);
-            setVisibleCount(PAGE);
-          }}
-          placeholder="All owners"
-          options={owners.map((o) => ({ value: o, label: o }))}
-        />
-
-        <FilterDropdownCOD
-          label="By Decade"
-          value={decadeQ}
-          onChange={(e) => {
-            setDecadeQ(e.target.value);
-            setVisibleCount(PAGE);
-          }}
-          placeholder="All decades"
-          options={decadeOptions}
-        />
-
-        <div className="flex items-end justify-end w-fit">
-          <button
-            onClick={() => {
-              setCategoryQ("");
-              setOwnerQ("");
-              setDecadeQ("");
-              setVisibleCount(PAGE);
-            }}
-            className="px-4 whitespace-nowrap py-2 text-[#704214] font-semibold border border-[#704214] rounded-full hover:bg-[#704214] hover:text-white transition"
-          >
-            Clear Filters
-          </button>
-        </div>
-      </div>
+    
 
       {err && <div className="mt-10 text-red-600 text-sm">{err}</div>}
 
